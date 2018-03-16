@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route, HashRouter, Link, Redirect, Switch } from 'react-router-dom';
+import { Route, Router, Link, Redirect, Switch } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
 import Home from './Home';
@@ -8,6 +8,7 @@ import { logout } from '../helpers/auth';
 import { firebaseAuth } from '../config/constants';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
+import history from './history'
 
 function PrivateRoute({ component: Component, authed, ...rest }) {
   return (
@@ -96,7 +97,7 @@ export default class App extends Component {
     return this.state.loading === true ? (
       <h1>Loading</h1>
     ) : (
-      <HashRouter>
+      <Router history={history}>
         <div>
           <AppBar
             title="My App"
@@ -131,7 +132,7 @@ export default class App extends Component {
             </div>
           </div>
         </div>
-      </HashRouter>
+      </Router>
     );
   }
 }
