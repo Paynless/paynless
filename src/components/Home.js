@@ -1,7 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import CheckIn from './CheckIn'
 
 export default class Home extends Component {
   render() {
-    return <div>Home. Not Protected. Anyone can see this.</div>;
+    return (
+      <Fragment>Home. Not Protected. Anyone can see this.
+        <CheckIn />
+      </Fragment>
+    );
   }
 }
