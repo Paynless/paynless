@@ -34,7 +34,7 @@ function PublicRoute({ component: Component, authed, ...rest }) {
         authed === false ? (
           <Component {...props} />
         ) : (
-          <Redirect to="/dashboard" />
+          <Redirect to="/" />
         )}
     />
   );
@@ -111,7 +111,11 @@ export default class App extends Component {
           <div className="container d-flex justify-content-center mt-3">
             <div className="row">
               <Switch>
-                <Route path="/" exact component={Home} />
+                <PrivateRoute
+                  path="/" exact
+                  component={Home}
+                  authed={this.state.authed}
+                  />
                 <PublicRoute
                   authed={this.state.authed}
                   path="/login"
