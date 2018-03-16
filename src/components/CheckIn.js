@@ -9,7 +9,7 @@ export default class CheckIn extends Component {
       user: ''
     };
   }
-
+  
   render() {
     let venues = dummyVenues.results.map(venue => ({
       merchant: venue.name,
