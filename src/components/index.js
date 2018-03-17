@@ -9,6 +9,7 @@ import { firebaseAuth } from '../config/constants';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import history from './history'
+import LoginBottomNavigation from './Login-Register-BottomBar'
 
 function PrivateRoute({ component: Component, authed, ...rest }) {
   return (
@@ -94,13 +95,26 @@ export default class App extends Component {
         {authButtons}
       </div>
     );
+
+    const tabData = {
+      0: {
+        path: this.state.authed ? "/home" : "/login",
+        icon: this.state.authed ? "plus-circle" : "sign-in",
+        label: this.state.authed ? "New Tab" : "Login"
+      },
+      1: {
+        path: this.state.authed ? "/dashboard" : "/register",
+        icon: this.state.authed ? "sticky-note" : "user-plus",
+        label: this.state.authed ? "Open Tabs" : "Register"
+      }
+    }
     return this.state.loading === true ? (
       <h1>Loading</h1>
     ) : (
       <Router history={history}>
-        <div>
+        <div className="fullheight">
           <AppBar
-            title="My App"
+            title="Paynless"
             iconElementRight={topbarButtons}
             iconStyleRight={{
               display: 'flex',
@@ -135,6 +149,7 @@ export default class App extends Component {
               </Switch>
             </div>
           </div>
+          <LoginBottomNavigation data={tabData}/>
         </div>
       </Router>
     );
