@@ -74,31 +74,18 @@ export default class App extends Component {
         style={{ color: '#fff' }}
       />
     ) : (
-      <span>
-        <Link to="/login">
-          <FlatButton label="Login" style={{ color: '#fff' }} />
-        </Link>
-        <Link to="/register">
-          <FlatButton label="Register" style={{ color: '#fff' }} />
-        </Link>
-      </span>
+      null
     );
 
     const topbarButtons = (
       <div>
-        <Link to="/">
-          <FlatButton label="Home" style={{ color: '#fff' }} />
-        </Link>
-        <Link to="/dashboard">
-          <FlatButton label="dashboard" style={{ color: '#fff' }} />
-        </Link>
         {authButtons}
       </div>
     );
 
     const tabData = {
       0: {
-        path: this.state.authed ? "/home" : "/login",
+        path: this.state.authed ? "/" : "/login",
         icon: this.state.authed ? "plus-circle" : "sign-in",
         label: this.state.authed ? "New Tab" : "Login"
       },
