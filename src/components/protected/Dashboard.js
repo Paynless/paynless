@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { db, firebaseAuth } from '../../config/constants';
+import Tab from './tab';
 
 export default class Dashboard extends Component {
   state = {
@@ -9,47 +10,60 @@ export default class Dashboard extends Component {
 
   async componentDidMount(){
     let userId;
-    this.removeListener = await firebaseAuth().onAuthStateChanged(user => {
+    this.removeListenerUser = await firebaseAuth().onAuthStateChanged(user => {
       if (user) {
         userId = user.uid
       } else {
       }
     });
     console.log('Current User Id', userId);
-    db.collection("Tabs").where("uid", "==", userId).get()
-    .then(function(querySnapshot) {
-      querySnapshot.forEach(function(doc) {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
+
+    let self = this;
+    this.removeListenerTabs = await db.collection("Tabs").where("uid", "==", userId)
+    .onSnapshot(function(snapshot) {
+      snapshot.docChanges.forEach(function(change) {
+          let changedTab = {
+            id: change.doc.id,
+            data: change.doc.data()
+          }
+          if (change.type === "added") {
+            self.setState(prevState => ({openTabs: [...prevState.openTabs, changedTab]}))
+          }
+          if (change.type === "modified") {
+            self.setState(prevState => ({openTabs: [...prevState.openTabs.filter(tab => tab.id !== changedTab.id), changedTab]}))
+          }
+          if (change.type === "removed") {
+            self.setState(prevState => ({openTabs: prevState.openTabs.filter(tab => tab.id !== changedTab.id)}))
+          }
+        });
       });
-  })
-  .catch(function(error) {
-      console.log("Error getting documents: ", error);
-  });
+      this.setState({isLoaded: true})
+    }
 
-
-    // db.collection("Tabs").onSnapshot(function(snapshot) {
-    //   snapshot.docChanges.forEach(function(change) {
-    //       if (change.type === "added") {
-    //           console.log("New city: ", change.doc.data());
-    //       }
-    //       if (change.type === "modified") {
-    //           console.log("Modified city: ", change.doc.data());
-    //       }
-    //       if (change.type === "removed") {
-    //           console.log("Removed city: ", change.doc.data());
-    //       }
-    //   });
-    // });
-  }
   componentWillUnmount() {
-    this.removeListener();
+    this.removeListenerUser();
+    this.removeListenerTabs();
   }
 
   render() {
+    console.log('state: ', this.state)
     return (
       <div>
-        PLACEHOLDER FOR THE OPEN TAB COMPONENT
+        {this.state.openTabs.map(tab => (
+          <div key={tab.id}>
+            {/* <h2>{tab.data.merchantName}</h2>
+            {tab.data.items.map((item, idx) => (
+              <div key={idx}>
+                {item.name} quant: {item.quantity} price: {item.price * item.quantity}
+              </div>
+            ))} */}
+            <Tab
+              merchantName={tab.data.merchantName}
+              items={tab.data.items}
+            />
+          </div>
+
+        ))}
       </div>
     );
   }
