@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import firebase from 'firebase';
-const db = firebase.firestore();
+import { db, firebaseAuth } from '../config/constants';
+
 const halfMile = 1/69/2;
 
 const findDistance = (cord1, cord2) => {
@@ -16,8 +16,9 @@ export default class CheckIn extends Component {
       selectedMerchant: '',
       user: '',
     };
-    this.handleChange = this.handleChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+
   }
   
   async componentDidMount() {
@@ -35,37 +36,44 @@ export default class CheckIn extends Component {
     openMerchants = openMerchants.filter(venue => {
       return findDistance(currentPos, venue.location) < halfMile;
     })
-    this.setState({openMerchants})
+    this.setState({ openMerchants })
   }
 
+  
   handleChange(event) {
     const selectedMerchant = event.target.value;
-    this.setState({selectedMerchant})
+    this.setState({ selectedMerchant })
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    //Add redirect
-    console.log('hooray')
+    this.setState({ checkedIn: true })
   }
 
+ 
   render() {
-
+    let { openMerchants } = this.state; 
     return (
       <Fragment>
-      
-        <select onChange={this.handleChange}>
-          <option value="Select">Select A Merchant</option>
-          { 
-            this.state.openMerchants.map(venue => (
-              <option value={venue.name} key={venue.name}>
-                {venue.name}
-              </option>
-            ))
-          }
-        </select>
-        <button onClick={this.handleSubmit} >Check in with {this.state.selectedMerchant}</button>
-
-      </Fragment>);
+      {
+        openMerchants.length > 0 &&
+        <Fragment>
+          <select onChange={this.handleChange}>
+            <option value="Select">Select A Merchant</option>
+            { 
+              openMerchants.map(venue => (
+                <option value={venue.name} key={venue.name}>
+                  {venue.name}
+                </option>
+              ))
+            }
+          </select>
+          <button onClick={this.handleSubmit}>
+            Check in with {this.state.selectedMerchant}
+          </button>
+        </Fragment>
+      }
+      </Fragment>
+    );
   }
 }
