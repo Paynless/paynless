@@ -15,7 +15,7 @@ export default class Dashboard extends Component {
       } else {
       }
     });
-    console.log('this should come second', userId);
+    console.log('Current User Id', userId);
     db.collection("Tabs").where("uid", "==", userId).get()
     .then(function(querySnapshot) {
       querySnapshot.forEach(function(doc) {

@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import firebase from 'firebase';
-const db = firebase.firestore();
+import { db, firebaseAuth } from '../config/constants';
 const halfMile = 1/69/2;
 
 const findDistance = (cord1, cord2) => {
@@ -19,16 +18,16 @@ export default class CheckIn extends Component {
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
-  
+
   async componentDidMount() {
-    let currentPos = {};    
+    let currentPos = {};
     await window.navigator.geolocation.getCurrentPosition(location => {
       currentPos._lat = location.coords.latitude;
       currentPos._long = location.coords.longitude;
     },
       err => console.log(err)
     )
-  
+
     let openMerchants = [];
     const collection = await db.collection("Merchants").get();
     collection.forEach(doc => openMerchants.push(doc.data()));
@@ -53,10 +52,10 @@ export default class CheckIn extends Component {
 
     return (
       <Fragment>
-      
+
         <select onChange={this.handleChange}>
           <option value="Select">Select A Merchant</option>
-          { 
+          {
             this.state.openMerchants.map(venue => (
               <option value={venue.name} key={venue.name}>
                 {venue.name}
