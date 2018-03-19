@@ -7,12 +7,7 @@ import Paper from 'material-ui/Paper';
 import FontAwesome from 'react-fontawesome';
 
 
-/**
- * A simple example of `BottomNavigation`, with three labels and icons
- * provided. The selected `BottomNavigationItem` is determined by application
- * state (for instance, by the URL).
- */
-class LoginBottomNavigation extends Component {
+class BottomNavigationBar extends Component {
   state = {
     selectedIndex: 0,
   };
@@ -55,31 +50,4 @@ class LoginBottomNavigation extends Component {
   }
 }
 
-export default withRouter(LoginBottomNavigation);
-
-// render() {
-//   const signIn = <FontAwesome name='sign-in' style={{ color: this.state.selectedIndex === 0 ? cyan500 : grey500
-//   }} />
-//   const signUp = <FontAwesome name='user-plus' style={{ color: this.state.selectedIndex === 1 ? cyan500 : grey500
-//   }} />
-//   return (
-//     <Paper zDepth={1}>
-//       <BottomNavigation selectedIndex={this.state.selectedIndex}>
-//         <Link to="/login">
-//           <BottomNavigationItem
-//             label="Login"
-//             icon={signIn}
-//             onClick={() => this.select(0)}
-//           />
-//         </Link>
-//         <Link to="/register">
-//           <BottomNavigationItem
-//             label="Register"
-//             icon={signUp}
-//             onClick={() => this.select(1)}
-//           />
-//         </Link>
-//       </BottomNavigation>
-//     </Paper>
-//   );
-// }
+export default withRouter(BottomNavigationBar);

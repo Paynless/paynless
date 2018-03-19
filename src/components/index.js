@@ -9,7 +9,7 @@ import { firebaseAuth } from '../config/constants';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import history from './history'
-import LoginBottomNavigation from './Login-Register-BottomBar'
+import BottomNavigationBar from './BottomBar'
 
 function PrivateRoute({ component: Component, authed, ...rest }) {
   return (
@@ -136,7 +136,7 @@ export default class App extends Component {
               </Switch>
             </div>
           </div>
-          <LoginBottomNavigation data={tabData}/>
+          <BottomNavigationBar data={tabData}/>
         </div>
       </Router>
     );
