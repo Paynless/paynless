@@ -65,12 +65,7 @@ export default class CheckIn extends Component {
           }
         </select>
         <button onClick={this.handleSubmit} >Check in with {this.state.selectedMerchant}</button>
-        {
-          this.state.selectedMerchant && 
-          <div>
-            {this.state.selectedMerchant}
-          </div>
-        }
+
       </Fragment>);
   }
 }
