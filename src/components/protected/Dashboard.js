@@ -1,14 +1,33 @@
 import React, { Component } from 'react';
-import { db } from '../../config/constants';
+import { db, firebaseAuth } from '../../config/constants';
 
 export default class Dashboard extends Component {
   state = {
-    openTabs: []
+    openTabs: [],
+    isLoaded: false
   }
 
-  componentDidMount(){
-    db.collection("Tabs").get()
-    .then(snapshot => snapshot.forEach(doc => console.log('data: ', doc.data())))
+  async componentDidMount(){
+    let userId;
+    this.removeListener = await firebaseAuth().onAuthStateChanged(user => {
+      if (user) {
+        userId = user.uid
+      } else {
+      }
+    });
+    console.log('this should come second', userId);
+    db.collection("Tabs").where("uid", "==", userId).get()
+    .then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+      });
+  })
+  .catch(function(error) {
+      console.log("Error getting documents: ", error);
+  });
+
+
     // db.collection("Tabs").onSnapshot(function(snapshot) {
     //   snapshot.docChanges.forEach(function(change) {
     //       if (change.type === "added") {
@@ -21,7 +40,10 @@ export default class Dashboard extends Component {
     //           console.log("Removed city: ", change.doc.data());
     //       }
     //   });
-  //});
+    // });
+  }
+  componentWillUnmount() {
+    this.removeListener();
   }
 
   render() {
