@@ -1,3 +1,17 @@
+
+//function for how to loop through data
+ // let venues = dummyVenues.results.map(venue => ({
+    //   merchant: venue.name,
+    //   address: venue.vicinity,
+    //   types: venue.types || [],
+    //   open: venue.opening_hours 
+    //     ? venue.opening_hours.open_now 
+    //     : false,
+    // }));
+    // const openRestaurants = venues.filter(venue => {
+    //   return venue.types.includes("restaurant") && venue.open
+    // })
+
 module.exports = {
   "html_attributions": [],
   "results": [
