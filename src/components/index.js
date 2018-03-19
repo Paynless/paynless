@@ -9,6 +9,7 @@ import { firebaseAuth } from '../config/constants';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import history from './history'
+import BottomNavigationBar from './BottomBar'
 
 function PrivateRoute({ component: Component, authed, ...rest }) {
   return (
@@ -73,34 +74,34 @@ export default class App extends Component {
         style={{ color: '#fff' }}
       />
     ) : (
-      <span>
-        <Link to="/login">
-          <FlatButton label="Login" style={{ color: '#fff' }} />
-        </Link>
-        <Link to="/register">
-          <FlatButton label="Register" style={{ color: '#fff' }} />
-        </Link>
-      </span>
+      null
     );
 
     const topbarButtons = (
       <div>
-        <Link to="/">
-          <FlatButton label="Home" style={{ color: '#fff' }} />
-        </Link>
-        <Link to="/dashboard">
-          <FlatButton label="dashboard" style={{ color: '#fff' }} />
-        </Link>
         {authButtons}
       </div>
     );
+
+    const tabData = {
+      0: {
+        path: this.state.authed ? "/" : "/login",
+        icon: this.state.authed ? "plus-circle" : "sign-in",
+        label: this.state.authed ? "New Tab" : "Login"
+      },
+      1: {
+        path: this.state.authed ? "/dashboard" : "/register",
+        icon: this.state.authed ? "sticky-note" : "user-plus",
+        label: this.state.authed ? "Open Tabs" : "Register"
+      }
+    }
     return this.state.loading === true ? (
       <h1>Loading</h1>
     ) : (
       <Router history={history}>
-        <div>
+        <div className="fullheight">
           <AppBar
-            title="My App"
+            title="Paynless"
             iconElementRight={topbarButtons}
             iconStyleRight={{
               display: 'flex',
@@ -135,6 +136,7 @@ export default class App extends Component {
               </Switch>
             </div>
           </div>
+          <BottomNavigationBar data={tabData}/>
         </div>
       </Router>
     );
