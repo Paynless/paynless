@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import CheckIn from './CheckIn'
 
 export default class Home extends Component {
   render() {
