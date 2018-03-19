@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route, HashRouter, Link, Redirect, Switch } from 'react-router-dom';
+import { Route, Router, Link, Redirect, Switch } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
 import Home from './Home';
@@ -8,6 +8,8 @@ import { logout } from '../helpers/auth';
 import { firebaseAuth } from '../config/constants';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
+import history from './history'
+import BottomNavigationBar from './BottomBar'
 
 function PrivateRoute({ component: Component, authed, ...rest }) {
   return (
@@ -33,7 +35,7 @@ function PublicRoute({ component: Component, authed, ...rest }) {
         authed === false ? (
           <Component {...props} />
         ) : (
-          <Redirect to="/dashboard" />
+          <Redirect to="/" />
         )}
     />
   );
@@ -72,34 +74,34 @@ export default class App extends Component {
         style={{ color: '#fff' }}
       />
     ) : (
-      <span>
-        <Link to="/login">
-          <FlatButton label="Login" style={{ color: '#fff' }} />
-        </Link>
-        <Link to="/register">
-          <FlatButton label="Register" style={{ color: '#fff' }} />
-        </Link>
-      </span>
+      null
     );
 
     const topbarButtons = (
       <div>
-        <Link to="/">
-          <FlatButton label="Home" style={{ color: '#fff' }} />
-        </Link>
-        <Link to="/dashboard">
-          <FlatButton label="dashboard" style={{ color: '#fff' }} />
-        </Link>
         {authButtons}
       </div>
     );
+
+    const tabData = {
+      0: {
+        path: this.state.authed ? "/" : "/login",
+        icon: this.state.authed ? "plus-circle" : "sign-in",
+        label: this.state.authed ? "New Tab" : "Login"
+      },
+      1: {
+        path: this.state.authed ? "/dashboard" : "/register",
+        icon: this.state.authed ? "sticky-note" : "user-plus",
+        label: this.state.authed ? "Open Tabs" : "Register"
+      }
+    }
     return this.state.loading === true ? (
       <h1>Loading</h1>
     ) : (
-      <HashRouter>
-        <div>
+      <Router history={history}>
+        <div className="fullheight">
           <AppBar
-            title="My App"
+            title="Paynless"
             iconElementRight={topbarButtons}
             iconStyleRight={{
               display: 'flex',
@@ -110,7 +112,11 @@ export default class App extends Component {
           <div className="container d-flex justify-content-center mt-3">
             <div className="row">
               <Switch>
-                <Route path="/" exact component={Home} />
+                <PrivateRoute
+                  path="/" exact
+                  component={Home}
+                  authed={this.state.authed}
+                  />
                 <PublicRoute
                   authed={this.state.authed}
                   path="/login"
@@ -130,8 +136,9 @@ export default class App extends Component {
               </Switch>
             </div>
           </div>
+          <BottomNavigationBar data={tabData}/>
         </div>
-      </HashRouter>
+      </Router>
     );
   }
 }
