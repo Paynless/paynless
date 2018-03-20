@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import { Route, Router, Redirect, Switch } from 'react-router-dom';
-import Login from './Login';
-import Register from './Register';
-import Home from './Home';
-import Dashboard from './protected/Dashboard';
+// import Login from './Login';
+// import Register from './Register';
+// import Home from './Home';
+// import Dashboard from './protected/Dashboard';
+import { CheckIn, OpenTabs, BottomNavigationBar } from './customer';
+import { Login, Register } from './auth';
 import { logout } from '../helpers/auth';
 import { firebaseAuth } from '../config/constants';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import history from './history'
-import BottomNavigationBar from './BottomBar'
+//import BottomNavigationBar from './BottomBar'
 
 function PrivateRoute({ component: Component, authed, ...rest }) {
   return (
@@ -90,7 +92,7 @@ export default class App extends Component {
         label: this.state.authed ? "New Tab" : "Login"
       },
       1: {
-        path: this.state.authed ? "/dashboard" : "/register",
+        path: this.state.authed ? "/open-tabs" : "/register",
         icon: this.state.authed ? "sticky-note" : "user-plus",
         label: this.state.authed ? "Open Tabs" : "Register"
       }
@@ -114,7 +116,7 @@ export default class App extends Component {
               <Switch>
                 <PrivateRoute
                   path="/" exact
-                  component={Home}
+                  component={CheckIn}
                   authed={this.state.authed}
                   />
                 <PublicRoute
@@ -129,8 +131,8 @@ export default class App extends Component {
                 />
                 <PrivateRoute
                   authed={this.state.authed}
-                  path="/dashboard"
-                  component={Dashboard}
+                  path="/open-tabs"
+                  component={OpenTabs}
                 />
                 <Route render={() => <h3>No Match</h3>} />
               </Switch>

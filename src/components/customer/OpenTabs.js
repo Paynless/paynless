@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { db, firebaseAuth } from '../../config/constants';
-import Tab from './tab';
+import Tab from './Tab';
 
 export default class Dashboard extends Component {
   state = {
