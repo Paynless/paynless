@@ -1,5 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import { db } from '../config/constants';
+import FlatButton from 'material-ui/FlatButton';
+import DropDownMenu from 'material-ui/DropDownMenu'
+import MenuItem from 'material-ui/MenuItem';
 
 const halfMile = 1/69/2;
 
@@ -24,8 +27,8 @@ export default class CheckIn extends Component {
     this.findNearbyRestaurants = this.findNearbyRestaurants.bind(this);
   }
 
-  handleChange(event) {
-    const selectedMerchant = event.target.value;
+  handleChange(event, idx, val) {
+    const selectedMerchant = val;
     this.setState({ selectedMerchant })
   }
 
@@ -36,15 +39,15 @@ export default class CheckIn extends Component {
 
   setcurrentPosition() {
     window.navigator.geolocation.getCurrentPosition(location => {
-      // const userCoords = {
-      //   _lat: location.coords.latitude,
-      //   _long: location.coords.longitude
-      // }
-      
-      const userCoords = { //dont use actual location when you are home
-        _lat: 40.7050604,
-        _long: -74.00865979999999
+      const userCoords = {
+        _lat: location.coords.latitude,
+        _long: location.coords.longitude
       }
+      
+      // const userCoords = { //dont use actual location when you are home
+      //   _lat: 40.7050604,
+      //   _long: -74.00865979999999
+      // }
       this.setState({ userCoords, useLocation: true })
       this.findNearbyRestaurants();
     },
@@ -63,33 +66,38 @@ export default class CheckIn extends Component {
     this.setState({ openMerchants })
   }
  
+
   render() {
-    let { openMerchants } = this.state; 
+    let { openMerchants, selectedMerchant } = this.state;
     return (
       <Fragment>
       {
         !this.state.useLocation &&
-        <button onClick={this.setcurrentPosition}>
+        <FlatButton onClick={this.setcurrentPosition}>
           Find Restaurants Nearby
-        </button>
+        </FlatButton>
       }
       {
         this.state.useLocation &&
         (openMerchants.length > 0 
           ?  <Fragment>
-              <select onChange={this.handleChange}>
-                <option value="Select">Select A Merchant</option>
+              <FlatButton onClick={this.handleSubmit}>
+                {
+                  selectedMerchant 
+                  ? `Check in with ${selectedMerchant}` 
+                  : 'Select a Merchant' 
+                }
+              </FlatButton>
+              
+              <DropDownMenu value={this.state.selectedMerchant} onChange={this.handleChange} openImmediately={true}>
                 { 
                   openMerchants.map(venue => (
-                    <option value={venue.name} key={venue.name}>
+                    <MenuItem value={venue.name} key={venue.name}>
                       {venue.name}
-                    </option>
+                    </MenuItem>
                   ))
                 }
-              </select>
-              <button onClick={this.handleSubmit}>
-                Check in with {this.state.selectedMerchant}
-              </button>
+              </DropDownMenu>
             </Fragment>
           : <h3>No Restaurants Nearby</h3>
         )
