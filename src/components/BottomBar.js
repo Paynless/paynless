@@ -1,6 +1,6 @@
 
 import React, {Component} from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import {BottomNavigation, BottomNavigationItem} from 'material-ui/BottomNavigation';
 import {cyan500, grey500} from 'material-ui/styles/colors';
 import Paper from 'material-ui/Paper';
