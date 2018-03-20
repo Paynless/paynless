@@ -16,7 +16,6 @@ export default class Dashboard extends Component {
       } else {
       }
     });
-    console.log('Current User Id', userId);
 
     let self = this;
     this.removeListenerTabs = await db.collection("Tabs").where("uid", "==", userId)
@@ -46,23 +45,15 @@ export default class Dashboard extends Component {
   }
 
   render() {
-    console.log('state: ', this.state)
     return (
       <div>
         {this.state.openTabs.map(tab => (
           <div key={tab.id}>
-            {/* <h2>{tab.data.merchantName}</h2>
-            {tab.data.items.map((item, idx) => (
-              <div key={idx}>
-                {item.name} quant: {item.quantity} price: {item.price * item.quantity}
-              </div>
-            ))} */}
             <Tab
               merchantName={tab.data.merchantName}
               items={tab.data.items}
             />
           </div>
-
         ))}
       </div>
     );

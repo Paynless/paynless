@@ -17,7 +17,6 @@ const Tab = (props) => {
   props.items.forEach(item => {
     totalCents += (item.price * item.quantity);
   })
-  console.log('total cents: ', totalCents)
   let total = currencyFormatter.format(totalCents / 100, { code: 'USD' });
   return (
   <Card style={styles.card}>
