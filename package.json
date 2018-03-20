@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://guilherme6191.github.io/react-router-firebase-auth-material-ui",
   "dependencies": {
+    "currency-formatter": "^1.4.2",
     "firebase": "4.6.0",
     "gh-pages": "^1.1.0",
     "history": "^4.7.2",

@@ -30,7 +30,6 @@ class BottomNavigationBar extends Component {
     }} />
     const navIcon2 = <FontAwesome name={this.props.data[1].icon} style={{ color: this.state.selectedIndex === 1 ? cyan500 : grey500
     }} />
-    console.log(this.props);
     return (
       <Paper zDepth={1}>
         <BottomNavigation selectedIndex={this.state.selectedIndex}>
