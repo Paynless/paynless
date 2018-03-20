@@ -2,7 +2,7 @@ import React from 'react';
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import currencyFormatter from 'currency-formatter';
-import Receipt from './tabItems';
+import Receipt from './TabItems';
 
 const styles = {
   card: {

@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { db } from '../config/constants';
+import { db } from '../../config/constants';
 import FlatButton from 'material-ui/FlatButton';
 import DropDownMenu from 'material-ui/DropDownMenu'
 import MenuItem from 'material-ui/MenuItem';
@@ -43,7 +43,7 @@ export default class CheckIn extends Component {
         _lat: location.coords.latitude,
         _long: location.coords.longitude
       }
-      
+
       // const userCoords = { //dont use actual location when you are home
       //   _lat: 40.7050604,
       //   _long: -74.00865979999999
@@ -65,7 +65,7 @@ export default class CheckIn extends Component {
     });
     this.setState({ openMerchants })
   }
- 
+
 
   render() {
     let { openMerchants, selectedMerchant } = this.state;
@@ -79,18 +79,18 @@ export default class CheckIn extends Component {
       }
       {
         this.state.useLocation &&
-        (openMerchants.length > 0 
+        (openMerchants.length > 0
           ?  <Fragment>
               <FlatButton onClick={this.handleSubmit}>
                 {
-                  selectedMerchant 
-                  ? `Check in with ${selectedMerchant}` 
-                  : 'Select a Merchant' 
+                  selectedMerchant
+                  ? `Check in with ${selectedMerchant}`
+                  : 'Select a Merchant'
                 }
               </FlatButton>
-              
+
               <DropDownMenu value={this.state.selectedMerchant} onChange={this.handleChange} openImmediately={true}>
-                { 
+                {
                   openMerchants.map(venue => (
                     <MenuItem value={venue.name} key={venue.name}>
                       {venue.name}
