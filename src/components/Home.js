@@ -3,6 +3,8 @@ import CheckIn from './CheckIn'
 
 export default class Home extends Component {
   render() {
-    return <CheckIn />;
+    return (
+      <CheckIn />
+    )
   }
 }
