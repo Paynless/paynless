@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Route, Router, Redirect, Switch } from 'react-router-dom';
 import { CheckIn, OpenTabs, BottomNavigationBar } from './customer';
 import { Login, Register } from './auth';
-import { AdminHome } from './admin';
+import { AdminHome, AdminSingleTab } from './admin';
 import { logout } from '../helpers';
 import { firebaseAuth } from '../config';
 import AppBar from 'material-ui/AppBar';
@@ -139,6 +139,11 @@ export default class App extends Component {
                   authed={this.state.authed}
                   exact path="/admin"
                   component={AdminHome}
+                />
+                <PrivateRoute
+                  authed={this.state.authed}
+                  exact path="/admin/tabs/:tabId"
+                  component={AdminSingleTab}
                 />
                 <Route render={() => <h3>No Match</h3>} />
               </Switch>
