@@ -1,9 +1,10 @@
-import React, { Component, Fragment } from 'react';
-import { db } from '../../config/constants';
-import FlatButton from 'material-ui/FlatButton';
-import DropDownMenu from 'material-ui/DropDownMenu'
-import MenuItem from 'material-ui/MenuItem';
+import React, { Component, Fragment } from "react";
+import { db } from "../../config/constants";
+import FlatButton from "material-ui/FlatButton";
+import DropDownMenu from "material-ui/DropDownMenu";
+import MenuItem from "material-ui/MenuItem";
 import CircularProgress from "material-ui/CircularProgress";
+import TypeaheadSearch from "./TypeaheadSearch";
 
 const halfMile = 1 / 69 / 2;
 
@@ -18,6 +19,8 @@ export default class CheckIn extends Component {
     super();
     this.state = {
       checkedInWithMerchant: false,
+      allOpenMerchants: [],
+      loadingAllMerchants: true,
       openMerchants: [],
       selectedMerchant: "",
       user: "",
@@ -65,6 +68,19 @@ export default class CheckIn extends Component {
     );
   };
 
+  fetchAllOpenRestaurants = async _ => {
+    try {
+      let allOpenMerchants = [];
+      const collection = await db.collection("Merchants").get();
+      collection.forEach(doc => {
+        allOpenMerchants.push(doc.data().name);
+        this.setState(_ => ({ allOpenMerchants, loadingAllMerchants: false }));
+      });
+    } catch (err) {
+      console.errror(err);
+    }
+  };
+
   findNearbyRestaurants = async _ => {
     try {
       let openMerchants = [];
@@ -81,14 +97,28 @@ export default class CheckIn extends Component {
   };
 
   render() {
+    const { allOpenMerchants, loadingAllMerchants } = this.state;
     let { openMerchants, selectedMerchant, loading } = this.state;
     return (
       <Fragment>
         {loading && <CircularProgress size={60} thickness={7} />}
         {!this.state.useLocation && (
-          <FlatButton onClick={this.setcurrentPosition}>
-            Find Restaurants Nearby
-          </FlatButton>
+          <div>
+            <TypeaheadSearch
+              fetchAllOpenRestaurants={this.fetchAllOpenRestaurants}
+              loadingAllMerchants={loadingAllMerchants}
+              allOpenMerchants={allOpenMerchants}
+              onChange={this.handleChange}
+              value={this.state.selectedMerchant}
+            />
+
+            <h4>--OR--</h4>
+            <FlatButton
+              label="Find Near Me"
+              onClick={this.setcurrentPosition}
+              primary={true}
+            />
+          </div>
         )}
         {this.state.useLocation &&
           (openMerchants.length > 0 ? (
