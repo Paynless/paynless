@@ -18,19 +18,23 @@ const Tab = (props) => {
     totalCents += (item.price * item.quantity);
   })
   let total = currencyFormatter.format(totalCents / 100, { code: 'USD' });
-  console.log('tab props: ', props)
+
+  //style settings
+  let shouldExpand = props.expanded ? false : true;
+  if(props.size) styles.card.width = props.size;
+
   return (
   <Card style={styles.card}>
     <CardHeader
       title={props.merchantName}
       subtitle={total}
-      actAsExpander={true}
-      showExpandableButton={true}
+      actAsExpander={shouldExpand}
+      showExpandableButton={shouldExpand}
     />
     <CardActions>
       <FlatButton label="Close Out" />
     </CardActions>
-    <CardText expandable={true}>
+    <CardText expandable={shouldExpand}>
       <Receipt items={props.items} />
     </CardText>
   </Card>

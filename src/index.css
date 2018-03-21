@@ -10,3 +10,10 @@ body {
   justify-content: space-between;
   height: 100vh;
 }
+
+.adminMenuItems {
+  width: 95vw;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}

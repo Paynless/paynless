@@ -69,7 +69,7 @@ class AdminHome extends Component {
           {this.state.openTabs.map((tab)=> (
             <Link
               key={tab.id}
-              to={`/admin/${tab.id}`}
+              to={`/admin/tabs/${tab.id}`}
             >
               <AdminTab
                 userName={tab.user.email}
