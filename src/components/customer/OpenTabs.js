@@ -27,7 +27,6 @@ class OpenTabs extends Component {
 
     if(!user) return;
     if(this.removeListenerTabs) this.removeListenerTabs();
-    console.log('user: ', user.uid);
     this.removeListenerTabs = db.collection("Tabs").where("uid", "==", user.uid).where("open", "==", true)
     .onSnapshot((snapshot) => {
       this.setState({openTabs: snapshot.docs.map(doc => doc.data()), isLoaded: true})

@@ -10,13 +10,26 @@ import FontAwesome from 'react-fontawesome';
 class BottomNavigationBar extends Component {
   state = {
     selectedIndex: 0,
+    shouldDisplay: false
   };
 
   componentDidMount(){
     if(this.props.location.pathname === this.props.data[0].path){
-      this.setState({selectedIndex: 0})
+      this.setState({selectedIndex: 0, shouldDisplay: true})
     } else if (this.props.location.pathname === this.props.data[1].path){
-      this.setState({selectedIndex: 1})
+      this.setState({selectedIndex: 1, shouldDisplay: true})
+    } else {
+      this.setState({shouldDisplay: false})
+    }
+  }
+
+  componentWillReceiveProps(props){
+    if(props.location.pathname === this.props.data[0].path){
+      this.setState({selectedIndex: 0, shouldDisplay: true})
+    } else if (props.location.pathname === this.props.data[1].path){
+      this.setState({selectedIndex: 1, shouldDisplay: true})
+    } else {
+      this.setState({shouldDisplay: false})
     }
   }
 
@@ -30,6 +43,7 @@ class BottomNavigationBar extends Component {
     }} />
     const navIcon2 = <FontAwesome name={this.props.data[1].icon} style={{ color: this.state.selectedIndex === 1 ? cyan500 : grey500
     }} />
+    if (!this.state.shouldDisplay) return <div></div>;
     return (
       <Paper zDepth={1}>
         <BottomNavigation selectedIndex={this.state.selectedIndex}>
