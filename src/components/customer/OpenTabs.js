@@ -16,38 +16,19 @@ export default class Dashboard extends Component {
       this.removeListenerUser = await firebaseAuth().onAuthStateChanged(user => {
         if (user) {
           userId = user.uid
-        } else {
         }
       });
 
-      //this is here because if the state is empty, the listener never returns a callback
-      await db.collection("Tabs").where("uid", "==", userId)
-      .get()
-      .then(docs => {
-        if(!docs.exists){
-          this.setState(() => ({isLoaded: true}));
-        }
-      })
-      .catch(err => console.error(err));
-
       this.removeListenerTabs = await db.collection("Tabs").where("uid", "==", userId).where("open", "==", true)
       .onSnapshot((snapshot) => {
-        snapshot.docChanges.forEach((change) => {
-            let changedTab = {
-              id: change.doc.id,
-              data: change.doc.data()
-            }
-            if (change.type === "added") {
-              this.setState(prevState => ({openTabs: [...prevState.openTabs, changedTab], isLoaded: true, hasTabs: true}))
-            }
-            if (change.type === "modified") {
-              this.setState(prevState => ({openTabs: [...prevState.openTabs.filter(tab => tab.id !== changedTab.id), changedTab], isLoaded: true, hasTabs: true}))
-            }
-            if (change.type === "removed") {
-              this.setState(prevState => ({openTabs: prevState.openTabs.filter(tab => tab.id !== changedTab.id), isLoaded: true, hasTabs: prevState.openTabs.filter(tab => tab.id !== changedTab.id).length > 0}))
-            }
-          });
-        });
+        if(snapshot.docs.length){
+          let tabs = []
+          snapshot.docs.forEach((doc) => tabs.push(doc.data()));
+          this.setState(() => ({openTabs: tabs, isLoaded: true, hasTabs: true}))
+        } else {
+          this.setState(() => ({openTabs: [], isLoaded: true, hasTabs: false}));
+        }
+      });
     } catch (err) {
         console.error(err);
     }
@@ -70,11 +51,11 @@ export default class Dashboard extends Component {
       <div>
         {this.state.hasTabs ?
         (<div>
-          {this.state.openTabs.map(tab => (
-            <div key={tab.id}>
+          {this.state.openTabs.map((tab, idx )=> (
+            <div key={idx}>
               <Tab
-                merchantName={tab.data.merchantName}
-                items={tab.data.items}
+                merchantName={tab.merchantName}
+                items={tab.items}
               />
             </div>
           ))}
