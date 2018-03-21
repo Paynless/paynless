@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { db } from '../../config/constants';
+import { db } from '../../config';
 import FlatButton from 'material-ui/FlatButton';
 import DropDownMenu from 'material-ui/DropDownMenu'
 import MenuItem from 'material-ui/MenuItem';

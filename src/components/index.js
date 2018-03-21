@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Route, Router, Redirect, Switch } from 'react-router-dom';
 import { CheckIn, OpenTabs, BottomNavigationBar } from './customer';
 import { Login, Register } from './auth';
-import { logout } from '../helpers/auth';
-import { firebaseAuth } from '../config/constants';
+import { logout } from '../helpers';
+import { firebaseAuth } from '../config';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import history from './history'

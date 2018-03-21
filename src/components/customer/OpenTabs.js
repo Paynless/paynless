@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { db, firebaseAuth } from '../../config/constants';
+import { db, firebaseAuth } from '../../config';
 import Tab from './Tab';
 
 export default class OpenTabs extends Component {
