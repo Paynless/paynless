@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { db, firebaseAuth } from '../../config/constants';
+import { db, firebaseAuth } from '../../config';
 import Tab from './Tab';
 import CircularProgress from 'material-ui/CircularProgress';
 
-export default class Dashboard extends Component {
+export default class OpenTabs extends Component {
   state = {
     openTabs: [],
     isLoaded: false,
