@@ -1,17 +1,12 @@
 import React, { Component } from 'react';
 import { Route, Router, Redirect, Switch } from 'react-router-dom';
-// import Login from './Login';
-// import Register from './Register';
-// import Home from './Home';
-// import Dashboard from './protected/Dashboard';
 import { CheckIn, OpenTabs, BottomNavigationBar } from './customer';
 import { Login, Register } from './auth';
-import { logout } from '../helpers/auth';
-import { firebaseAuth } from '../config/constants';
+import { logout } from '../helpers';
+import { firebaseAuth } from '../config';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import history from './history'
-//import BottomNavigationBar from './BottomBar'
 
 function PrivateRoute({ component: Component, authed, ...rest }) {
   return (
@@ -131,7 +126,12 @@ export default class App extends Component {
                 />
                 <PrivateRoute
                   authed={this.state.authed}
-                  path="/open-tabs"
+                  exact path="/open-tabs"
+                  component={OpenTabs}
+                />
+                <PrivateRoute
+                  authed={this.state.authed}
+                  exact path="/open-tabs/:id"
                   component={OpenTabs}
                 />
                 <Route render={() => <h3>No Match</h3>} />

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { auth } from '../../helpers/auth';
+import { auth } from '../../helpers';
 
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
