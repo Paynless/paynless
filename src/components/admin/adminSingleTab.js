@@ -4,6 +4,7 @@ import { db, firebaseAuth } from '../../config';
 import { withAuth } from 'fireview';
 import { Tab } from '../customer';
 import AdminTab from './adminTab';
+import MenuItem from './menuItem';
 import CircularProgress from 'material-ui/CircularProgress';
 
 class AdminSingleTab extends Component {
@@ -45,17 +46,17 @@ class AdminSingleTab extends Component {
 
     this.removeListenerTabs = db.collection("Tabs").where("merchantId", "==", merchantId).where("open", "==", true)
     .onSnapshot((snapshot) => {
-      let tab = snapshot.docs.filter(doc => doc.id === 1)
-      // tab = tab.map(tab => {
-      //   let user = users.filter(user => user.uid === tab.data.uid)[0]
-      //   return Object.assign({}, tab, {user: user})
-      // })
-      // this.setState({openTabs: tabData, isLoaded: true})
+      let tabDoc = snapshot.docs.filter(doc => doc.id === props.match.params.tabId)[0]
+      console.log('tab: ', tabDoc.data());
+      let tab = tabDoc.data()
+      let user = users.filter(user => user.uid === tab.uid)[0]
+      this.setState({selectedTab: Object.assign({}, tab, {user: user}), isLoaded: true})
     });
+
+
   }
 
   async fetchMenuItems(props){
-    console.log('called fetch menu items');
     const {user} = props.withAuth;
     if(!user) return;
 
@@ -74,37 +75,50 @@ class AdminSingleTab extends Component {
     this.setState({menuItems: menu});
   }
 
+  handleAdd = (name, price) => {
+    let currentTab = this.state.selectedTab;
+    let tabId = this.props.match.params.tabId;
+    console.log('items: ', currentTab.items)
+    if(currentTab.items.filter(item => item.name === name).length){
+      let index = currentTab.items.findIndex(item => item.name === name)
+      console.log('index: ', index);
+      currentTab.items[index].quantity++;
+    } else {
+      console.log('don\'t have it');
+      currentTab.items.push({name: name, price: price, quantity: 1});
+    }
+    console.log('currentTab', currentTab)
+
+    db.collection("Tabs").doc(tabId)
+    .set(currentTab)
+  }
+
   render() {
+    console.log('state: ', this.state);
     if(!this.state.isLoaded){
       return (
       <div>
       <CircularProgress size={80} thickness={10} />
       </div>)
     }
-    console.log('singleTab props: ', this.props);
     return (
-      <div>
-        {this.state.openTabs.length ?
-        (<div>
-          {this.state.openTabs.map((tab)=> (
-            <Link
-              key={tab.id}
-              to={`/admin/tabs/${tab.id}`}
-            >
-              <AdminTab
-                userName={tab.user.email}
-                items={tab.data.items}
-                value={tab.id}
-              />
-            </Link>
+      <div className="adminSingleTab">
+        <Tab
+          merchantName={this.state.selectedTab.user.email}
+          items={this.state.selectedTab.items}
+          expanded={true}
+          size={400}
+        />
+        <div className="adminMenuItems">
+          {this.state.menuItems.map((item, idx ) => (
+            <MenuItem
+              key={idx}
+              name={item.name}
+              price={item.price}
+              onClick={(name, price) => this.handleAdd(name, price)}
+            />
           ))}
-          </div>
-        ) : (
-          <div>
-          No tabs found!
-          </div>
-        )
-        }
+        </div>
       </div>
     );
   }
