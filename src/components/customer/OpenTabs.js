@@ -1,43 +1,37 @@
 import React, { Component } from 'react';
-import { db, firebaseAuth } from '../../config/constants';
+import { db, firebaseAuth } from '../../config';
+import { withAuth } from 'fireview';
 import Tab from './Tab';
 import CircularProgress from 'material-ui/CircularProgress';
 
-export default class Dashboard extends Component {
+class OpenTabs extends Component {
   state = {
     openTabs: [],
-    isLoaded: false,
-    hasTabs: false
+    isLoaded: false
   }
 
-  async componentDidMount(){
-    try {
-      let userId;
-      this.removeListenerUser = await firebaseAuth().onAuthStateChanged(user => {
-        if (user) {
-          userId = user.uid
-        }
-      });
+  componentDidMount(){
+    this.listen(this.props);
+  }
 
-      this.removeListenerTabs = await db.collection("Tabs").where("uid", "==", userId).where("open", "==", true)
-      .onSnapshot((snapshot) => {
-        if(snapshot.docs.length){
-          let tabs = []
-          snapshot.docs.forEach((doc) => tabs.push(doc.data()));
-          this.setState(() => ({openTabs: tabs, isLoaded: true, hasTabs: true}))
-        } else {
-          this.setState(() => ({openTabs: [], isLoaded: true, hasTabs: false}));
-        }
-      });
-    } catch (err) {
-        console.error(err);
-    }
-
+  componentWillReceiveProps(props){
+    this.listen(props);
   }
 
   componentWillUnmount() {
-    this.removeListenerUser();
-    this.removeListenerTabs();
+    this.removeListenerTabs && this.removeListenerTabs();
+  }
+
+  listen(props){
+    const {user} = props.withAuth;
+
+    if(!user) return;
+    if(this.removeListenerTabs) this.removeListenerTabs();
+    console.log('user: ', user.uid);
+    this.removeListenerTabs = db.collection("Tabs").where("uid", "==", user.uid).where("open", "==", true)
+    .onSnapshot((snapshot) => {
+      this.setState({openTabs: snapshot.docs.map(doc => doc.data()), isLoaded: true})
+    });
   }
 
   render() {
@@ -49,7 +43,7 @@ export default class Dashboard extends Component {
     }
     return (
       <div>
-        {this.state.hasTabs ?
+        {this.state.openTabs.length ?
         (<div>
           {this.state.openTabs.map((tab, idx )=> (
             <div key={idx}>
@@ -70,3 +64,5 @@ export default class Dashboard extends Component {
     );
   }
 }
+
+export default withAuth(OpenTabs);
