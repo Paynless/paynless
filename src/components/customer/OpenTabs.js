@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { db, firebaseAuth } from '../../config';
+import { withAuth } from 'fireview';
 import Tab from './Tab';
 import CircularProgress from 'material-ui/CircularProgress';
 
-export default class OpenTabs extends Component {
+class OpenTabs extends Component {
   state = {
     openTabs: [],
     isLoaded: false,
@@ -18,6 +19,11 @@ export default class OpenTabs extends Component {
           userId = user.uid
         }
       });
+      console.log('props', this.props.withAuth)
+      console.log(typeof this.props.withAuth)
+      //const {user} = this.props.withAuth;
+      //console.log('user', user);
+      //const userId = user.id;
 
       this.removeListenerTabs = await db.collection("Tabs").where("uid", "==", userId).where("open", "==", true)
       .onSnapshot((snapshot) => {
@@ -70,3 +76,5 @@ export default class OpenTabs extends Component {
     );
   }
 }
+
+export default withAuth(OpenTabs);
