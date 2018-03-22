@@ -84,3 +84,20 @@ export const findOrCreateUserOpenTabs = async (userId, merchant) => {
   }
 };
 
+function setErrorMsg(error) {
+  return {
+    registerError: error.message
+  };
+}
+
+const isValidEmail = email => {
+  return !!email.match(
+  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  )
+}
+
+const isValidDOB = dob => {
+  return !!dob.match(
+  /^(?:0[1-9]|1[12])[\/](?:0[1-9]|[12]\d|3[01])([\/])(?:19|20)\d\d$/
+  )
+}

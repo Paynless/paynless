@@ -1,10 +1,9 @@
-import { db, firebaseAuth } from '../config';
+import { db, firebaseAuth } from "../config";
 
 export const auth = async (email, pw, firstName, lastName, dob) => {
-  const user = await firebaseAuth()
-    .createUserWithEmailAndPassword(email, pw);
+  const user = await firebaseAuth().createUserWithEmailAndPassword(email, pw);
   saveUser(user, firstName, lastName, dob);
-}
+};
 
 export function logout() {
   return firebaseAuth().signOut();
@@ -20,16 +19,14 @@ export function resetPassword(email) {
 
 export const saveUser = async (user, firstName, lastName, dob) => {
   try {
-    await db
-      .collection(`users`)
-      .add({
-        email: user.email,
-        uid: user.uid,
-        firstName: firstName,
-        lastName: lastName,
-        dob: dob,
-      })
-  } catch(error) {
-      console.error('Error adding document: ', error);
-    }
-}
+    await db.collection(`users`).add({
+      email: user.email,
+      uid: user.uid,
+      firstName: firstName,
+      lastName: lastName,
+      dob: dob
+    });
+  } catch (error) {
+    console.error("Error adding document: ", error);
+  }
+};

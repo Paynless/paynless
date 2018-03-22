@@ -1,38 +1,80 @@
-import React, { Component } from 'react';
-import { auth } from '../../helpers';
-
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-
-function setErrorMsg(error) {
-  return {
-    registerError: error.message
-  };
-}
+import React, { Component } from "react";
+import { auth, isValidDOB, isValidEmail, setErrorMsg } from "../../helpers";
+import Dialog from "material-ui/Dialog";
+import RaisedButton from "material-ui/RaisedButton";
+import FlatButton from "material-ui/FlatButton";
+import TextField from "material-ui/TextField";
 
 export default class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
       registerError: null,
-      email: '',
-      password: '',
-      firstName: '',
-      lastName: '',
-      dob: '',
-
+      email: "",
+      password: "",
+      firstName: "",
+      lastName: "",
+      dob: "",
+      invalidEmailPw: false,
+      invalidName: false,
+      invalidDOB: false
     };
   }
 
   handleSubmit = event => {
-    const {email, password, firstName, lastName, dob} = this.state;
     event.preventDefault();
-    auth(email, password, firstName, lastName, dob)
-    .catch(err =>
+    const { email, password, firstName, lastName, dob } = this.state;
+    if (!isValidEmail(email) || password.length < 4) {
+      this.setState(_ => ({
+        invalidEmailPw: true
+      }));
+      return;
+    } else if (firstName.length < 3 || lastName.length < 3) {
+      this.setState(_ => ({
+        invalidName: true
+      }));
+      return;
+    } else if (!isValidDOB(dob)) {
+      this.setState(_ => ({
+        invalidDOB: true
+      }));
+      return;
+    }
+    auth(email, password, firstName, lastName, dob).catch(err =>
       this.setState(setErrorMsg(err))
     );
   };
+
   render() {
+    const action = [
+      <FlatButton
+        label="Try Credientials Again"
+        primary={true}
+        onClick={evt =>
+          this.setState(_ => ({
+            invalidEmailPw: false
+          }))
+        }
+      />,
+      <FlatButton
+        label="Try Name Again"
+        primary={true}
+        onClick={evt =>
+          this.setState(_ => ({
+            invalidName: false
+          }))
+        }
+      />,
+      <FlatButton
+        label="Try DOB Again"
+        primary={true}
+        onClick={evt =>
+          this.setState(_ => ({
+            invalidDOB: false
+          }))
+        }
+      />
+    ];
     return (
       <form onSubmit={this.handleSubmit} style={style.container}>
         <h3>Register</h3>
@@ -43,9 +85,9 @@ export default class Register extends Component {
         />
         <br />
         <TextField
-        hintText="Enter your last name"
-        floatingLabelText="Last Name"
-        onChange={(event, newValue) => this.setState({ lastName: newValue })}
+          hintText="Enter your last name"
+          floatingLabelText="Last Name"
+          onChange={(event, newValue) => this.setState({ lastName: newValue })}
         />
         <br />
         <TextField
@@ -83,6 +125,31 @@ export default class Register extends Component {
           style={style.raisedBtn}
           type="submit"
         />
+        <Dialog
+          actions={action[0]}
+          modal={false}
+          open={this.state.invalidEmailPw}
+          onRequestClose={_ => this.setState(_ => ({ invalidEmailPw: false }))}
+        >
+          Please Enter A Valid Email Or Password
+        </Dialog>
+
+        <Dialog
+          actions={action[1]}
+          modal={false}
+          open={this.state.invalidName}
+          onRequestClose={evt => this.setState(_ => ({ invalidName: false }))}
+        >
+          Please Enter A Valid First And Last Name
+        </Dialog>
+        <Dialog
+          actions={action[2]}
+          modal={false}
+          open={this.state.invalidDOB}
+          onRequestClose={evt => this.setState(_ => ({ invalidDOB: false }))}
+        >
+          Please Enter A Valid Date Of Birth
+        </Dialog>
       </form>
     );
   }
@@ -93,7 +160,7 @@ const raisedBtn = {
 };
 
 const container = {
-  textAlign: 'center'
+  textAlign: "center"
 };
 
 const style = {
