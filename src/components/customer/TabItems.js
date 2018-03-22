@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
   Table,
   TableBody,
@@ -8,17 +8,7 @@ import {
   TableRow,
   TableRowColumn,
 } from 'material-ui/Table';
-import TextField from 'material-ui/TextField';
-import Toggle from 'material-ui/Toggle';
 import currencyFormatter from 'currency-formatter';
-
-const styles = {
-  FoodDrink: {
-    width: '50%',
-    overflow: 'wrap',
-    margin: '20px auto 0',
-  }
-};
 
 export default function Receipt(props){
   let tableData = props.items

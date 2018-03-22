@@ -12,6 +12,7 @@
   flex-wrap: wrap;
 }
 
+<<<<<<< HEAD
 /* CSS for Stripe */
 
 * {
@@ -92,4 +93,8 @@ button:hover {
 }
 .StripeElement.PaymentRequestButton {
   padding: 0;
+=======
+.scrollable {
+  overflow-y: scroll;
+>>>>>>> master
 }
