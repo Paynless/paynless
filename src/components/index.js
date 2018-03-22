@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route, Router, Redirect, Switch } from "react-router-dom";
-import { CheckIn, OpenTabs, BottomNavigationBar } from "./customer";
+import { CheckIn, OpenTabs, BottomNavigationBar, CustomerInfo } from "./customer";
 import { Login, Register } from "./auth";
 import { logout } from "../helpers";
 import { firebaseAuth } from "../config";
@@ -121,6 +121,12 @@ export default class App extends Component {
                   authed={this.state.authed}
                   allOpenMerchants={allOpenMerchants}
                   component={CheckIn}
+                />
+                <PrivateRoute
+                  path="/payment-details"
+                  exact
+                  authed={this.state.authed}
+                  component={CustomerInfo}
                 />
                 <PublicRoute
                   authed={this.state.authed}
