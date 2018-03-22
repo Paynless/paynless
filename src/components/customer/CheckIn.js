@@ -1,15 +1,8 @@
 import React, { Component, Fragment } from "react";
-import FlatButton from "material-ui/FlatButton";
-import DropDownMenu from "material-ui/DropDownMenu";
-import MenuItem from "material-ui/MenuItem";
-import CircularProgress from "material-ui/CircularProgress";
+import { FlatButton, DropDownMenu, MenuItem, CircularProgress } from "material-ui";
 import { withAuth } from "fireview";
 import { Typeahead } from "react-typeahead";
-import {
-  getCurrentPosition,
-  findNearbyMerchants,
-  findOrCreateUserOpenTabs
-} from "../../helpers/";
+import { getCurrentPosition, findNearbyMerchants, findOrCreateUserOpenTabs } from "../../helpers/";
 
 const halfMile = 1 / 69 / 2;
 
@@ -35,13 +28,21 @@ class CheckIn extends Component {
     this.setState(_ => ({ selectedMerchant }));
   };
 
-  loadTab = async event => {
+  loadTab = async (event, merchantName)=> {
     try {
-      event.preventDefault();
+      event && event.preventDefault();
       const { user } = this.props.withAuth;
       if (!user) return;
 
-      const { selectedMerchant } = this.state;
+      let selectedMerchant;
+      if (merchantName) {
+        selectedMerchant = this.props.allOpenMerchants.find(merchant => {
+          return merchant.name === merchantName;
+        });
+      } else {
+        selectedMerchant = this.state.selectedMerchant;
+      }
+
 
       const tab = await findOrCreateUserOpenTabs(user.uid, selectedMerchant);
       console.log("tab", tab.data());
@@ -88,57 +89,54 @@ class CheckIn extends Component {
       selectedMerchant
     } = this.state;
     const { allOpenMerchants } = this.props;
-    const merchantNames =
-      locationSearchConducted
-        ? nearbyMerchants.map(venue => venue.name)
-        : allOpenMerchants.map(venue => venue.name);
-    console.log("names", merchantNames);
     const isSelected = selectedMerchant.hasOwnProperty("name");
+    
     return (
       <Fragment>
+      {!useLocation && (
+        <div>
+        <Typeahead
+        placeholder="Search all..."
+        options={allOpenMerchants.map(venue => venue.name)}
+        value={selectedMerchant.name}
+        maxVisible={5}
+        onOptionSelected={val =>
+          this.loadTab(null, val)
+        }
+        />
+        <h4>--OR--</h4>
         <FlatButton
-          primary={true}
-          fullWidth={true}
-          onClick={this.loadTab}
-          disabled={!isSelected}
-        >
-          {selectedMerchant.name
-            ? `Check in with ${selectedMerchant.name}`
-            : "Select a Merchant"}
-        </FlatButton>
-        {!useLocation && (
-          <div>
-            <Typeahead
-              placeholder="Search all..."
-              options={merchantNames}
-              maxVisible={5}
-              onOptionSelected={val =>
-                this.updateSelectedMerchant(null, null, val)
-              }
-            />
-            <h4>--OR--</h4>
-            <FlatButton
-              label="Find Near Me"
-              onClick={this.narrowMerchantsUsingLocation}
-              primary={true}
-            />
-          </div>
-        )}
-        {isLoadingUserLocation && 
-          <CircularProgress size={60} thickness={7} />}
+        label="Find Near Me"
+        onClick={this.narrowMerchantsUsingLocation}
+        primary={true}
+        />
+        </div>
+      )}
+      {isLoadingUserLocation && 
+        <CircularProgress size={60} thickness={7} />}
         {locationSearchConducted &&
           nearbyMerchants.length < 1 && <h3>No Restaurants Nearby</h3>}
-        {locationSearchConducted &&
-          nearbyMerchants.length > 0 && (
-            <Fragment>
+          {locationSearchConducted &&
+            nearbyMerchants.length > 0 && (
+              <Fragment>
+              <FlatButton
+                primary={true}
+                fullWidth={true}
+                onClick={this.loadTab}
+                disabled={!isSelected}
+              >
+                {selectedMerchant.name
+                  ? `Check in with ${selectedMerchant.name}`
+                  : "Select a Merchant"}
+              </FlatButton>
               <DropDownMenu
                 value={selectedMerchant.name}
                 onChange={this.updateSelectedMerchant}
                 openImmediately={true}
               >
-                {merchantNames.forEach(name => (
-                  <MenuItem value={name} key={name}>
-                    {name}
+                {nearbyMerchants.map(venue => (
+                  <MenuItem value={venue.name} key={venue.name}>
+                    {venue.name}
                   </MenuItem>
                 ))}
               </DropDownMenu>

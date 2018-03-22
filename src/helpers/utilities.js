@@ -84,12 +84,3 @@ export const findOrCreateUserOpenTabs = async (userId, merchant) => {
   }
 };
 
-export const checkInWithMerchant = async (userId, merchant) => {
-  try {
-    const tab = await findOrCreateUserOpenTabs(userId, merchant);
-    console.log("tab", tab);
-    this.props.history.push(`/open-tabs/${merchant.id}`);
-  } catch (err) {
-    console.log(err);
-  }
-};
