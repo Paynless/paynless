@@ -87,36 +87,40 @@ exports.createStripeCustomer = functions.firestore
       .catch(err => console.log(err));
   });
 
-// // Add a payment source (card) for a user by writing a stripe payment source token to Realtime database
-// exports.addPaymentSource = functions.database
-//   .ref("/users/{userId}/sources/{pushId}/token")
-//   .onWrite(event => {
-//     const source = event.data.val();
-//     if (source === null) return null;
-//     return admin
-//       .database()
-//       .ref(`/users/${event.params.userId}/customer_id`)
-//       .once("value")
-//       .then(snapshot => {
-//         return snapshot.val();
-//       })
-//       .then(customer => {
-//         return stripe.customers.createSource(customer, { source });
-//       })
-//       .then(
-//         response => {
-//           return event.data.adminRef.parent.set(response);
-//         },
-//         error => {
-//           return event.data.adminRef.parent
-//             .child("error")
-//             .set(userFacingMessage(error));
-//         }
-//       )
-//       .then(() => {
-//         return reportError(error, { user: event.params.userId });
-//       });
-//   });
+// Add a payment source (card) for a user by writing a stripe payment source token
+// to firestore database
+exports.addPaymentSource = functions.firestore
+  .document("/users/{userId}/sources/{pushId}")
+  .onWrite(event => {
+    console.log("event.data in aPS", event.data);
+    const source = event.data.val();
+    if (source === null) return null;
+    return admin
+      .firestore
+      .collection(`/users/${event.params.userId}/customer_id`)
+      .once("value")
+      .then(snapshot => {
+        console.log("snapshot", snapshot);
+        return snapshot.val();
+      })
+      .then(customer => {
+        console.log("customer", customer);
+        return stripe.customers.createSource(customer, { source });
+      })
+      .then(
+        response => {
+          return event.data.adminRef.parent.set(response);
+        },
+        error => {
+          return event.data.adminRef.parent
+            .child("error")
+            .set(userFacingMessage(error));
+        }
+      )
+      .then(() => {
+        return reportError(error, { user: event.params.userId });
+      });
+  });
 
 // // When a user deletes their account, clean up after them
 // exports.cleanupUser = functions.auth.user().onDelete(event => {
@@ -138,57 +142,50 @@ exports.createStripeCustomer = functions.firestore
 //     });
 // });
 
-// // To keep on top of errors, we should raise a verbose error report with Stackdriver rather
-// // than simply relying on console.error. This will calculate users affected + send you email
-// // alerts, if you've opted into receiving them.
-// // [START reporterror]
-// function reportError(err, context = {}) {
-//   // This is the name of the StackDriver log stream that will receive the log
-//   // entry. This name can be any valid log stream name, but must contain "err"
-//   // in order for the error to be picked up by StackDriver Error Reporting.
-//   const logName = "errors";
-//   const log = logging.log(logName);
+// To keep on top of errors, we should raise a verbose error report with Stackdriver rather
+// than simply relying on console.error. This will calculate users affected + send you email
+// alerts, if you've opted into receiving them.
+// [START reporterror]
+function reportError(err, context = {}) {
+  // This is the name of the StackDriver log stream that will receive the log
+  // entry. This name can be any valid log stream name, but must contain "err"
+  // in order for the error to be picked up by StackDriver Error Reporting.
+  const logName = "errors";
+  const log = logging.log(logName);
 
-//   // https://cloud.google.com/logging/docs/api/ref_v2beta1/rest/v2beta1/MonitoredResource
-//   const metadata = {
-//     resource: {
-//       type: "cloud_function",
-//       labels: { function_name: process.env.FUNCTION_NAME }
-//     }
-//   };
+  // https://cloud.google.com/logging/docs/api/ref_v2beta1/rest/v2beta1/MonitoredResource
+  const metadata = {
+    resource: {
+      type: "cloud_function",
+      labels: { function_name: process.env.FUNCTION_NAME }
+    }
+  };
 
-//   // https://cloud.google.com/error-reporting/reference/rest/v1beta1/ErrorEvent
-//   const errorEvent = {
-//     message: err.stack,
-//     serviceContext: {
-//       service: process.env.FUNCTION_NAME,
-//       resourceType: "cloud_function"
-//     },
-//     context: context
-//   };
+  // https://cloud.google.com/error-reporting/reference/rest/v1beta1/ErrorEvent
+  const errorEvent = {
+    message: err.stack,
+    serviceContext: {
+      service: process.env.FUNCTION_NAME,
+      resourceType: "cloud_function"
+    },
+    context: context
+  };
 
-//   // Write the error log entry
-//   return new Promise((resolve, reject) => {
-//     log.write(log.entry(metadata, errorEvent), error => {
-//       if (error) {
-//         reject(error);
-//       }
-//       resolve();
-//     });
-//   });
-// }
-// // [END reporterror]
+  // Write the error log entry
+  return new Promise((resolve, reject) => {
+    log.write(log.entry(metadata, errorEvent), error => {
+      if (error) {
+        reject(error);
+      }
+      resolve();
+    });
+  });
+}
+// [END reporterror]
 
-// // Sanitize the error message for the user
-// function userFacingMessage(error) {
-//   return error.type
-//     ? error.message
-//     : "An error occurred, developers have been alerted";
-// }
-
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+// Sanitize the error message for the user
+function userFacingMessage(error) {
+  return error.type
+    ? error.message
+    : "An error occurred, developers have been alerted";
+}

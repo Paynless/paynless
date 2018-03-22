@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route, Router, Redirect, Switch } from "react-router-dom";
-import { CheckIn, OpenTabs, BottomNavigationBar, SplashScreen } from "./customer";
+import { CheckIn, OpenTabs, BottomNavigationBar, SplashScreen, CustomerInfo } from "./customer";
 import { Login, Register } from "./auth";
 import { logout } from "../helpers";
 import { firebaseAuth } from "../config";
@@ -105,10 +105,14 @@ export default class App extends Component {
             iconStyleRight={{
               display: "flex",
               alignItems: "center",
-              marginTop: "0"
+              marginTop: "0",
+            }}
+            style={{
+              height: '64px',
+              flexShrink: 0
             }}
           />
-          <div className="container d-flex justify-content-center mt-3">
+          <div className="container d-flex justify-content-center mt-3 scrollable">
             <div className="row">
               <Switch>
                 <PrivateRoute
@@ -117,6 +121,12 @@ export default class App extends Component {
                   authed={this.state.authed}
                   allOpenMerchants={allOpenMerchants}
                   component={CheckIn}
+                />
+                <PrivateRoute
+                  path="/payment-details"
+                  exact
+                  authed={this.state.authed}
+                  component={CustomerInfo}
                 />
                 <PublicRoute
                   authed={this.state.authed}

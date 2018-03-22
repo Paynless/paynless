@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { db, firebaseAuth } from '../../config';
+import { db } from '../../config';
 import { withAuth } from 'fireview';
-import { Tab } from '../customer';
 import AdminTab from './adminTab';
 import CircularProgress from 'material-ui/CircularProgress';
 
@@ -25,34 +24,38 @@ class AdminHome extends Component {
   }
 
   async listen(props){
-    const {user} = props.withAuth;
-    if(!user) return;
-    if(this.removeListenerTabs) this.removeListenerTabs();
+    try {
+      const {user} = props.withAuth;
+      if(!user) return;
+      if(this.removeListenerTabs) this.removeListenerTabs();
 
-    const  { merchantId } = await db.collection("users").where("uid", "==", user.uid).get()
-    .then(snapshot => {
-      return snapshot.docs;
-    })
-    .then(docs => docs[0].data())
-
-    const users = await db.collection("users").get()
-    .then(snapshot => {
-      return snapshot.docs;
-    })
-    .then(docs => docs.map(doc => doc.data()))
-
-    this.removeListenerTabs = db.collection("Tabs").where("merchantId", "==", merchantId).where("open", "==", true)
-    .onSnapshot((snapshot) => {
-      let tabData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        data: doc.data()
-      }))
-      tabData = tabData.map(tab => {
-        let user = users.filter(user => user.uid === tab.data.uid)[0]
-        return Object.assign({}, tab, {user: user})
+      const  { merchantId } = await db.collection("users").where("uid", "==", user.uid).get()
+      .then(snapshot => {
+        return snapshot.docs;
       })
-      this.setState({openTabs: tabData, isLoaded: true})
-    });
+      .then(docs => docs[0].data())
+
+      const users = await db.collection("users").get()
+      .then(snapshot => {
+        return snapshot.docs;
+      })
+      .then(docs => docs.map(doc => doc.data()))
+
+      this.removeListenerTabs = db.collection("Tabs").where("merchantId", "==", merchantId).where("open", "==", true)
+      .onSnapshot((snapshot) => {
+        let tabData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        }))
+        tabData = tabData.map(tab => {
+          let user = users.filter(user => user.uid === tab.data.uid)[0]
+          return Object.assign({}, tab, {user: user})
+        })
+        this.setState({openTabs: tabData, isLoaded: true})
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   render() {
@@ -72,7 +75,7 @@ class AdminHome extends Component {
               to={`/admin/tabs/${tab.id}`}
             >
               <AdminTab
-                userName={tab.user.email}
+                userName={tab.user && tab.user.email}
                 items={tab.data.items}
                 value={tab.id}
               />

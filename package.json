@@ -15,6 +15,7 @@
     "react-fontawesome": "^1.6.1",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.17",
+    "react-stripe-elements": "^1.6.0",
     "react-typeahead": "^2.0.0-alpha.8"
   },
   "scripts": {

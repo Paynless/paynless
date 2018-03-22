@@ -1,8 +1,8 @@
 import React from 'react';
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
 import currencyFormatter from 'currency-formatter';
 import Receipt from './TabItems';
+import Checkout from './Checkout';
 
 const styles = {
   card: {
@@ -22,6 +22,7 @@ const Tab = (props) => {
   //style settings
   let shouldExpand = props.expanded ? false : true;
   if(props.size) styles.card.width = props.size;
+  let displayAction = props.displayAction ? false : true;
 
   return (
   <Card style={styles.card}>
@@ -31,9 +32,15 @@ const Tab = (props) => {
       actAsExpander={shouldExpand}
       showExpandableButton={shouldExpand}
     />
-    <CardActions>
-      <FlatButton label="Close Out" />
-    </CardActions>
+    {displayAction &&
+      <CardActions>
+        <Checkout
+          merchantName={props.merchantName}
+          total={totalCents}
+          items={props.items}
+        />
+      </CardActions>
+    }
     <CardText expandable={shouldExpand}>
       <Receipt items={props.items} />
     </CardText>
