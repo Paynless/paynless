@@ -7,7 +7,8 @@ import CircularProgress from 'material-ui/CircularProgress';
 class OpenTabs extends Component {
   state = {
     openTabs: [],
-    isLoaded: false
+    isLoaded: false,
+    hasTabs: false
   }
 
   componentDidMount(){
@@ -16,6 +17,8 @@ class OpenTabs extends Component {
 
   componentWillReceiveProps(props){
     this.listen(props);
+  }
+
   }
 
   componentWillUnmount() {
