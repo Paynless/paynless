@@ -1,124 +1,149 @@
-import React, { Component, Fragment } from 'react';
-import { db } from '../../config';
-import FlatButton from 'material-ui/FlatButton';
-import DropDownMenu from 'material-ui/DropDownMenu'
-import MenuItem from 'material-ui/MenuItem';
+import React, { Component, Fragment } from "react";
+import FlatButton from "material-ui/FlatButton";
+import DropDownMenu from "material-ui/DropDownMenu";
+import MenuItem from "material-ui/MenuItem";
 import CircularProgress from "material-ui/CircularProgress";
-import { withAuth } from 'fireview';
-import { findDistance, findOrCreateUserOpenTabs } from '../../helpers/'
+import { withAuth } from "fireview";
+import { Typeahead } from "react-typeahead";
+import {
+  getCurrentPosition,
+  findNearbyMerchants,
+  findOrCreateUserOpenTabs
+} from "../../helpers/";
 
 const halfMile = 1 / 69 / 2;
 
 class CheckIn extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      checkedInWithMerchant: false,
-      openMerchants: [],
-      selectedMerchant: "",
+      nearbyMerchants: [],
+      locationSearchConducted: false,
+      selectedMerchant: {},
       useLocation: false,
       userCoords: {},
-      loading: false
+      isLoadingUserLocation: false
     };
   }
 
-  handleChange = (event, idx, val) => {
-    const selectedMerchant = val;
-    this.setState({ selectedMerchant });
+  updateSelectedMerchant = (event, idx, name) => {
+    const { allOpenMerchants } = this.props;
+    console.log("update", name);
+    const selectedMerchant = allOpenMerchants.find(merchant => {
+      return merchant.name === name;
+    });
+    this.setState(_ => ({ selectedMerchant }));
   };
 
-  checkInWithMerchant = async event => {
-    event.preventDefault();
-    const {user} = this.props.withAuth;
-    if (!user) return;
-    this.setState({ checkedInWithMerchant: true });
-    const merchant = this.state.openMerchants.find( merchant => {
-      return merchant.name === this.state.selectedMerchant;
-    })
-    findOrCreateUserOpenTabs(user.uid, merchant)
-    this.props.history.push(`/open-tabs/${merchant.id}`)
-  };
-
-  setcurrentPosition = _ => {
-    this.setState(_ => ({
-      loading: true
-    }));
-    window.navigator.geolocation.getCurrentPosition(
-      location => {
-        const userCoords = {
-          _lat: location.coords.latitude,
-          _long: location.coords.longitude
-        };
-
-        // const userCoords = { //dont use actual location when you are home
-        //   _lat: 40.7050604,
-        //   _long: -74.00865979999999
-        // }
-        this.setState(_ => ({
-          userCoords,
-          useLocation: true
-        }));
-        this.findNearbyRestaurants();
-      },
-      err => {
-        alert("Could not find location");
-        console.log(err);
-      }
-    );
-  };
-
-  findNearbyRestaurants = async _ => {
+  loadTab = async event => {
     try {
-      let openMerchants = [];
-      const { userCoords } = this.state;
-      const snapshot = await db.collection("Merchants").get();
-      snapshot.forEach( doc => {
-        let merchant = doc.data();
-        merchant.id = doc.id
-        openMerchants.push(merchant)
-      });
-      openMerchants = openMerchants.filter(venue => {
-        return findDistance(userCoords, venue.location) < halfMile;
-      });
-      this.setState(_ => ({ openMerchants, loading: false }));
+      event.preventDefault();
+      const { user } = this.props.withAuth;
+      if (!user) return;
+
+      const { selectedMerchant } = this.state;
+
+      const tab = await findOrCreateUserOpenTabs(user.uid, selectedMerchant);
+      console.log("tab", tab.data());
+      this.props.history.push(`/open-tabs/${selectedMerchant.id}`);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  narrowMerchantsUsingLocation = async _ => {
+    try {
+      let allOpenMerchants = this.props.allOpenMerchants.slice();
+
+      this.setState(_ => ({
+        isLoadingUserLocation: true
+      }));
+
+      const userCoords = await getCurrentPosition();
+
+      const nearbyMerchants = await findNearbyMerchants(
+        userCoords,
+        allOpenMerchants,
+        halfMile
+      );
+      // console.log("nearby", nearbyMerchants);
+      this.setState(_ => ({
+        userCoords,
+        useLocation: true,
+        isLoadingUserLocation: false,
+        locationSearchConducted: nearbyMerchants.length > 0,
+        nearbyMerchants
+      }));
     } catch (err) {
       console.log(err);
     }
   };
 
   render() {
-    let { openMerchants, selectedMerchant, loading } = this.state;
+    const {
+      useLocation,
+      isLoadingUserLocation,
+      locationSearchConducted,
+      nearbyMerchants,
+      selectedMerchant
+    } = this.state;
+    const { allOpenMerchants } = this.props;
+    const merchantNames =
+      locationSearchConducted
+        ? nearbyMerchants.map(venue => venue.name)
+        : allOpenMerchants.map(venue => venue.name);
+    console.log("names", merchantNames);
+    const isSelected = selectedMerchant.hasOwnProperty("name");
     return (
       <Fragment>
-        {loading && <CircularProgress size={60} thickness={7} />}
-        {!this.state.useLocation && (
-          <FlatButton onClick={this.setcurrentPosition}>
-            Find Restaurants Nearby
-          </FlatButton>
+        <FlatButton
+          primary={true}
+          fullWidth={true}
+          onClick={this.loadTab}
+          disabled={!isSelected}
+        >
+          {selectedMerchant.name
+            ? `Check in with ${selectedMerchant.name}`
+            : "Select a Merchant"}
+        </FlatButton>
+        {!useLocation && (
+          <div>
+            <Typeahead
+              placeholder="Search all..."
+              options={merchantNames}
+              maxVisible={5}
+              onOptionSelected={val =>
+                this.updateSelectedMerchant(null, null, val)
+              }
+            />
+            <h4>--OR--</h4>
+            <FlatButton
+              label="Find Near Me"
+              onClick={this.narrowMerchantsUsingLocation}
+              primary={true}
+            />
+          </div>
         )}
-        {this.state.useLocation &&
-          (openMerchants.length > 0 ? (
+        {isLoadingUserLocation && 
+          <CircularProgress size={60} thickness={7} />}
+        {locationSearchConducted &&
+          nearbyMerchants.length < 1 && <h3>No Restaurants Nearby</h3>}
+        {locationSearchConducted &&
+          nearbyMerchants.length > 0 && (
             <Fragment>
-              <FlatButton onClick={this.checkInWithMerchant}>
-                {selectedMerchant
-                  ? `Check in with ${selectedMerchant}`
-                  : "Select a Merchant"}
-              </FlatButton>
               <DropDownMenu
-                value={this.state.selectedMerchant}
-                onChange={this.handleChange}
+                value={selectedMerchant.name}
+                onChange={this.updateSelectedMerchant}
                 openImmediately={true}
               >
-                {openMerchants.map(venue => (
-                  <MenuItem value={venue.name} key={venue.name}>
-                    {venue.name}
+                {merchantNames.forEach(name => (
+                  <MenuItem value={name} key={name}>
+                    {name}
                   </MenuItem>
                 ))}
               </DropDownMenu>
             </Fragment>
-          ) : (
-            <h3>No Restaurants Nearby</h3>
-          ))}
+          )}
       </Fragment>
     );
   }

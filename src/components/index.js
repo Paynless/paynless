@@ -1,26 +1,28 @@
-import React, { Component } from 'react';
-import { Route, Router, Redirect, Switch } from 'react-router-dom';
-import { CheckIn, OpenTabs, BottomNavigationBar } from './customer';
-import { Login, Register } from './auth';
-import { AdminHome, AdminSingleTab } from './admin';
-import { logout } from '../helpers';
-import { firebaseAuth } from '../config';
-import AppBar from 'material-ui/AppBar';
-import FlatButton from 'material-ui/FlatButton';
-import history from './history'
+import React, { Component } from "react";
+import { Route, Router, Redirect, Switch } from "react-router-dom";
+import { CheckIn, OpenTabs, BottomNavigationBar } from "./customer";
+import { Login, Register } from "./auth";
+import { logout } from "../helpers";
+import { firebaseAuth } from "../config";
+import AppBar from "material-ui/AppBar";
+import FlatButton from "material-ui/FlatButton";
+import history from "./history";
+import { fetchAllMerchants } from "../helpers";
+import { AdminHome, AdminSingleTab } from "./admin";
 
-function PrivateRoute({ component: Component, authed, ...rest }) {
+function PrivateRoute({ component: Component, authed, allOpenMerchants, ...rest }) {
   return (
     <Route
       {...rest}
-      render={props =>
+      render={props => 
         authed === true ? (
-          <Component {...props} />
+          <Component allOpenMerchants={allOpenMerchants} {...props} />
         ) : (
           <Redirect
-            to={{ pathname: '/login', state: { from: props.location } }}
+            to={{ pathname: "/login", state: { from: props.location } }}
           />
-        )}
+        )
+      }
     />
   );
 }
@@ -30,11 +32,8 @@ function PublicRoute({ component: Component, authed, ...rest }) {
     <Route
       {...rest}
       render={props =>
-        authed === false ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to="/" />
-        )}
+        authed === false ? <Component {...props} /> : <Redirect to="/" />
+      }
     />
   );
 }
@@ -42,22 +41,27 @@ function PublicRoute({ component: Component, authed, ...rest }) {
 export default class App extends Component {
   state = {
     authed: false,
-    loading: true
+    loading: true,
+    allOpenMerchants: []
   };
-  componentDidMount() {
+  async componentDidMount() {
     this.removeListener = firebaseAuth().onAuthStateChanged(user => {
       if (user) {
-        this.setState({
+        this.setState(_=> ({
           authed: true,
           loading: false
-        });
+        }));
       } else {
-        this.setState({
+        this.setState(_=> ({
           authed: false,
           loading: false
-        });
+        }));
       }
     });
+    const allOpenMerchants = await fetchAllMerchants();
+    this.setState(_=>({
+      allOpenMerchants
+    }));
   }
   componentWillUnmount() {
     this.removeListener();
@@ -69,17 +73,11 @@ export default class App extends Component {
         onClick={() => {
           logout();
         }}
-        style={{ color: '#fff' }}
+        style={{ color: "#fff" }}
       />
-    ) : (
-      null
-    );
+    ) : null;
 
-    const topbarButtons = (
-      <div>
-        {authButtons}
-      </div>
-    );
+    const topbarButtons = <div>{authButtons}</div>;
 
     const tabData = {
       0: {
@@ -92,8 +90,11 @@ export default class App extends Component {
         icon: this.state.authed ? "sticky-note" : "user-plus",
         label: this.state.authed ? "Open Tabs" : "Register"
       }
-    }
-    return this.state.loading === true ? (
+    };
+
+    const { allOpenMerchants } = this.state;
+
+    return this.state.loading === true && allOpenMerchants.length === 0 ? (
       <h1>Loading</h1>
     ) : (
       <Router history={history}>
@@ -102,19 +103,21 @@ export default class App extends Component {
             title="Paynless"
             iconElementRight={topbarButtons}
             iconStyleRight={{
-              display: 'flex',
-              alignItems: 'center',
-              marginTop: '0'
+              display: "flex",
+              alignItems: "center",
+              marginTop: "0"
             }}
           />
           <div className="container d-flex justify-content-center mt-3">
             <div className="row">
               <Switch>
                 <PrivateRoute
-                  path="/" exact
-                  component={CheckIn}
+                  path="/"
+                  exact
                   authed={this.state.authed}
-                  />
+                  allOpenMerchants={allOpenMerchants}
+                  component={CheckIn}
+                />
                 <PublicRoute
                   authed={this.state.authed}
                   path="/login"
@@ -149,7 +152,7 @@ export default class App extends Component {
               </Switch>
             </div>
           </div>
-          <BottomNavigationBar data={tabData}/>
+          <BottomNavigationBar data={tabData} />
         </div>
       </Router>
     );
