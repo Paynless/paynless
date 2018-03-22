@@ -4,7 +4,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 const SplashScreen = (props) => {
   return (
   <div>
-    <img src="/public/favicon-1024.png"/>
+    <img src="favicon-1024.png" alt="logo" />
     Loading123
   </div>
 )};
