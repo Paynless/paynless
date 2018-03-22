@@ -1,5 +1,23 @@
 import React, { Component } from "react";
-import { CardElement } from "react-stripe-elements";
+import { CardNumberElement, CardExpiryElement } from "react-stripe-elements";
+import { CardCVCElement, PostalCodeElement } from "react-stripe-elements";
+import { FlatButton }from 'material-ui';
+
+const handleBlur = () => {
+  console.log("[blur]");
+};
+const handleChange = change => {
+  console.log("[change]", change);
+};
+const handleClick = () => {
+  console.log("[click]");
+};
+const handleFocus = () => {
+  console.log("[focus]");
+};
+const handleReady = () => {
+  console.log("[ready]");
+};
 
 const createOptions = fontSize => {
   return {
@@ -21,16 +39,77 @@ const createOptions = fontSize => {
 };
 
 class CardSection extends Component {
+
+  handleSubmit = event => {
+    event.preventDefault();
+    console.log('Submitted!');
+    this.props.stripe.createToken({name: 'Alfonso Millan'})
+      .then(({token}) => {
+        console.log('Received Stripe token:', token);
+      })
+  }
+
   render() {
     return (
-      <label>
-        Card details
-        <CardElement />
-      </label>
+      <form onSubmit={this.handleSubmit}>
+        <div>
+          <label>
+            Card number
+            <CardNumberElement
+              onBlur={handleBlur}
+              onChange={handleChange}
+              onFocus={handleFocus}
+              onReady={handleReady}
+              {...createOptions(this.props.fontSize)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Expiration date
+            <CardExpiryElement
+              onBlur={handleBlur}
+              onChange={handleChange}
+              onFocus={handleFocus}
+              onReady={handleReady}
+              {...createOptions(this.props.fontSize)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            CVC
+            <CardCVCElement
+              onBlur={handleBlur}
+              onChange={handleChange}
+              onFocus={handleFocus}
+              onReady={handleReady}
+              {...createOptions(this.props.fontSize)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Postal code
+            <PostalCodeElement
+              onBlur={handleBlur}
+              onChange={handleChange}
+              onFocus={handleFocus}
+              onReady={handleReady}
+              {...createOptions(this.props.fontSize)}
+            />
+          </label>
+        </div>
+        <div>
+          <FlatButton
+            label="Save"
+            primary={true}
+            onClick={handleClick}
+          />
+        </div>
+      </form>
     );
   }
 }
 
 export default CardSection;
-
-// style={{ base: { fontSize: "18px" } }}
