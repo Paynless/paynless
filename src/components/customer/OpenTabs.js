@@ -19,8 +19,6 @@ class OpenTabs extends Component {
     this.listen(props);
   }
 
-  }
-
   componentWillUnmount() {
     this.removeListenerTabs && this.removeListenerTabs();
   }
