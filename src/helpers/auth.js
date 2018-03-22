@@ -1,9 +1,9 @@
 import { db, firebaseAuth } from '../config';
 
-export function auth(email, pw) {
-  return firebaseAuth()
-    .createUserWithEmailAndPassword(email, pw)
-    .then(saveUser);
+export const auth = async (email, pw, firstName, lastName, dob) => {
+  const user = await firebaseAuth()
+    .createUserWithEmailAndPassword(email, pw);
+  saveUser(user, firstName, lastName, dob);
 }
 
 export function logout() {
@@ -18,15 +18,18 @@ export function resetPassword(email) {
   return firebaseAuth().sendPasswordResetEmail(email);
 }
 
-export function saveUser(user) {
-  return db
-    .collection(`users`)
-    .add({
-      email: user.email,
-      uid: user.uid
-    })
-    .then(docRef => docRef)
-    .catch(function(error) {
+export const saveUser = async (user, firstName, lastName, dob) => {
+  try {
+    await db
+      .collection(`users`)
+      .add({
+        email: user.email,
+        uid: user.uid,
+        firstName: firstName,
+        lastName: lastName,
+        dob: dob,
+      })
+  } catch(error) {
       console.error('Error adding document: ', error);
-    });
+    }
 }

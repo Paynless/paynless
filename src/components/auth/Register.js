@@ -16,20 +16,44 @@ export default class Register extends Component {
     this.state = {
       registerError: null,
       email: '',
-      password: ''
+      password: '',
+      firstName: '',
+      lastName: '',
+      dob: '',
+
     };
   }
 
-  handleSubmit = e => {
-    e.preventDefault();
-    auth(this.state.email, this.state.password).catch(e =>
-      this.setState(setErrorMsg(e))
+  handleSubmit = event => {
+    const {email, password, firstName, lastName, dob} = this.state;
+    event.preventDefault();
+    auth(email, password, firstName, lastName, dob)
+    .catch(err =>
+      this.setState(setErrorMsg(err))
     );
   };
   render() {
     return (
       <form onSubmit={this.handleSubmit} style={style.container}>
         <h3>Register</h3>
+        <TextField
+          hintText="Enter your first name"
+          floatingLabelText="First Name"
+          onChange={(event, newValue) => this.setState({ firstName: newValue })}
+        />
+        <br />
+        <TextField
+        hintText="Enter your last name"
+        floatingLabelText="Last Name"
+        onChange={(event, newValue) => this.setState({ lastName: newValue })}
+        />
+        <br />
+        <TextField
+          hintText="Enter your date of birth"
+          floatingLabelText="Date of Birth MM/DD/YYYY"
+          onChange={(event, newValue) => this.setState({ dob: newValue })}
+        />
+        <br />
         <TextField
           hintText="Enter your Email"
           floatingLabelText="Email"
