@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route, Router, Redirect, Switch } from "react-router-dom";
-import { CheckIn, OpenTabs, BottomNavigationBar } from "./customer";
+import { CheckIn, OpenTabs, BottomNavigationBar, SplashScreen } from "./customer";
 import { Login, Register } from "./auth";
 import { logout } from "../helpers";
 import { firebaseAuth } from "../config";
@@ -14,7 +14,7 @@ function PrivateRoute({ component: Component, authed, allOpenMerchants, ...rest 
   return (
     <Route
       {...rest}
-      render={props => 
+      render={props =>
         authed === true ? (
           <Component allOpenMerchants={allOpenMerchants} {...props} />
         ) : (
@@ -95,7 +95,7 @@ export default class App extends Component {
     const { allOpenMerchants } = this.state;
 
     return this.state.loading === true && allOpenMerchants.length === 0 ? (
-      <h1>Loading</h1>
+      <SplashScreen />
     ) : (
       <Router history={history}>
         <div className="fullheight">
