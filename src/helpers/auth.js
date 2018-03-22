@@ -1,4 +1,4 @@
-import { db, firebaseAuth } from '../config/constants';
+import { db, firebaseAuth } from '../config';
 
 export function auth(email, pw) {
   return firebaseAuth()

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { Component, Fragment } from "react";
 import { db } from "../../config/constants";
 import FlatButton from "material-ui/FlatButton";
@@ -5,16 +6,20 @@ import DropDownMenu from "material-ui/DropDownMenu";
 import MenuItem from "material-ui/MenuItem";
 import CircularProgress from "material-ui/CircularProgress";
 import TypeaheadSearch from "./TypeaheadSearch";
+=======
+import React, { Component, Fragment } from 'react';
+import { db } from '../../config';
+import FlatButton from 'material-ui/FlatButton';
+import DropDownMenu from 'material-ui/DropDownMenu'
+import MenuItem from 'material-ui/MenuItem';
+import CircularProgress from "material-ui/CircularProgress";
+import { withAuth } from 'fireview';
+import { findDistance, findOrCreateUserOpenTabs } from '../../helpers/'
+>>>>>>> master
 
 const halfMile = 1 / 69 / 2;
 
-const findDistance = (cord1, cord2) => {
-  return Math.sqrt(
-    (cord1._lat - cord2._lat) ** 2 + (cord1._long - cord2._long) ** 2
-  );
-};
-
-export default class CheckIn extends Component {
+class CheckIn extends Component {
   constructor() {
     super();
     this.state = {
@@ -23,7 +28,6 @@ export default class CheckIn extends Component {
       loadingAllMerchants: true,
       openMerchants: [],
       selectedMerchant: "",
-      user: "",
       useLocation: false,
       userCoords: {},
       loading: false
@@ -35,9 +39,16 @@ export default class CheckIn extends Component {
     this.setState({ selectedMerchant });
   };
 
-  handleSubmit = event => {
+  checkInWithMerchant = async event => {
     event.preventDefault();
+    const {user} = this.props.withAuth;
+    if (!user) return;
     this.setState({ checkedInWithMerchant: true });
+    const merchant = this.state.openMerchants.find( merchant => {
+      return merchant.name === this.state.selectedMerchant;
+    })
+    findOrCreateUserOpenTabs(user.uid, merchant)
+    this.props.history.push(`/open-tabs/${merchant.id}`)
   };
 
   setcurrentPosition = _ => {
@@ -85,8 +96,12 @@ export default class CheckIn extends Component {
     try {
       let openMerchants = [];
       const { userCoords } = this.state;
-      const collection = await db.collection("Merchants").get();
-      collection.forEach(doc => openMerchants.push(doc.data()));
+      const snapshot = await db.collection("Merchants").get();
+      snapshot.forEach( doc => {
+        let merchant = doc.data();
+        merchant.id = doc.id
+        openMerchants.push(merchant)
+      });
       openMerchants = openMerchants.filter(venue => {
         return findDistance(userCoords, venue.location) < halfMile;
       });
@@ -123,7 +138,7 @@ export default class CheckIn extends Component {
         {this.state.useLocation &&
           (openMerchants.length > 0 ? (
             <Fragment>
-              <FlatButton onClick={this.handleSubmit}>
+              <FlatButton onClick={this.checkInWithMerchant}>
                 {selectedMerchant
                   ? `Check in with ${selectedMerchant}`
                   : "Select a Merchant"}
@@ -147,3 +162,5 @@ export default class CheckIn extends Component {
     );
   }
 }
+
+export default withAuth(CheckIn);

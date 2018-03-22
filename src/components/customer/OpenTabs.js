@@ -1,61 +1,67 @@
 import React, { Component } from 'react';
-import { db, firebaseAuth } from '../../config/constants';
+import { db, firebaseAuth } from '../../config';
+import { withAuth } from 'fireview';
 import Tab from './Tab';
+import CircularProgress from 'material-ui/CircularProgress';
 
-export default class Dashboard extends Component {
+class OpenTabs extends Component {
   state = {
     openTabs: [],
     isLoaded: false
   }
 
-  async componentDidMount(){
-    let userId;
-    this.removeListenerUser = await firebaseAuth().onAuthStateChanged(user => {
-      if (user) {
-        userId = user.uid
-      } else {
-      }
-    });
+  componentDidMount(){
+    this.listen(this.props);
+  }
 
-    let self = this;
-    this.removeListenerTabs = await db.collection("Tabs").where("uid", "==", userId)
-    .onSnapshot(function(snapshot) {
-      snapshot.docChanges.forEach(function(change) {
-          let changedTab = {
-            id: change.doc.id,
-            data: change.doc.data()
-          }
-          if (change.type === "added") {
-            self.setState(prevState => ({openTabs: [...prevState.openTabs, changedTab]}))
-          }
-          if (change.type === "modified") {
-            self.setState(prevState => ({openTabs: [...prevState.openTabs.filter(tab => tab.id !== changedTab.id), changedTab]}))
-          }
-          if (change.type === "removed") {
-            self.setState(prevState => ({openTabs: prevState.openTabs.filter(tab => tab.id !== changedTab.id)}))
-          }
-        });
-      });
-      this.setState({isLoaded: true})
-    }
+  componentWillReceiveProps(props){
+    this.listen(props);
+  }
 
   componentWillUnmount() {
-    this.removeListenerUser();
-    this.removeListenerTabs();
+    this.removeListenerTabs && this.removeListenerTabs();
+  }
+
+  listen(props){
+    const {user} = props.withAuth;
+
+    if(!user) return;
+    if(this.removeListenerTabs) this.removeListenerTabs();
+    this.removeListenerTabs = db.collection("Tabs").where("uid", "==", user.uid).where("open", "==", true)
+    .onSnapshot((snapshot) => {
+      this.setState({openTabs: snapshot.docs.map(doc => doc.data()), isLoaded: true})
+    });
   }
 
   render() {
+    if(!this.state.isLoaded){
+      return (
+      <div>
+      <CircularProgress size={80} thickness={10} />
+      </div>)
+    }
     return (
       <div>
-        {this.state.openTabs.map(tab => (
-          <div key={tab.id}>
-            <Tab
-              merchantName={tab.data.merchantName}
-              items={tab.data.items}
-            />
+        {this.state.openTabs.length ?
+        (<div>
+          {this.state.openTabs.map((tab, idx )=> (
+            <div key={idx}>
+              <Tab
+                merchantName={tab.merchantName}
+                items={tab.items}
+              />
+            </div>
+          ))}
           </div>
-        ))}
+        ) : (
+          <div>
+          No tabs found, open one and start the fun!
+          </div>
+        )
+        }
       </div>
     );
   }
 }
+
+export default withAuth(OpenTabs);

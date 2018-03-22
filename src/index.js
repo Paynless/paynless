@@ -4,11 +4,15 @@ import App from './components';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { AuthProvider } from 'fireview';
+import { firebaseAuth } from './config'
 
 ReactDOM.render(
+  <AuthProvider auth={firebaseAuth()}>
   <MuiThemeProvider>
     <App />
-  </MuiThemeProvider>,
+  </MuiThemeProvider>
+  </AuthProvider>,
   document.getElementById('root')
 );
 registerServiceWorker();
