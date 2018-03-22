@@ -17,3 +17,7 @@ body {
   flex-direction: row;
   flex-wrap: wrap;
 }
+
+.scrollable {
+  overflow-y: scroll;
+}

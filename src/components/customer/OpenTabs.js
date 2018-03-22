@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { db, firebaseAuth } from '../../config';
+import { db } from '../../config';
 import { withAuth } from 'fireview';
 import Tab from './Tab';
 import CircularProgress from 'material-ui/CircularProgress';

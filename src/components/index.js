@@ -14,7 +14,7 @@ function PrivateRoute({ component: Component, authed, allOpenMerchants, ...rest 
   return (
     <Route
       {...rest}
-      render={props => 
+      render={props =>
         authed === true ? (
           <Component allOpenMerchants={allOpenMerchants} {...props} />
         ) : (
@@ -105,10 +105,14 @@ export default class App extends Component {
             iconStyleRight={{
               display: "flex",
               alignItems: "center",
-              marginTop: "0"
+              marginTop: "0",
+            }}
+            style={{
+              height: '64px',
+              flexShrink: 0
             }}
           />
-          <div className="container d-flex justify-content-center mt-3">
+          <div className="container d-flex justify-content-center mt-3 scrollable">
             <div className="row">
               <Switch>
                 <PrivateRoute
