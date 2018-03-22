@@ -1,20 +1,24 @@
 import React, { Component } from "react";
 import { CardNumberElement, CardExpiryElement } from "react-stripe-elements";
 import { CardCVCElement, PostalCodeElement } from "react-stripe-elements";
-import { FlatButton }from 'material-ui';
+import { FlatButton } from 'material-ui';
 
 const handleBlur = () => {
   console.log("[blur]");
 };
+
 const handleChange = change => {
   console.log("[change]", change);
 };
+
 const handleClick = () => {
   console.log("[click]");
 };
+
 const handleFocus = () => {
   console.log("[focus]");
 };
+
 const handleReady = () => {
   console.log("[ready]");
 };
@@ -102,7 +106,7 @@ class CardSection extends Component {
         </div>
         <div>
           <FlatButton
-            label="Save"
+            label="Save Info"
             primary={true}
             onClick={handleClick}
           />
