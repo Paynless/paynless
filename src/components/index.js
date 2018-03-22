@@ -8,6 +8,7 @@ import AppBar from "material-ui/AppBar";
 import FlatButton from "material-ui/FlatButton";
 import history from "./history";
 import { fetchAllMerchants } from "../helpers";
+import { AdminHome, AdminSingleTab } from "./admin";
 
 function PrivateRoute({ component: Component, authed, allOpenMerchants, ...rest }) {
   return (

@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
-import { db, firestore } from '../config'
-=======
 import { db, firestore } from "../config";
->>>>>>> Stashed changes
 
 export const findDistance = (cord1, cord2) => {
   return Math.sqrt(
@@ -10,31 +6,6 @@ export const findDistance = (cord1, cord2) => {
   );
 };
 
-<<<<<<< Updated upstream
-export const findOrCreateUserOpenTabs = async (userId, merchant) => {
-  //find
-  const ref = db.collection('Tabs')
-    .where("uid", "==", userId)
-    .where("merchantId", "==", merchant.id)
-    .where("open", "==", true)
-
-  const tab = await ref.get()
-  if (tab.docs.length) return tab.docs[0];
-
-  //create
-  const data = {
-    items: [],
-    merchantId: merchant.id,
-    merchantName: merchant.name,
-    open: true,
-    uid: userId,
-    accepted: false,
-    timestamp: firestore.FieldValue.serverTimestamp(),
-  }
-
-  return db.collection("Tabs").add(data)
-}
-=======
 export const getCurrentPosition = options => {
   return new Promise( resolve => {
     navigator.geolocation.getCurrentPosition(
@@ -122,4 +93,3 @@ export const checkInWithMerchant = async (userId, merchant) => {
     console.log(err);
   }
 };
->>>>>>> Stashed changes
