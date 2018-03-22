@@ -72,7 +72,7 @@ exports.createStripeCustomer = functions.firestore
   .document("users/{userId}")
   .onCreate(event => {
     const data = event.data.data();
-    console.log("data in createStripeCustomer", data);
+    const doc_id = event.data.id;
     return stripe.customers
       .create({
         email: data.email
@@ -80,8 +80,9 @@ exports.createStripeCustomer = functions.firestore
       .then(customer => {
         return admin
           .firestore()
-          .doc(`/users/${data.uid}/stripeCollection/customer_id`)
-          .set(customer.id);
+          .collection("users")
+          .doc(doc_id)
+          .set({ sid: customer.id }, { merge: true });
       })
       .catch(err => console.log(err));
   });
