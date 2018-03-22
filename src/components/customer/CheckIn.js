@@ -21,7 +21,6 @@ class CheckIn extends Component {
 
   updateSelectedMerchant = (event, idx, name) => {
     const { allOpenMerchants } = this.props;
-    console.log("update", name);
     const selectedMerchant = allOpenMerchants.find(merchant => {
       return merchant.name === name;
     });
@@ -43,9 +42,8 @@ class CheckIn extends Component {
         selectedMerchant = this.state.selectedMerchant;
       }
 
-
       const tab = await findOrCreateUserOpenTabs(user.uid, selectedMerchant);
-      console.log("tab", tab.data());
+
       this.props.history.push(`/open-tabs/${selectedMerchant.id}`);
     } catch (err) {
       console.log(err);
@@ -67,7 +65,7 @@ class CheckIn extends Component {
         allOpenMerchants,
         halfMile
       );
-      // console.log("nearby", nearbyMerchants);
+
       this.setState(_ => ({
         userCoords,
         useLocation: true,
