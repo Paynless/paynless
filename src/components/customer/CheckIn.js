@@ -3,6 +3,7 @@ import { FlatButton, DropDownMenu, MenuItem, CircularProgress } from "material-u
 import { withAuth } from "fireview";
 import { Typeahead } from "react-typeahead";
 import { getCurrentPosition, findNearbyMerchants, findOrCreateUserOpenTabs } from "../../helpers/";
+import SelectMerchant from './SelectMerchant';
 
 const halfMile = 1 / 69 / 2;
 
@@ -88,9 +89,10 @@ class CheckIn extends Component {
     } = this.state;
     const { allOpenMerchants } = this.props;
     const isSelected = selectedMerchant.hasOwnProperty("name");
-    
+    console.log('open merchants', allOpenMerchants);
     return (
       <Fragment>
+        <SelectMerchant openMerchants={allOpenMerchants}/>
       {!useLocation && (
         <div>
         <Typeahead
@@ -110,7 +112,7 @@ class CheckIn extends Component {
         />
         </div>
       )}
-      {isLoadingUserLocation && 
+      {isLoadingUserLocation &&
         <CircularProgress size={60} thickness={7} />}
         {locationSearchConducted &&
           nearbyMerchants.length < 1 && <h3>No Restaurants Nearby</h3>}
