@@ -1,46 +1,70 @@
-import React, { Component } from 'react';
-import { auth } from '../../helpers';
-
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-
-function setErrorMsg(error) {
-  return {
-    registerError: error.message
-  };
-}
+import React, { Component } from "react";
+import { auth, isValidDOB, isValidEmail, setErrorMsg } from "../../helpers";
+import Dialog from "material-ui/Dialog";
+import RaisedButton from "material-ui/RaisedButton";
+import FlatButton from "material-ui/FlatButton";
+import TextField from "material-ui/TextField";
 
 export default class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
       registerError: null,
-      email: '',
-      password: ''
+      email: "",
+      password: "",
+      firstName: "",
+      lastName: "",
+      dob: "",
     };
   }
 
-  handleSubmit = e => {
-    e.preventDefault();
-    auth(this.state.email, this.state.password).catch(e =>
-      this.setState(setErrorMsg(e))
+  handleSubmit = event => {
+    event.preventDefault();
+    const { email, password, firstName, lastName, dob } = this.state;
+    if (!isValidEmail(email) || password.length < 6) {
+      this.setState(_ => {
+        return setErrorMsg(Error('Email Must Be Valid And Password Must Be At Least 6 Characters'))
+      });
+      return;
+    } else if (!firstName.length || !lastName.length) {
+      this.setState(_ => {
+        return setErrorMsg(Error('First And Last Name Cannot Be Left Blank'))
+      });
+      return;
+    } 
+
+    auth(email, password, firstName, lastName, dob).catch(err =>
+      this.setState(setErrorMsg(err))
     );
   };
+
   render() {
     return (
       <form onSubmit={this.handleSubmit} style={style.container}>
         <h3>Register</h3>
         <TextField
+          hintText="Enter your first name"
+          floatingLabelText="First Name"
+          onChange={(event, newValue) => this.setState({ firstName: newValue, registerError: "", })}
+        />
+        <br />
+        <TextField
+          hintText="Enter your last name"
+          floatingLabelText="Last Name"
+          onChange={(event, newValue) => this.setState({ lastName: newValue, registerError: "", })}
+        />
+        <br />
+        <TextField
           hintText="Enter your Email"
           floatingLabelText="Email"
-          onChange={(event, newValue) => this.setState({ email: newValue })}
+          onChange={(event, newValue) => this.setState({ email: newValue, registerError: "" })}
         />
         <br />
         <TextField
           type="password"
           hintText="Enter your Password"
           floatingLabelText="Password"
-          onChange={(event, newValue) => this.setState({ password: newValue })}
+          onChange={(event, newValue) => this.setState({ password: newValue, registerError: "" })}
         />
         <br />
         {this.state.registerError && (
@@ -69,7 +93,7 @@ const raisedBtn = {
 };
 
 const container = {
-  textAlign: 'center'
+  textAlign: "center"
 };
 
 const style = {

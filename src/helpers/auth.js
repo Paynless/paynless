@@ -21,11 +21,10 @@ firebaseAuth().onAuthStateChanged(user => {
   }
 });
 
-export function auth(email, pw) {
-  return firebaseAuth()
-    .createUserWithEmailAndPassword(email, pw)
-    .then(saveUser);
-}
+export const auth = async (email, pw, firstName, lastName) => {
+  const user = await firebaseAuth().createUserWithEmailAndPassword(email, pw);
+  saveUser(user, firstName, lastName);
+};
 
 export function logout() {
   return firebaseAuth().signOut();
@@ -39,15 +38,15 @@ export function resetPassword(email) {
   return firebaseAuth().sendPasswordResetEmail(email);
 }
 
-export function saveUser(user) {
-  return db
-    .collection("users")
-    .add({
+export const saveUser = async (user, firstName, lastName) => {
+  try {
+    await db.collection(`users`).add({
       email: user.email,
-      uid: user.uid
-    })
-    .then(docRef => docRef)
-    .catch(function(error) {
-      console.error("Error adding document: ", error);
+      uid: user.uid,
+      firstName: firstName,
+      lastName: lastName,
     });
-}
+  } catch (error) {
+    console.error("Error adding document: ", error);
+  }
+};
