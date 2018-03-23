@@ -8,7 +8,7 @@ const Favorite = (props) => {
     <div className="favoriteIcon">
       <FontAwesome name={'star'} style={{ color: props.isFavorite ? amberA400 : grey500
         }}
-        onClick={() => console.log('sauce')} />
+        onClick={() => props.toggle(props.merchantId)} />
     </div>
 )};
 

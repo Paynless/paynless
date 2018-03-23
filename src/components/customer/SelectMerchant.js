@@ -17,20 +17,41 @@ class SelectMerchant extends Component {
   }
 
   componentDidMount(){
-    this.awaitUser(this.props);
+    this.listenUser(this.props);
   }
 
   componentWillReceiveProps(props){
-    this.awaitUser(props);
+    this.listenUser(props);
   }
 
+  componentWillUnmount() {
+    this.removeListener && this.removeListener();
+  }
 
-  awaitUser(props){
+  listenUser(props){
     const {user} = props.withAuth;
     if(!user) return;
-    db.collection("users").where("uid", "==", user.uid)
-    .get()
-    .then(user => this.setState({user: user.docs[0].data(), isLoaded: true}))
+    if(this.removeListener) this.removeListener();
+
+    this.removeListener = db.collection("users").where("uid", "==", user.uid)
+    .onSnapshot(userDocs => {
+      const user = Object.assign({}, userDocs.docs[0].data(), {docId: userDocs.docs[0].id})
+      this.setState({user, isLoaded: true})
+    })
+  }
+
+  toggleFavorite = (merchantId) => {
+    const currFavs = Object.assign({}, this.state.user.favorites)
+    if(currFavs[merchantId]){
+      currFavs[merchantId] = false;
+    } else {
+      currFavs[merchantId] = true;
+    }
+    db.collection("users").doc(this.state.user.docId)
+    .update({
+      "favorites": currFavs
+    })
+    .then(item => console.log('what we get back from update', item))
     .catch(err => console.error(err))
   }
 
@@ -58,14 +79,17 @@ class SelectMerchant extends Component {
         />
         <List>
           {displayMerchants.map(merchant => (
-          <div className="checkinItem">
+          <div key={merchant.id} className="checkinItem">
             <div className="checkinName">
               <ListItem
-                key={merchant.id}
                 primaryText={merchant.name}
               />
             </div>
-            <Favorite isFavorite={this.state.user.favorites[merchant.id]} />
+            <Favorite
+              isFavorite={this.state.user.favorites[merchant.id]}
+              merchantId={merchant.id}
+              toggle={this.toggleFavorite}
+            />
           </div>
           )
           )}
