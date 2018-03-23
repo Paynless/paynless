@@ -31,9 +31,9 @@ export default class Register extends Component {
         return setErrorMsg(Error('First And Last Name Cannot Be Left Blank'))
       });
       return;
-    } 
+    }
 
-    auth(email, password, firstName, lastName, dob).catch(err =>
+    auth(email, password, firstName, lastName).catch(err =>
       this.setState(setErrorMsg(err))
     );
   };

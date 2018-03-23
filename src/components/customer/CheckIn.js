@@ -89,19 +89,19 @@ class CheckIn extends Component {
     } = this.state;
     const { allOpenMerchants } = this.props;
     const isSelected = selectedMerchant.hasOwnProperty("name");
-    console.log('open merchants', allOpenMerchants);
     return (
       <Fragment>
-
       {!useLocation && (
-        <div>
+        <div className="checkIn">
           <SelectMerchant openMerchants={allOpenMerchants} loadTab={this.loadTab}/>
-          <h4>--OR--</h4>
-          <FlatButton
-          label="Find Near Me"
-          onClick={this.narrowMerchantsUsingLocation}
-          primary={true}
-          />
+          <div></div>
+          <div className="findNearMe">
+            <FlatButton
+            label="Find Near Me"
+            onClick={this.narrowMerchantsUsingLocation}
+            primary={true}
+            />
+          </div>
         </div>
       )}
       {isLoadingUserLocation &&

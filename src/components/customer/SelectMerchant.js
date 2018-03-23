@@ -78,7 +78,7 @@ class SelectMerchant extends Component {
       ? foundMerchants
       : favoriteMerchants;
     return (
-      <div>
+      <div className="selectMerchant">
         <TextField
           id="text-field-default"
           hintText="Find a spot!"
@@ -90,9 +90,8 @@ class SelectMerchant extends Component {
             <div
               key={merchant.id}
               className="checkinItem"
-              onClick={() => this.props.loadTab(null, merchant.name)}
             >
-              <div className="checkinName">
+              <div className="checkinName" onClick={() => this.props.loadTab(null, merchant.name)}>
                 <ListItem primaryText={merchant.name} />
               </div>
               <Favorite
