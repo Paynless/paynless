@@ -11,6 +11,7 @@ import { StripeProvider } from "react-stripe-elements";
 const muiTheme = getMuiTheme({
   palette: {
     primary1Color: '#0a2009',
+    accent1Color: '#7CB342'
   }
 });
 

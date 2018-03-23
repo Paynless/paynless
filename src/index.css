@@ -45,7 +45,6 @@
   left: -64px;
   z-index: 0;
   border-radius: 10%;
-  /* background-color: rgb(82, 175, 20); */
   background-color: #7CB342;
   animation: 1s ease 0s 1 slideUpText;
 }
