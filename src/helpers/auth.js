@@ -8,15 +8,23 @@ export function googleSignIn() {
 
 firebaseAuth().onAuthStateChanged(user => {
   if (user) {
-    return db
+    db
       .collection("users")
-      .add({
-        email: user.email,
-        uid: user.uid
-      })
-      .then(docRef => docRef)
-      .catch(function(error) {
-        console.error("Error adding document: ", error);
+      .where("uid", "==", user.uid)
+      .get()
+      .then(foundUser => {
+        if (!foundUser.docs.length) {
+          return db
+            .collection("users")
+            .add({
+              email: user.email,
+              uid: user.uid
+            })
+            .then(docRef => docRef)
+            .catch(function(error) {
+              console.error("Error adding document: ", error);
+            });
+        }
       });
   }
 });
@@ -44,7 +52,7 @@ export const saveUser = async (user, firstName, lastName) => {
       email: user.email,
       uid: user.uid,
       firstName: firstName,
-      lastName: lastName,
+      lastName: lastName
     });
   } catch (error) {
     console.error("Error adding document: ", error);
