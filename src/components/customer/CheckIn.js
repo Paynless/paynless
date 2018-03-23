@@ -45,7 +45,7 @@ class CheckIn extends Component {
 
       const tab = await findOrCreateUserOpenTabs(user.uid, selectedMerchant);
 
-      this.props.history.push(`/open-tabs/${selectedMerchant.id}`);
+      this.props.history.push("/open-tabs");
     } catch (err) {
       console.log(err);
     }
@@ -104,7 +104,7 @@ class CheckIn extends Component {
           this.loadTab(null, val)
         }
         /> */}
-        <SelectMerchant openMerchants={allOpenMerchants}/>
+        <SelectMerchant openMerchants={allOpenMerchants} loadTab={this.loadTab}/>
         <h4>--OR--</h4>
         <FlatButton
         label="Find Near Me"

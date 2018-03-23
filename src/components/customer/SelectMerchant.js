@@ -51,13 +51,12 @@ class SelectMerchant extends Component {
     .update({
       "favorites": currFavs
     })
-    .then(item => console.log('what we get back from update', item))
     .catch(err => console.error(err))
   }
 
   render() {
     console.log('state in new component: ', this.state)
-    console.log('merchants in new component: ', this.props);
+    console.log('props in new component: ', this.props);
     if(!this.state.isLoaded){
       return (
       <div>
@@ -66,8 +65,6 @@ class SelectMerchant extends Component {
     }
     let favoriteMerchants = this.props.openMerchants.filter(merchant => this.state.user.favorites[merchant.id])
     let foundMerchants = this.props.openMerchants.filter(merchant => merchant.name.match(RegExp(this.state.search, 'i')))
-    console.log('favorites: ', favoriteMerchants);
-    console.log('searched for: ', foundMerchants);
     let displayMerchants = this.state.search.length ? foundMerchants : favoriteMerchants;
     return (
       <div>
@@ -79,7 +76,11 @@ class SelectMerchant extends Component {
         />
         <List>
           {displayMerchants.map(merchant => (
-          <div key={merchant.id} className="checkinItem">
+          <div
+            key={merchant.id}
+            className="checkinItem"
+            onClick={() => this.props.loadTab(null, merchant.name)}
+          >
             <div className="checkinName">
               <ListItem
                 primaryText={merchant.name}
