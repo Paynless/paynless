@@ -6,29 +6,29 @@ export function googleSignIn() {
   firebaseAuth().signInWithRedirect(provider);
 }
 
-// firebaseAuth()
-//   .getRedirectResult()
-//   .then(result => {
-//     if (result.credential) {
-//       const token = result.credential.accessToken;
-//     }
+firebaseAuth()
+  .getRedirectResult()
+  .then(result => {
+    if (result.credential) {
+      const token = result.credential.accessToken;
+    }
 
-//     const User = {
-//       uid: result.user.uid,
-//       email: result.user.email
-//     };
+    const User = {
+      uid: result.user.uid,
+      email: result.user.email
+    };
 
-//     firebaseAuth()
-//       .collection("users")
-//       .doc()
-//       .set(User, { merge: true })
-//       .catch(error => {
-//         const errorCode = error.code;
-//         const errorMessage = error.message;
-//         const email = error.email;
-//         const credential = error.credential;
-//       });
-//   });
+    firebaseAuth()
+      .collection("users")
+      .doc()
+      .set(User, { merge: true })
+      .catch(error => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.email;
+        const credential = error.credential;
+      });
+  });
 
 export function auth(email, pw) {
   return firebaseAuth()
