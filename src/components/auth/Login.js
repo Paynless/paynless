@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
-import { login, resetPassword } from '../../helpers';
+import React, { Component } from "react";
+import { login, resetPassword, googleSignIn } from "../../helpers";
 
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
+import RaisedButton from "material-ui/RaisedButton";
+import TextField from "material-ui/TextField";
+import GoogleButton from "react-google-button";
 
 function setErrorMsg(error) {
   return {
@@ -14,8 +15,8 @@ export default class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
       loginMessage: null
     };
   }
@@ -23,7 +24,7 @@ export default class Login extends Component {
   handleSubmit = e => {
     e.preventDefault();
     login(this.state.email, this.state.password).catch(error => {
-      this.setState(setErrorMsg('Invalid username/password.'));
+      this.setState(setErrorMsg("Invalid username/password."));
     });
   };
   resetPassword = () => {
@@ -62,7 +63,7 @@ export default class Login extends Component {
               aria-hidden="true"
             />
             <span className="sr-only">Error:</span>
-            &nbsp;{this.state.loginMessage}{' '}
+            &nbsp;{this.state.loginMessage}{" "}
             <p onClick={this.resetPassword} className="alert-link">
               Forgot Password?
             </p>
@@ -74,6 +75,10 @@ export default class Login extends Component {
           style={style.raisedBtn}
           type="submit"
         />
+        <GoogleButton
+          onClick={() => googleSignIn()}
+        />
+
       </form>
     );
   }
@@ -84,10 +89,11 @@ const raisedBtn = {
 };
 
 const container = {
-  textAlign: 'center'
+  textAlign: "center"
 };
 
 const style = {
   raisedBtn,
   container
 };
+

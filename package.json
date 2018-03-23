@@ -5,6 +5,7 @@
   "private": true,
   "homepage": "https://paynless-db.firebaseapp.com/",
   "dependencies": {
+    "ajv": "^6.3.0",
     "currency-formatter": "^1.4.2",
     "eslint-config-fullstack": "^3.0.0",
     "firebase": "4.6.0",
@@ -15,6 +16,7 @@
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
     "react-fontawesome": "^1.6.1",
+    "react-google-button": "^0.5.1",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.17",
     "react-stripe-elements": "^1.6.0",
