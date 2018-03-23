@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route, Router, Redirect, Switch } from "react-router-dom";
-import { CheckIn, OpenTabs, BottomNavigationBar, CustomerInfo } from "./customer";
+import { CheckIn, OpenTabs, BottomNavigationBar, SplashScreen, CustomerInfo } from "./customer";
 import { Login, Register } from "./auth";
 import { logout } from "../helpers";
 import { firebaseAuth } from "../config";
@@ -95,7 +95,7 @@ export default class App extends Component {
     const { allOpenMerchants } = this.state;
 
     return this.state.loading === true && allOpenMerchants.length === 0 ? (
-      <h1>Loading</h1>
+      <SplashScreen />
     ) : (
       <Router history={history}>
         <div className="fullheight">

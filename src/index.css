@@ -1,8 +1,69 @@
+@keyframes slideUpText {
+  0% {
+    transform: translateX(-100px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInUnderline {
+  0% {
+    transform: translateX(-100px);
+    transform: translateY(200px);
+  }
+  100% {
+    transform: translateX(0);
+    transform: translateY(0);
+  }
+}
+
 .fullheight {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100vh;
+}
+
+
+.splashScreen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgb(10, 32, 9);
+  animation: 1s ease 0s 1 lightenBackground;
+}
+
+.splashbox {
+  height: 40px;
+  width: 40px;
+  position: relative;
+  top: -45px;
+  left: -64px;
+  z-index: 0;
+  border-radius: 10%;
+  background-color: rgb(82, 175, 20);
+  animation: 1s ease 0s 1 slideUpText;
+}
+
+.underline {
+  height: 2px;
+  width: 180px;
+  position: relative;
+  top: -40px;
+  left: 10px;
+  z-index: 0;
+  border-radius: 10%;
+  background-color:white;
+  animation: 1s ease 0s 1 slideInUnderline;
+}
+
+.logotext {
+  z-index: 1;
+  color: white;
 }
 
 .adminMenuItems {
@@ -43,39 +104,12 @@ label {
   font-weight: 300;
   letter-spacing: 0.025em;
 }
-button {
-  white-space: nowrap;
-  border: 0;
-  outline: 0;
-  display: inline-block;
-  height: 40px;
-  line-height: 40px;
-  padding: 0 14px;
-  box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
-  color: #fff;
-  border-radius: 4px;
-  font-size: 15px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-  background-color: #6772e5;
-  text-decoration: none;
-  -webkit-transition: all 150ms ease;
-  transition: all 150ms ease;
-  margin-top: 10px;
-}
+
 form {
   margin-bottom: 40px;
   padding-bottom: 40px;
-  border-bottom: 3px solid #e6ebf1;
 }
-button:hover {
-  color: #fff;
-  cursor: pointer;
-  background-color: #7795f8;
-  transform: translateY(-1px);
-  box-shadow: 0 7px 14px rgba(50, 50, 93, .10), 0 3px 6px rgba(0, 0, 0, .08);
-}
+
 .StripeElement {
   margin: 0px 10px 10px 0px;
   max-width: 500px;
@@ -96,3 +130,5 @@ button:hover {
 .scrollable {
   overflow-y: scroll;
 }
+
+
