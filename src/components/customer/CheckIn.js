@@ -95,22 +95,13 @@ class CheckIn extends Component {
 
       {!useLocation && (
         <div>
-        {/* <Typeahead
-        placeholder="Search all..."
-        options={allOpenMerchants.map(venue => venue.name)}
-        value={selectedMerchant.name}
-        maxVisible={5}
-        onOptionSelected={val =>
-          this.loadTab(null, val)
-        }
-        /> */}
-        <SelectMerchant openMerchants={allOpenMerchants} loadTab={this.loadTab}/>
-        <h4>--OR--</h4>
-        <FlatButton
-        label="Find Near Me"
-        onClick={this.narrowMerchantsUsingLocation}
-        primary={true}
-        />
+          <SelectMerchant openMerchants={allOpenMerchants} loadTab={this.loadTab}/>
+          <h4>--OR--</h4>
+          <FlatButton
+          label="Find Near Me"
+          onClick={this.narrowMerchantsUsingLocation}
+          primary={true}
+          />
         </div>
       )}
       {isLoadingUserLocation &&
