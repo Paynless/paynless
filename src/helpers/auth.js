@@ -6,29 +6,20 @@ export function googleSignIn() {
   firebaseAuth().signInWithRedirect(provider);
 }
 
-firebaseAuth()
-  .getRedirectResult()
-  .then(result => {
-    if (result.credential) {
-      const token = result.credential.accessToken;
-    }
-
-    const User = {
-      uid: result.user.uid,
-      email: result.user.email
-    };
-
-    firebaseAuth()
+firebaseAuth().onAuthStateChanged(user => {
+  if (user) {
+    return db
       .collection("users")
-      .doc()
-      .set(User, { merge: true })
-      .catch(error => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        const email = error.email;
-        const credential = error.credential;
+      .add({
+        email: user.email,
+        uid: user.uid
+      })
+      .then(docRef => docRef)
+      .catch(function(error) {
+        console.error("Error adding document: ", error);
       });
-  });
+  }
+});
 
 export function auth(email, pw) {
   return firebaseAuth()
