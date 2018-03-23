@@ -5,3 +5,4 @@ export {default as Tab} from './Tab';
 export {default as TabItems} from './TabItems';
 export {default as SplashScreen} from './splashScreen';
 export { default as CustomerInfo } from "./CustomerInfo";
+export { default as Menu } from "./Menu";
