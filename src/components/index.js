@@ -110,7 +110,8 @@ export default class App extends Component {
               }}
               style={{
                 height: '64px',
-                flexShrink: 0
+                flexShrink: 0,
+                background: 'linear-gradient(to bottom right, #0a2009, #0e2d0c)'
               }}
             />
             <div className="splashbox"></div>

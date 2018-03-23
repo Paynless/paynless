@@ -33,7 +33,8 @@
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background-color: #0a2009;
+  /* background-color: #0a2009; */
+  background: linear-gradient(to bottom right, #0a2009, #10350e);
   animation: 1s ease 0s 1 lightenBackground;
 }
 
