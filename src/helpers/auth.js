@@ -1,8 +1,29 @@
 import { db, firebaseAuth } from "../config";
 
-export const auth = async (email, pw, firstName, lastName, dob) => {
+const provider = new firebaseAuth.GoogleAuthProvider();
+
+export function googleSignIn() {
+  firebaseAuth().signInWithRedirect(provider);
+}
+
+firebaseAuth().onAuthStateChanged(user => {
+  if (user) {
+    return db
+      .collection("users")
+      .add({
+        email: user.email,
+        uid: user.uid
+      })
+      .then(docRef => docRef)
+      .catch(function(error) {
+        console.error("Error adding document: ", error);
+      });
+  }
+});
+
+export const auth = async (email, pw, firstName, lastName) => {
   const user = await firebaseAuth().createUserWithEmailAndPassword(email, pw);
-  saveUser(user, firstName, lastName, dob);
+  saveUser(user, firstName, lastName);
 };
 
 export function logout() {
@@ -17,14 +38,13 @@ export function resetPassword(email) {
   return firebaseAuth().sendPasswordResetEmail(email);
 }
 
-export const saveUser = async (user, firstName, lastName, dob) => {
+export const saveUser = async (user, firstName, lastName) => {
   try {
     await db.collection(`users`).add({
       email: user.email,
       uid: user.uid,
       firstName: firstName,
       lastName: lastName,
-      dob: dob
     });
   } catch (error) {
     console.error("Error adding document: ", error);
