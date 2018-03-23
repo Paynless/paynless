@@ -1,11 +1,13 @@
 {
   "name": "react-router-firebase-auth-material-ui",
+  "main": "functions/index.js",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://guilherme6191.github.io/react-router-firebase-auth-material-ui",
+  "homepage": "https://paynless-db.firebaseapp.com/",
   "dependencies": {
     "ajv": "^6.3.0",
     "currency-formatter": "^1.4.2",
+    "eslint-config-fullstack": "^3.0.0",
     "firebase": "4.6.0",
     "fireview": "0.0.8",
     "gh-pages": "^1.1.0",
