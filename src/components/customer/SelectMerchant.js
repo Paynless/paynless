@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { db } from '../../config';
 import { withAuth } from 'fireview';
-import Tab from './Tab';
+import Favorite from './Favorite'
 import CircularProgress from 'material-ui/CircularProgress';
+import {List, ListItem} from 'material-ui/List';
 import TextField from 'material-ui/TextField';
 
 class SelectMerchant extends Component {
@@ -27,10 +28,9 @@ class SelectMerchant extends Component {
   awaitUser(props){
     const {user} = props.withAuth;
     if(!user) return;
-    db.collection("users").where("uid", "==", 1)//user.uid
+    db.collection("users").where("uid", "==", user.uid)
     .get()
-    .then(user => console.log('empty user', user.docs))
-    //.then(user => this.setState({user: user.docs[0].data(), isLoaded: true}))
+    .then(user => this.setState({user: user.docs[0].data(), isLoaded: true}))
     .catch(err => console.error(err))
   }
 
@@ -43,8 +43,11 @@ class SelectMerchant extends Component {
       <CircularProgress size={80} thickness={10} />
       </div>)
     }
-    //let favoriteMerchants = this.props.openMerchants.filter(merchant => this.state.user.favorites[merchant.id])
-    //console.log('favorites: ', favoriteMerchants);
+    let favoriteMerchants = this.props.openMerchants.filter(merchant => this.state.user.favorites[merchant.id])
+    let foundMerchants = this.props.openMerchants.filter(merchant => merchant.name.match(RegExp(this.state.search, 'i')))
+    console.log('favorites: ', favoriteMerchants);
+    console.log('searched for: ', foundMerchants);
+    let displayMerchants = this.state.search.length ? foundMerchants : favoriteMerchants;
     return (
       <div>
         <TextField
@@ -53,6 +56,20 @@ class SelectMerchant extends Component {
           value={this.state.search}
           onChange={(event) => this.setState({search: event.target.value})}
         />
+        <List>
+          {displayMerchants.map(merchant => (
+          <div className="checkinItem">
+            <div className="checkinName">
+              <ListItem
+                key={merchant.id}
+                primaryText={merchant.name}
+              />
+            </div>
+            <Favorite isFavorite={this.state.user.favorites[merchant.id]} />
+          </div>
+          )
+          )}
+        </List>
       </div>
     );
   }

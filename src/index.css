@@ -131,4 +131,18 @@ form {
   overflow-y: scroll;
 }
 
+.checkinItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
 
+.checkinName {
+  flex-grow: 2
+}
+
+.favoriteIcon {
+  flex-shrink: 2;
+  min-width: 30px;
+}

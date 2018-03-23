@@ -92,10 +92,10 @@ class CheckIn extends Component {
     console.log('open merchants', allOpenMerchants);
     return (
       <Fragment>
-        <SelectMerchant openMerchants={allOpenMerchants}/>
+
       {!useLocation && (
         <div>
-        <Typeahead
+        {/* <Typeahead
         placeholder="Search all..."
         options={allOpenMerchants.map(venue => venue.name)}
         value={selectedMerchant.name}
@@ -103,7 +103,8 @@ class CheckIn extends Component {
         onOptionSelected={val =>
           this.loadTab(null, val)
         }
-        />
+        /> */}
+        <SelectMerchant openMerchants={allOpenMerchants}/>
         <h4>--OR--</h4>
         <FlatButton
         label="Find Near Me"
