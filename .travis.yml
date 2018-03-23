@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+   - node # uses most recent stable node version
+cache:
+  directories:
+    - node_modules
+install:
+  - npm i
+script:
+  - npm build
+  - npm test
