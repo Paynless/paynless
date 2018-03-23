@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route, Router, Redirect, Switch } from "react-router-dom";
-import { CheckIn, OpenTabs, BottomNavigationBar, SplashScreen, CustomerInfo } from "./customer";
+import { CheckIn, OpenTabs, BottomNavigationBar, SplashScreen, CustomerInfo, Logo } from "./customer";
 import { Login, Register } from "./auth";
 import { logout } from "../helpers";
 import { firebaseAuth } from "../config";
@@ -99,19 +99,22 @@ export default class App extends Component {
     ) : (
       <Router history={history}>
         <div className="fullheight">
-          <AppBar
-            title="Paynless"
-            iconElementRight={topbarButtons}
-            iconStyleRight={{
-              display: "flex",
-              alignItems: "center",
-              marginTop: "0",
-            }}
-            style={{
-              height: '64px',
-              flexShrink: 0
-            }}
-          />
+          <div>
+            <AppBar
+              title={<Logo />}
+              iconElementRight={topbarButtons}
+              iconStyleRight={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: "0",
+              }}
+              style={{
+                height: '64px',
+                flexShrink: 0
+              }}
+            />
+            <div className="splashbox"></div>
+          </div>
           <div className="container d-flex justify-content-center mt-3 scrollable">
             <div className="row">
               <Switch>
