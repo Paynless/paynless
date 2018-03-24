@@ -9,14 +9,14 @@ import {
   ListItem
 } from "material-ui";
 import {
-  blue300,
-  indigo900,
+  green900,
+  lightGreen600,
 } from "material-ui/styles/colors";
 
 export default class Menu extends React.Component {
 
   render() {
-    const { openMenu, handleClose } = this.props;
+    const { user, openMenu, handleClose } = this.props;
     return (
       <Fragment>
         <Drawer
@@ -27,8 +27,8 @@ export default class Menu extends React.Component {
           <List>
             <ListItem>
               <Avatar
-                color={blue300}
-                backgroundColor={indigo900}
+                color={green900}
+                backgroundColor={lightGreen600}
                 style={{ margin: 5 }}
               >
                 U
@@ -55,6 +55,9 @@ export default class Menu extends React.Component {
           <Link to="/settings">
             <MenuItem onClick={handleClose}>Settings</MenuItem>
           </Link>
+          {user && <Link to="/admin">
+            <MenuItem onClick={handleClose}>Admin Panel</MenuItem>
+          </Link> }
         </Drawer>
       </Fragment>
     );

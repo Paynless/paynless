@@ -3,6 +3,7 @@ import { FlatButton, DropDownMenu, MenuItem, CircularProgress } from "material-u
 import { withAuth } from "fireview";
 import { Typeahead } from "react-typeahead";
 import { getCurrentPosition, findNearbyMerchants, findOrCreateUserOpenTabs } from "../../helpers/";
+import SelectMerchant from './SelectMerchant';
 
 const halfMile = 1 / 69 / 2;
 
@@ -44,7 +45,7 @@ class CheckIn extends Component {
 
       const tab = await findOrCreateUserOpenTabs(user.uid, selectedMerchant);
 
-      this.props.history.push(`/open-tabs/${selectedMerchant.id}`);
+      this.props.history.push("/open-tabs");
     } catch (err) {
       console.log(err);
     }
@@ -88,29 +89,22 @@ class CheckIn extends Component {
     } = this.state;
     const { allOpenMerchants } = this.props;
     const isSelected = selectedMerchant.hasOwnProperty("name");
-    
     return (
       <Fragment>
       {!useLocation && (
-        <div>
-        <Typeahead
-        placeholder="Search all..."
-        options={allOpenMerchants.map(venue => venue.name)}
-        value={selectedMerchant.name}
-        maxVisible={5}
-        onOptionSelected={val =>
-          this.loadTab(null, val)
-        }
-        />
-        <h4>--OR--</h4>
-        <FlatButton
-        label="Find Near Me"
-        onClick={this.narrowMerchantsUsingLocation}
-        primary={true}
-        />
+        <div className="checkIn">
+          <SelectMerchant openMerchants={allOpenMerchants} loadTab={this.loadTab}/>
+          <div></div>
+          <div className="findNearMe">
+            <FlatButton
+            label="Find Near Me"
+            onClick={this.narrowMerchantsUsingLocation}
+            primary={true}
+            />
+          </div>
         </div>
       )}
-      {isLoadingUserLocation && 
+      {isLoadingUserLocation &&
         <CircularProgress size={60} thickness={7} />}
         {locationSearchConducted &&
           nearbyMerchants.length < 1 && <h3>No Restaurants Nearby</h3>}

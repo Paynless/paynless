@@ -4,7 +4,7 @@ import {
 } from "react-router-dom";
 import {
   CheckIn, OpenTabs, BottomNavigationBar,
-  SplashScreen, CustomerInfo, Menu
+  SplashScreen, CustomerInfo, Menu, Logo,
 } from "./customer";
 import { Login, Register } from "./auth";
 import { logout } from "../helpers";
@@ -107,28 +107,37 @@ export default class App extends Component {
       }
     };
 
-    const { allOpenMerchants } = this.state;
+    const { allOpenMerchants, authed } = this.state;
 
     return this.state.loading === true && allOpenMerchants.length === 0 ? (
       <SplashScreen />
     ) : (
       <Router history={history}>
         <div className="fullheight">
-          <AppBar
-            title="Paynless"
-            iconElementRight={topbarButtons}
-            iconStyleRight={{
-              display: "flex",
-              alignItems: "center",
-              marginTop: "0"
-            }}
-            style={{
-              height: "64px",
-              flexShrink: 0
-            }}
-            onLeftIconButtonTouchTap={this.toggleMenu}
-          />
-          <Menu toggleMenu={this.toggleMenu} openMenu={this.state.openMenu} handleClose={this.handleClose}/>
+          <div>
+            <AppBar
+              title={<Logo />}
+              iconElementRight={topbarButtons}
+              iconStyleRight={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: "0",
+              }}
+              style={{
+                height: '64px',
+                flexShrink: 0,
+                background: 'linear-gradient(to bottom right, #0a2009, #0d2d0b)'
+              }}
+              onLeftIconButtonTouchTap={this.toggleMenu}
+            />
+            <Menu 
+              user={authed}
+              toggleMenu={this.toggleMenu} 
+              openMenu={this.state.openMenu}
+              handleClose={this.handleClose}
+            />
+            <div className="splashbox"></div>
+          </div>
           <div className="container d-flex justify-content-center mt-3 scrollable">
             <div className="row">
               <Switch>
@@ -179,7 +188,7 @@ export default class App extends Component {
                   path="/admin/tabs/:tabId"
                   component={AdminSingleTab}
                 />
-                <Route render={() => <h3>No Match</h3>} />
+                <Route render={_ => <h3>No Match</h3>} />
               </Switch>
             </div>
           </div>
