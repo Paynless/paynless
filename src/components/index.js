@@ -1,16 +1,25 @@
 import React, { Component } from "react";
-import { Route, Router, Redirect, Switch } from "react-router-dom";
-import { CheckIn, OpenTabs, BottomNavigationBar, SplashScreen, CustomerInfo, Logo } from "./customer";
+import { 
+  Route, Router, Redirect, Switch 
+} from "react-router-dom";
+import {
+  CheckIn, OpenTabs, BottomNavigationBar,
+  SplashScreen, CustomerInfo, Menu, Logo,
+} from "./customer";
 import { Login, Register } from "./auth";
 import { logout } from "../helpers";
 import { firebaseAuth } from "../config";
-import AppBar from "material-ui/AppBar";
-import FlatButton from "material-ui/FlatButton";
-import history from "./history";
+import { AppBar, FlatButton } from "material-ui";
 import { fetchAllMerchants } from "../helpers";
 import { AdminHome, AdminSingleTab } from "./admin";
+import history from "./history";
 
-function PrivateRoute({ component: Component, authed, allOpenMerchants, ...rest }) {
+function PrivateRoute({
+  component: Component,
+  authed,
+  allOpenMerchants,
+  ...rest
+}) {
   return (
     <Route
       {...rest}
@@ -42,30 +51,36 @@ export default class App extends Component {
   state = {
     authed: false,
     loading: true,
-    allOpenMerchants: []
+    allOpenMerchants: [],
+    openMenu: false
   };
   async componentDidMount() {
     this.removeListener = firebaseAuth().onAuthStateChanged(user => {
       if (user) {
-        this.setState(_=> ({
+        this.setState(_ => ({
           authed: true,
           loading: false
         }));
       } else {
-        this.setState(_=> ({
+        this.setState(_ => ({
           authed: false,
           loading: false
         }));
       }
     });
     const allOpenMerchants = await fetchAllMerchants();
-    this.setState(_=>({
+    this.setState(_ => ({
       allOpenMerchants
     }));
   }
   componentWillUnmount() {
     this.removeListener();
   }
+
+  toggleMenu = _ => this.setState(_ => ({ openMenu: !this.state.openMenu }));
+
+  handleClose = _ => this.setState(_ => ({ openMenu: false }));
+
   render() {
     const authButtons = this.state.authed ? (
       <FlatButton
@@ -92,7 +107,7 @@ export default class App extends Component {
       }
     };
 
-    const { allOpenMerchants } = this.state;
+    const { allOpenMerchants, authed } = this.state;
 
     return this.state.loading === true && allOpenMerchants.length === 0 ? (
       <SplashScreen />
@@ -113,6 +128,13 @@ export default class App extends Component {
                 flexShrink: 0,
                 background: 'linear-gradient(to bottom right, #0a2009, #0d2d0b)'
               }}
+              onLeftIconButtonTouchTap={this.toggleMenu}
+            />
+            <Menu 
+              user={authed}
+              toggleMenu={this.toggleMenu} 
+              openMenu={this.state.openMenu}
+              handleClose={this.handleClose}
             />
             <div className="splashbox"></div>
           </div>
@@ -144,25 +166,29 @@ export default class App extends Component {
                 />
                 <PrivateRoute
                   authed={this.state.authed}
-                  exact path="/open-tabs"
+                  exact
+                  path="/open-tabs"
                   component={OpenTabs}
                 />
                 <PrivateRoute
                   authed={this.state.authed}
-                  exact path="/open-tabs/:id"
+                  exact
+                  path="/open-tabs/:id"
                   component={OpenTabs}
                 />
                 <PrivateRoute
                   authed={this.state.authed}
-                  exact path="/admin"
+                  exact
+                  path="/admin"
                   component={AdminHome}
                 />
                 <PrivateRoute
                   authed={this.state.authed}
-                  exact path="/admin/tabs/:tabId"
+                  exact
+                  path="/admin/tabs/:tabId"
                   component={AdminSingleTab}
                 />
-                <Route render={() => <h3>No Match</h3>} />
+                <Route render={_ => <h3>No Match</h3>} />
               </Switch>
             </div>
           </div>
@@ -172,3 +198,4 @@ export default class App extends Component {
     );
   }
 }
+
