@@ -2,7 +2,7 @@
 import React, {Component} from 'react';
 import { withRouter } from 'react-router-dom';
 import {BottomNavigation, BottomNavigationItem} from 'material-ui/BottomNavigation';
-import {cyan500, grey500} from 'material-ui/styles/colors';
+import {grey500} from 'material-ui/styles/colors';
 import Paper from 'material-ui/Paper';
 import FontAwesome from 'react-fontawesome';
 
@@ -39,9 +39,9 @@ class BottomNavigationBar extends Component {
   };
 
   render() {
-    const navIcon1 = <FontAwesome name={this.props.data[0].icon} style={{ color: this.state.selectedIndex === 0 ? cyan500 : grey500
+    const navIcon1 = <FontAwesome name={this.props.data[0].icon} style={{ color: this.state.selectedIndex === 0 ? '#0a2009' : grey500
     }} />
-    const navIcon2 = <FontAwesome name={this.props.data[1].icon} style={{ color: this.state.selectedIndex === 1 ? cyan500 : grey500
+    const navIcon2 = <FontAwesome name={this.props.data[1].icon} style={{ color: this.state.selectedIndex === 1 ? '#0a2009' : grey500
     }} />
     if (!this.state.shouldDisplay) return <div></div>;
     return (

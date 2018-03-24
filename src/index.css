@@ -33,7 +33,8 @@
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background-color: rgb(10, 32, 9);
+  /* background-color: #0a2009; */
+  background: linear-gradient(to bottom right, #0a2009, #10350e);
   animation: 1s ease 0s 1 lightenBackground;
 }
 
@@ -41,11 +42,11 @@
   height: 40px;
   width: 40px;
   position: relative;
-  top: -45px;
+  top: -48px;
   left: -64px;
   z-index: 0;
   border-radius: 10%;
-  background-color: rgb(82, 175, 20);
+  background-color: #7CB342;
   animation: 1s ease 0s 1 slideUpText;
 }
 
@@ -66,6 +67,25 @@
   color: white;
 }
 
+.logotextstatic {
+  position: relative;
+  z-index: 10;
+  color: white;
+  top: 18px;
+  left: 7px;
+}
+
+.logobox {
+  height: 30px;
+  width: 30px;
+  position: relative;
+  top: -20px;
+  left: 0px;
+  z-index: 0;
+  border-radius: 10%;
+  /* background-color: rgb(82, 175, 20); */
+  background-color: #7CB342;
+}
 .adminMenuItems {
   width: 95vw;
   display: flex;
@@ -127,8 +147,47 @@ form {
 .StripeElement.PaymentRequestButton {
   padding: 0;
 }
+
+/* More CSS Not for Stripe */
 .scrollable {
   overflow-y: scroll;
+  height: 100%;
+  background-color: #f6f9fc;
 }
 
+.checkIn {
+  width: 95vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
 
+.selectMerchant {
+  flex: 4;
+}
+
+.findNearMe {
+  flex: 1;
+}
+
+.checkinItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 2px 2px rgba(50, 50, 93, 0.109804);
+  margin-bottom: 5px;
+  width: 80vw;
+  border-radius: 3%;
+}
+
+.checkinName {
+  flex-grow: 2
+}
+
+.favoriteIcon {
+  flex-shrink: 2;
+  min-width: 40px;
+  text-align: center;
+}
