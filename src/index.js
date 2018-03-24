@@ -1,10 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./components";
+import { App } from "./components";
 import registerServiceWorker from "./registerServiceWorker";
 import "./index.css";
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import { MuiThemeProvider, getMuiTheme } from "material-ui/styles"
 import { AuthProvider } from "fireview";
 import { firebaseAuth } from "./config";
 import { StripeProvider } from "react-stripe-elements";
