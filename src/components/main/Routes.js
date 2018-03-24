@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route, Router, Redirect, Switch } from "react-router-dom";
+import { Route, Redirect, Switch } from "react-router-dom";
 import {
   CheckIn,
   OpenTabs,
@@ -8,17 +8,16 @@ import {
   AdminSingleTab,
   Login,
   Register,
-  history
 } from "../index";
 import { withAuth } from "fireview";
 
-function PrivateRoute({ component: Component, authed, ...rest }) {
+function PrivateRoute({ component: Component, authed, allOpenMerchants, ...rest }) {
   return (
     <Route
       {...rest}
       render={props =>
         authed === true ? (
-          <Component {...props} />
+          <Component allOpenMerchants={allOpenMerchants} {...props} />
         ) : (
           <Redirect
             to={{ pathname: "/login", state: { from: props.location } }}
@@ -44,7 +43,6 @@ class Routes extends Component {
   render() {
     const { user } = this.props.withAuth || null;
     const { allOpenMerchants } = this.props;
-    console.log(user);
     return (
       <Switch>
         <PrivateRoute

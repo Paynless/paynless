@@ -1,22 +1,17 @@
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import {
-  Drawer,
-  MenuItem,
-  Avatar,
-  Divider,
-  List,
-  ListItem
+  Drawer, MenuItem, Avatar, Divider, List, ListItem
 } from "material-ui";
-import {
-  green900,
-  lightGreen600,
-} from "material-ui/styles/colors";
+import { green900, lightGreen600 } from "material-ui/styles/colors";
+import { withAuth } from "fireview";
 
-export default class Menu extends React.Component {
+class Menu extends React.Component {
 
   render() {
-    const { user, openMenu, handleClose } = this.props;
+    const { openMenu, handleClose } = this.props;
+    const user = this.props.withAuth
+    console.log(user)
     return (
       <Fragment>
         <Drawer
@@ -55,7 +50,7 @@ export default class Menu extends React.Component {
           <Link to="/settings">
             <MenuItem onClick={handleClose}>Settings</MenuItem>
           </Link>
-          {user && <Link to="/admin">
+          {!!user && <Link to="/admin">
             <MenuItem onClick={handleClose}>Admin Panel</MenuItem>
           </Link> }
         </Drawer>
@@ -63,3 +58,5 @@ export default class Menu extends React.Component {
     );
   }
 }
+
+export default withAuth(Menu)

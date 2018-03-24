@@ -1,10 +1,12 @@
 import React, { Component } from "react";
-import { Route, Router, Redirect, Switch } from "react-router-dom";
-import { SplashScreen, Menu, Logo, Login, Register, AdminHome, AdminSingleTab, BottomNavigationBar,history} from "../index";
-import {logout, fetchAllMerchants} from '../../helpers'
+import { Router } from "react-router-dom";
+import {
+  Routes, SplashScreen, Menu, Logo,
+  BottomNavigationBar, history,
+} from "../index";
+import { logout, fetchAllMerchants } from "../../helpers";
 import { AppBar, FlatButton } from "material-ui";
-import { Routes } from "./index";
-import { withAuth } from 'fireview';
+import { withAuth } from "fireview";
 
 class App extends Component {
   state = {
@@ -14,7 +16,7 @@ class App extends Component {
     openMenu: false
   };
   async componentDidMount() {
-   const allOpenMerchants = fetchAllMerchants();
+    const allOpenMerchants = await fetchAllMerchants();
     this.setState(_ => ({
       allOpenMerchants
     }));
@@ -26,7 +28,8 @@ class App extends Component {
 
   render() {
     const { user } = this.props.withAuth || null;
-    console.log(user)
+
+    const { allOpenMerchants } = this.state;
 
     const authButtons = !!user ? (
       <FlatButton
@@ -53,10 +56,7 @@ class App extends Component {
       }
     };
 
-    const { allOpenMerchants } = this.state;
-
-
-    return this.state.loading === true && allOpenMerchants.length === 0 ? (
+    return allOpenMerchants.length === 0 ? (
       <SplashScreen />
     ) : (
       <Router history={history}>
@@ -78,15 +78,18 @@ class App extends Component {
               onLeftIconButtonTouchTap={this.toggleMenu}
             />
             <Menu
-              user={!!user}
               toggleMenu={this.toggleMenu}
               openMenu={this.state.openMenu}
               handleClose={this.handleClose}
             />
             <div className="splashbox" />
           </div>
+          <div className="container d-flex justify-content-center mt-3 scrollable">
+            <div className="row">
+              <Routes allOpenMerchants={allOpenMerchants} />
+            </div>
+          </div>
           <BottomNavigationBar data={tabData} />
-          <Routes allOpenMerchants={allOpenMerchants} />
         </div>
       </Router>
     );
