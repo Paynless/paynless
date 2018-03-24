@@ -1,36 +1,62 @@
-import React from 'react';
-import Drawer from 'material-ui/Drawer';
-import MenuItem from 'material-ui/MenuItem';
-import RaisedButton from 'material-ui/RaisedButton';
+import React, { Fragment } from "react";
+import { Link } from "react-router-dom";
+import {
+  Drawer,
+  MenuItem,
+  Avatar,
+  Divider,
+  List,
+  ListItem
+} from "material-ui";
+import {
+  blue300,
+  indigo900,
+} from "material-ui/styles/colors";
 
 export default class Menu extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {open: false};
-  }
-
-  handleToggle = () => this.setState({open: !this.state.open});
-
-  handleClose = () => this.setState({open: false});
-
   render() {
+    const { openMenu, handleClose } = this.props;
     return (
-      <div>
-        <RaisedButton
-          label="Open Drawer"
-          onClick={this.handleToggle}
-        />
+      <Fragment>
         <Drawer
           docked={false}
-          width={200}
-          open={this.state.open}
-          onRequestChange={(open) => this.setState({open})}
+          open={openMenu}
+          onRequestChange={handleClose}
         >
-          <MenuItem onClick={this.handleClose}>Menu Item</MenuItem>
-          <MenuItem onClick={this.handleClose}>Menu Item 2</MenuItem>
+          <List>
+            <ListItem>
+              <Avatar
+                color={blue300}
+                backgroundColor={indigo900}
+                style={{ margin: 5 }}
+              >
+                U
+              </Avatar>
+              User Name
+            </ListItem>
+          </List>
+          <Link to="/user-profile">
+            <MenuItem onClick={handleClose}>Profile</MenuItem>
+          </Link>
+          <Link to="/payment-details">
+            <MenuItem onClick={handleClose}>Payment</MenuItem>
+          </Link>
+          <Link to="/favorites">
+            <MenuItem onClick={handleClose}>Favorites</MenuItem>
+          </Link>
+          <Link to="/open-tabs">
+            <MenuItem onClick={handleClose}>Open Tabs</MenuItem>
+          </Link>
+          <Link to="/history">
+            <MenuItem onClick={handleClose}>Tab History</MenuItem>
+          </Link>
+          <Divider />
+          <Link to="/settings">
+            <MenuItem onClick={handleClose}>Settings</MenuItem>
+          </Link>
         </Drawer>
-      </div>
+      </Fragment>
     );
   }
 }

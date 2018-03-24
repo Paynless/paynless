@@ -1,36 +1,18 @@
 import React, { Component } from "react";
-import { Route, Router, Redirect, Switch } from "react-router-dom";
+import { 
+  Route, Router, Redirect, Switch 
+} from "react-router-dom";
 import {
-  CheckIn,
-  OpenTabs,
-  BottomNavigationBar,
-  SplashScreen,
-  CustomerInfo,
-  Menu
+  CheckIn, OpenTabs, BottomNavigationBar,
+  SplashScreen, CustomerInfo, Menu
 } from "./customer";
 import { Login, Register } from "./auth";
 import { logout } from "../helpers";
 import { firebaseAuth } from "../config";
-import AppBar from "material-ui/AppBar";
-import FlatButton from "material-ui/FlatButton";
-import Drawer from "material-ui/Drawer";
-import MenuItem from "material-ui/MenuItem";
-import Avatar from "material-ui/Avatar";
-import {
-  blue300,
-  indigo900,
-  orange200,
-  deepOrange300,
-  pink400,
-  purple500
-} from "material-ui/styles/colors";
-import FontIcon from "material-ui/FontIcon";
-import Divider from "material-ui/Divider";
-import List from "material-ui/List/List";
-import ListItem from "material-ui/List/ListItem";
-import history from "./history";
+import { AppBar, FlatButton } from "material-ui";
 import { fetchAllMerchants } from "../helpers";
 import { AdminHome, AdminSingleTab } from "./admin";
+import history from "./history";
 
 function PrivateRoute({
   component: Component,
@@ -97,8 +79,9 @@ export default class App extends Component {
 
   toggleMenu = _ => this.setState(_ => ({ openMenu: !this.state.openMenu }));
 
+  handleClose = _ => this.setState(_ => ({ openMenu: false }));
+
   render() {
-    console.log(this)
     const authButtons = this.state.authed ? (
       <FlatButton
         label="Logout"
@@ -145,32 +128,7 @@ export default class App extends Component {
             }}
             onLeftIconButtonTouchTap={this.toggleMenu}
           />
-          <Drawer
-            docked={false}
-            open={this.state.openMenu}
-            onRequestChange={this.toggleMenu}
-          >
-            <List>
-              <ListItem>
-                <Avatar
-                  color={blue300}
-                  backgroundColor={indigo900}
-                  style={style}
-                >
-                  U
-                </Avatar>
-                User Name
-              </ListItem>
-            </List>
-
-            <MenuItem>Profile</MenuItem>
-            <MenuItem onClick={_=> this.props.history.push('/payment-details')}>Payment</MenuItem>
-            <MenuItem>Favorites</MenuItem>
-            <MenuItem onClick={_=> this.props.history.push('/open-tabs')}>Open Tabs</MenuItem>
-            <MenuItem>Tab History</MenuItem>
-            <Divider />
-            <MenuItem>Settings</MenuItem>
-          </Drawer>
+          <Menu toggleMenu={this.toggleMenu} openMenu={this.state.openMenu} handleClose={this.handleClose}/>
           <div className="container d-flex justify-content-center mt-3 scrollable">
             <div className="row">
               <Switch>
@@ -232,4 +190,3 @@ export default class App extends Component {
   }
 }
 
-const style = { margin: 5 };
