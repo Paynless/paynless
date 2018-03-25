@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { FlatButton, DropDownMenu, MenuItem, CircularProgress } from "material-ui";
 import { withAuth } from "fireview";
-import { Typeahead } from "react-typeahead";
 import { getCurrentPosition, findNearbyMerchants, findOrCreateUserOpenTabs } from "../../helpers/";
 import SelectMerchant from './SelectMerchant';
 
@@ -43,7 +42,7 @@ class CheckIn extends Component {
         selectedMerchant = this.state.selectedMerchant;
       }
 
-      const tab = await findOrCreateUserOpenTabs(user.uid, selectedMerchant);
+      await findOrCreateUserOpenTabs(user.uid, selectedMerchant);
 
       this.props.history.push("/open-tabs");
     } catch (err) {

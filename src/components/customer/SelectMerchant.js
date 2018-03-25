@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import { db } from "../../config";
 import { withAuth } from "fireview";
-import Favorite from "./Favorite";
-import CircularProgress from "material-ui/CircularProgress";
-import { List, ListItem } from "material-ui/List";
-import TextField from "material-ui/TextField";
+import { Favorite } from "./index";
+import { CircularProgress, List, ListItem, TextField } from "material-ui";
 
 class SelectMerchant extends Component {
   constructor(props) {
