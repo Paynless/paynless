@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { FlatButton, DropDownMenu, MenuItem, CircularProgress } from "material-ui";
 import { withAuth } from "fireview";
-import { getCurrentPosition, findNearbyMerchants, findOrCreateUserOpenTab } from "../../helpers/";
+import { getCurrentPosition, findNearbyMerchants, findOrCreateUserOpenTab, fetchUser } from "../../helpers/";
 import SelectMerchant from './SelectMerchant';
 
 const halfMile = 1 / 69 / 2;
@@ -54,6 +54,8 @@ class CheckIn extends Component {
 
   narrowMerchantsUsingLocation = async _ => {
     try {
+      const user = await fetchUser(this.props.withAuth.user.uid)
+      console.log('user', user)
       let allOpenMerchants = this.props.allOpenMerchants.slice();
 
       this.setState(_ => ({

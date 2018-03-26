@@ -59,6 +59,8 @@ class SelectMerchant extends Component {
   };
 
   render() {
+    const { openMerchants } = this.props;
+    const { user } = this.state; 
     if (!this.state.isLoaded) {
       return (
         <div>
@@ -66,10 +68,10 @@ class SelectMerchant extends Component {
         </div>
       );
     }
-    let favoriteMerchants = this.props.openMerchants.filter(
-      merchant => this.state.user.favorites[merchant.id]
-    );
-    let foundMerchants = this.props.openMerchants.filter(merchant =>
+    let favoriteMerchants = openMerchants.filter(merchant => {
+      return user.favorites[merchant]
+    });
+    let foundMerchants = openMerchants.filter(merchant =>
       merchant.name.match(RegExp(this.state.search, "i"))
     );
     let displayMerchants = this.state.search.length

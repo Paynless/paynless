@@ -48,18 +48,15 @@ export const fetchAllMerchants = async _ => {
   }
 };
 
-export const fetchUserWithListener = async (uid, setState) => {
+export const fetchUser = async uid => {
   try {
-    const userListener = await db
+    const userQuery = await db
       .collection("users")
       .where("uid", "==", uid)
-      .onSnapshot(userDocs => { //the contained function is a side effect
-        const user = Object.assign({}, userDocs.docs[0].data(), {
-          docId: userDocs.docs[0].id
-        });
-        setState(_ => ({user}))
-      });
-    return userListener
+
+    const user = userQuery.get()
+    if (user.docs.length) return user.docs[0];
+
   } catch (err) {
     console.log(err);
   }

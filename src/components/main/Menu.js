@@ -11,7 +11,6 @@ class Menu extends React.Component {
   render() {
     const { openMenu, handleClose } = this.props;
     const user = this.props.withAuth
-    console.log(user)
     return (
       <Fragment>
         <Drawer
