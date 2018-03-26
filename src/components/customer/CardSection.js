@@ -4,6 +4,7 @@ import { CardNumberElement, CardExpiryElement } from "react-stripe-elements";
 import { CardCVCElement, PostalCodeElement } from "react-stripe-elements";
 import { FlatButton } from "material-ui";
 import { withAuth } from "fireview";
+import { fetchUser } from "../../helpers";
 
 const handleBlur = () => {
   // console.log("[blur]");
@@ -54,39 +55,25 @@ class CardSection extends Component {
     event.preventDefault();
     const { user } = this.props.withAuth;
     const { stripe } = this.props;
-
-    let doc_id;
-    let capturedTokenId;
-
-    const userListener = await db
-      .collection("users")
-      .where("uid", "==", user.uid)
-      .onSnapshot(doc =>
-        doc.docs[0].data(async doc => {
-          doc_id = doc.id;
-          const token = await stripe.createToken()
-          console.log("in", token);
-          capturedTokenId = token.token.id.slice();
-        })
-      );
-
-    console.log("out", capturedTokenId);
-    console.log("doc_id", doc_id);
-    const addToken = await db
-      .collection("users")
-      .doc(`${doc_id}/stripe_source/tokens`)
-      .set({ token_id: capturedTokenId }, { merge: true });
-
-    await db
-      .collection("users")
-      .where("uid", "==", user.uid)
-      .get()
-      .then(item =>
-        item.forEach(doc => stripe.customers.createSource(doc.data().sid, { source: capturedTokenId }))
-      );
+    try {
+      const userListener = await db
+        .collection("users")
+        .where("uid", "==", user.uid)
+        .onSnapshot(async doc => {
+          let doc_id = doc.docs[0].id;
+          const token = await stripe.createToken();
+          let source = token.token.id;
+          const updateUserWithToken = await db
+            .collection("users")
+            .doc(`${doc_id}/stripe_source/tokens`)
+            .set({ token_id: source }, { merge: true });
+        });
+    } catch (err) {
+      console.log(err);
+    }
   };
-
   render() {
+    console.log(this.props.stripe);
     return (
       <form onSubmit={this.handleSubmit}>
         <div>

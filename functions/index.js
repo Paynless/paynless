@@ -1,4 +1,5 @@
 "use strict";
+
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const logging = require("@google-cloud/logging")();
@@ -70,7 +71,7 @@ exports.createStripeCustomer = functions.firestore
   .document("users/{userId}")
   .onCreate(event => {
     const data = event.data.data();
-    const doc_id = event.data.id;
+    const docId = event.data.id;
     return stripe.customers
       .create({
         email: data.email
@@ -79,7 +80,7 @@ exports.createStripeCustomer = functions.firestore
         return admin
           .firestore()
           .collection("users")
-          .doc(doc_id)
+          .doc(docId)
           .set({ sid: customer.id }, { merge: true });
       })
       .catch(err => console.log(err));
@@ -88,22 +89,19 @@ exports.createStripeCustomer = functions.firestore
 // Add a payment source (card) for a user by writing a stripe payment source token
 // to firestore database
 exports.addPaymentSource = functions.firestore
-  .document("/users/{userId}/stripe_source/{tokens}")
+  .document("/users/{docId}/stripe_source/{tokens}")
   .onWrite(event => {
-    const userId = event.params.userId;
+    const docId = event.params.docId;
     const source = event.data.data().token_id;
     if (source === null) return null;
 
     return admin
       .firestore()
       .collection("users")
-      .where("uid", "==", userId)
-      .get()
+      .where("id", "==", docId) // .doc(docId) should work but does not here
+      .get() // work-around
       .then(snap => {
-        snap.forEach(doc => {
-          console.log("doc.data()", doc.data());
-          return stripe.customers.createSource(doc.data().sid, { source });
-        });
+        snap.forEach(doc => stripe.customers.createSource(doc.data().sid, { source }));
       })
       .catch(err => console.error(err));
   });
