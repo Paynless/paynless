@@ -11,7 +11,6 @@ class Menu extends React.Component {
   render() {
     const { openMenu, handleClose } = this.props;
     const user = this.props.withAuth
-    console.log(user)
     return (
       <Fragment>
         <Drawer
@@ -49,6 +48,9 @@ class Menu extends React.Component {
           <Divider />
           <Link to="/settings">
             <MenuItem onClick={handleClose}>Settings</MenuItem>
+          </Link>
+          <Link to="/addVenue">
+            <MenuItem onClick={handleClose}>Add Business</MenuItem>
           </Link>
           {!!user && <Link to="/admin">
             <MenuItem onClick={handleClose}>Admin Panel</MenuItem>
