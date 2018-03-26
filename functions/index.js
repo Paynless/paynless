@@ -1,5 +1,4 @@
 "use strict";
-
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const logging = require("@google-cloud/logging")();
@@ -7,7 +6,6 @@ const logging = require("@google-cloud/logging")();
 admin.initializeApp(functions.config().firebase);
 
 const stripe = require("stripe")(functions.config().stripe.token);
-
 const currency = functions.config().stripe.currency || "USD";
 
 // // [START chargecustomer]
@@ -90,36 +88,23 @@ exports.createStripeCustomer = functions.firestore
 // Add a payment source (card) for a user by writing a stripe payment source token
 // to firestore database
 exports.addPaymentSource = functions.firestore
-  .document("/users/{userId}/sources/{pushId}")
+  .document("/users/{userId}/stripe_source/{tokens}")
   .onWrite(event => {
-    console.log("event.data in aPS", event.data);
-    const source = event.data.val();
+    const userId = event.params.userId;
+    const source = event.data.data().token_id;
     if (source === null) return null;
+
     return admin
-      .firestore
-      .collection(`/users/${event.params.userId}/customer_id`)
-      .once("value")
-      .then(snapshot => {
-        console.log("snapshot", snapshot);
-        return snapshot.val();
-      })
-      .then(customer => {
-        console.log("customer", customer);
-        return stripe.customers.createSource(customer, { source });
-      })
-      .then(
-        response => {
-          return event.data.adminRef.parent.set(response);
-        },
-        error => {
-          return event.data.adminRef.parent
-            .child("error")
-            .set(userFacingMessage(error));
-        }
-      )
-      .then(() => {
-        return reportError(error, { user: event.params.userId });
-      });
+      .firestore()
+      .collection("users")
+      .where("uid", "==", userId)
+      .get()
+      .then(snap =>
+        snap.forEach(doc => {
+          console.log("doc.data()", doc.data());
+          return stripe.customers.createSource(doc.data().sid, { source });
+        })
+      );
   });
 
 // // When a user deletes their account, clean up after them
@@ -142,9 +127,6 @@ exports.addPaymentSource = functions.firestore
 //     });
 // });
 
-// To keep on top of errors, we should raise a verbose error report with Stackdriver rather
-// than simply relying on console.error. This will calculate users affected + send you email
-// alerts, if you've opted into receiving them.
 // [START reporterror]
 function reportError(err, context = {}) {
   // This is the name of the StackDriver log stream that will receive the log
