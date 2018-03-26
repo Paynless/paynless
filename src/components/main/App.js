@@ -1,25 +1,56 @@
 import React, { Component } from "react";
 import { Router } from "react-router-dom";
 import {
-  Routes, SplashScreen, Menu, Logo,
-  BottomNavigationBar, history,
+  Routes,
+  SplashScreen,
+  Menu,
+  Logo,
+  BottomNavigationBar,
+  history
 } from "../index";
-import { logout, fetchAllMerchants } from "../../helpers";
+import { logout, fetchAllMerchants, fetchUser } from "../../helpers";
 import { AppBar, FlatButton } from "material-ui";
 import { withAuth } from "fireview";
+import { db } from "../../config";
 
 class App extends Component {
   state = {
-    authed: false,
-    loading: true,
     allOpenMerchants: [],
-    openMenu: false
+    openMenu: false,
+    userObj: {}
   };
   async componentDidMount() {
-    const allOpenMerchants = await fetchAllMerchants();
-    this.setState(_ => ({
-      allOpenMerchants
-    }));
+    try {
+      const allOpenMerchants = await fetchAllMerchants();
+      this.setState(_ => ({
+        allOpenMerchants
+      }));
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async componentWillReceiveProps(nextProps) {
+    try {
+      if (!!nextProps.withAuth.user) {
+        const { user } = nextProps.withAuth;
+        if (!user.isAnonymous) {
+          this.removeUserListener = await db
+            .collection("users")
+            .where("uid", "==", user.uid)
+            .onSnapshot(snapshot => {
+              const userObj = snapshot.docs[0].data();
+              this.setState(_ => ({ userObj }));
+            });
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  componentWillUnmount() {
+    this.removeUserListener();
   }
 
   toggleMenu = _ => this.setState(_ => ({ openMenu: !this.state.openMenu }));
@@ -27,9 +58,10 @@ class App extends Component {
   handleClose = _ => this.setState(_ => ({ openMenu: false }));
 
   render() {
-    const { user } = this.props.withAuth || null;
+    const { user } = this.props.withAuth;
 
-    const { allOpenMerchants } = this.state;
+    const { allOpenMerchants, userObj } = this.state;
+    const loaded = userObj.hasOwnProperty('email') && allOpenMerchants.length > 0;
 
     const authButtons = !!user ? (
       <FlatButton
@@ -56,7 +88,7 @@ class App extends Component {
       }
     };
 
-    return allOpenMerchants.length === 0 ? (
+    return !loaded ? (
       <SplashScreen />
     ) : (
       <Router history={history}>
@@ -78,6 +110,7 @@ class App extends Component {
               onLeftIconButtonTouchTap={this.toggleMenu}
             />
             <Menu
+              userObj={userObj}
               toggleMenu={this.toggleMenu}
               openMenu={this.state.openMenu}
               handleClose={this.handleClose}
@@ -86,7 +119,7 @@ class App extends Component {
           </div>
           <div className="container d-flex justify-content-center mt-3 scrollable">
             <div className="row">
-              <Routes allOpenMerchants={allOpenMerchants} />
+              <Routes allOpenMerchants={allOpenMerchants} userObj={userObj} />
             </div>
           </div>
           <BottomNavigationBar data={tabData} />

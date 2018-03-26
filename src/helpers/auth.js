@@ -36,7 +36,7 @@ export const saveUser = async (user, firstName, lastName) => {
       uid: user.uid,
       firstName: firstName,
       lastName: lastName,
-      favorites: ""
+      favorites: {}
     };
     const userRef = await db.collection("users").doc();
     data.id = userRef.id;
