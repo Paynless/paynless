@@ -1,5 +1,9 @@
 import React, { Component } from "react";
-import { findOrCreateMerchant, setErrorMsg, getCoordsFromAdd } from "../../helpers";
+import {
+  findOrCreateMerchant,
+  setErrorMsg,
+  getCoordsFromAdd
+} from "../../helpers";
 import RaisedButton from "material-ui/RaisedButton";
 import TextField from "material-ui/TextField";
 import { firestore } from "../../config";
@@ -11,7 +15,7 @@ export default class RegisterVenue extends Component {
       registerError: null,
       name: "",
       vicinity: "",
-      hours: {},
+      hours: {}
     };
   }
 
@@ -23,32 +27,32 @@ export default class RegisterVenue extends Component {
         name,
         vicinity,
         location: new firestore.GeoPoint(40.7050604, -74.00865979999999),
-        hours,
-      }
+        hours
+      };
       await findOrCreateMerchant(null, data);
-    } catch(err) {
-      this.setState(setErrorMsg(err))
+    } catch (err) {
+      this.setState(setErrorMsg(err));
     }
   };
 
-  handleUpdateInput = (searchText) => {
+  handleUpdateInput = searchText => {
     this.setState({
-      searchText: searchText,
+      searchText: searchText
     });
   };
 
   handleNewRequest = () => {
     this.setState({
-      searchText: '',
+      searchText: ""
     });
   };
-  onChange = vicinity => this.setState(_ => ({ vicinity, registerError: "", }))
+  onChange = vicinity => this.setState(_ => ({ vicinity, registerError: "" }));
 
   render() {
     const inputProps = {
       value: this.state.vicinity,
-      onChange: this.onChange,
-    }
+      onChange: this.onChange
+    };
     return (
       <form onSubmit={this.handleSubmit} style={style.container}>
         <h3>Register Your Business With Paynless</h3>
@@ -56,13 +60,17 @@ export default class RegisterVenue extends Component {
         <TextField
           hintText="Ex. Milan's Pizza Palace"
           floatingLabelText="Business Name"
-          onChange={(event, newValue) => this.setState(_ => ({ name: newValue, registerError: "", }))}
+          onChange={(event, newValue) =>
+            this.setState(_ => ({ name: newValue, registerError: "" }))
+          }
         />
         <br />
         <TextField
           hintText="Ex. 5 Hanover Square"
           floatingLabelText="Street Address"
-          onChange={(event, newValue) => this.setState(_ => ({ vicinity: newValue, registerError: "", }))}
+          onChange={(event, newValue) =>
+            this.setState(_ => ({ vicinity: newValue, registerError: "" }))
+          }
         />
         <br />
         {this.state.registerError && (

@@ -1,1 +1,1 @@
-export {default as AddVenue} from './AddVenue'
+export { default as AddVenue } from "./AddVenue";

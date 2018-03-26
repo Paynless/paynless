@@ -22,11 +22,9 @@ export const findNearbyMerchants = async (
 
 export const findOrCreateMerchant = async (id, data) => {
   try {
-    console.log('creating merchant')
     const merchantRef = await db
       .collection("Merchants")
       .doc();
-    console.log('merchant doc id', merchantRef)
     
     data.id = merchantRef.id;
     return merchantRef.set(data);
