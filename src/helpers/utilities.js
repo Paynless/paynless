@@ -93,9 +93,7 @@ export const findOrCreateUserOpenTab = async (userId, merchant) => {
       accepted: false,
       timestamp: firestore.FieldValue.serverTimestamp()
     };
-    const tabRef = await db
-      .collection("Tabs")
-      .doc();
+    const tabRef = await db.collection("Tabs").doc();
     data.id = tabRef.id;
     return tabRef.set(data);
 
