@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { FlatButton, DropDownMenu, MenuItem, CircularProgress } from "material-ui";
 import { withAuth } from "fireview";
-import { getCurrentPosition, findNearbyMerchants, findOrCreateUserOpenTabs } from "../../helpers/";
+import { getCurrentPosition, findNearbyMerchants, findOrCreateUserOpenTab, fetchUser } from "../../helpers/";
 import SelectMerchant from './SelectMerchant';
 
 const halfMile = 1 / 69 / 2;
@@ -27,24 +27,27 @@ class CheckIn extends Component {
     this.setState(_ => ({ selectedMerchant }));
   };
 
-  loadTab = async (event, merchantName)=> {
+  loadTab = async (event, merchant)=> {
     try {
       event && event.preventDefault();
       const { user } = this.props.withAuth;
+      const {name, id} = merchant
+
       if (!user) return;
 
       let selectedMerchant;
-      if (merchantName) {
+      if (name) {
         selectedMerchant = this.props.allOpenMerchants.find(merchant => {
-          return merchant.name === merchantName;
+          return merchant.name === name;
         });
       } else {
         selectedMerchant = this.state.selectedMerchant;
       }
 
-      await findOrCreateUserOpenTabs(user.uid, selectedMerchant);
+      const tab = await findOrCreateUserOpenTab(user.uid, selectedMerchant);
+      console.log('tab', tab)
 
-      this.props.history.push("/open-tabs");
+      this.props.history.push(`/open-tabs/${tab.id}`);
     } catch (err) {
       console.log(err);
     }
@@ -113,7 +116,7 @@ class CheckIn extends Component {
               <FlatButton
                 primary={true}
                 fullWidth={true}
-                onClick={this.loadTab}
+                onClick={event => this.loadTab(event, selectedMerchant)}
                 disabled={!isSelected}
               >
                 {selectedMerchant.name

@@ -6,26 +6,6 @@ export const findDistance = (cord1, cord2) => {
   );
 };
 
-export const getCurrentPosition = options => {
-  return new Promise( resolve => {
-    navigator.geolocation.getCurrentPosition(
-      location => {
-        resolve({
-        //   _lat: location.coords.latitude,
-        //   _long: location.coords.longitude
-    
-        //dont use location when you are home
-          _lat: 40.7050604,
-          _long: -74.00865979999999
-        })
-      }, 
-      err => {
-        alert("Could not find location");
-        console.log(err);
-      }, options);
-  })
-}
-
 export const findNearbyMerchants = async (
   userCoords,
   merchants,
@@ -35,6 +15,19 @@ export const findNearbyMerchants = async (
     return merchants.filter(venue => {
       return findDistance(userCoords, venue.location) < distance;
     });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const findOrCreateMerchant = async (id, data) => {
+  try {
+    const merchantRef = await db
+      .collection("Merchants")
+      .doc();
+    
+    data.id = merchantRef.id;
+    return merchantRef.set(data);
   } catch (err) {
     console.log(err);
   }
@@ -55,17 +48,40 @@ export const fetchAllMerchants = async _ => {
   }
 };
 
-export const findOrCreateUserOpenTabs = async (userId, merchant) => {
+export const fetchUser = async uid => {
+  try {
+    const userQuery = db
+      .collection("users")
+      .where("uid", "==", uid)
+    const userDoc = await userQuery.get()
+    if (userDoc.docs.length) return userDoc.docs[0].data();
+
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const updateUser = async (uid, data) => {
+  try {
+    await db
+      .collection(`users`)
+      .where("uid", "==", uid)
+      .update(data);
+  } catch (error) {
+    console.error("Error adding document: ", error);
+  }
+};
+
+export const findOrCreateUserOpenTab = async (userId, merchant) => {
   try {
     //find
-    const ref = db
+    const tabQuery = db
       .collection("Tabs")
       .where("uid", "==", userId)
       .where("merchantId", "==", merchant.id)
       .where("open", "==", true);
-
-    const tab = await ref.get();
-    if (tab.docs.length) return tab.docs[0];
+    const tabDoc = await tabQuery.get();
+    if (tabDoc.docs.length) return tabDoc.docs[0].data();
 
     //create
     const data = {
@@ -77,8 +93,10 @@ export const findOrCreateUserOpenTabs = async (userId, merchant) => {
       accepted: false,
       timestamp: firestore.FieldValue.serverTimestamp()
     };
+    const tabRef = await db.collection("Tabs").doc();
+    data.id = tabRef.id;
+    return tabRef.set(data);
 
-    return db.collection("Tabs").add(data);
   } catch (err) {
     console.log(err);
   }
