@@ -50,6 +50,9 @@ class Menu extends React.Component {
           <Link to="/settings">
             <MenuItem onClick={handleClose}>Settings</MenuItem>
           </Link>
+          <Link to="/addVenue">
+            <MenuItem onClick={handleClose}>Add Business</MenuItem>
+          </Link>
           {!!user && <Link to="/admin">
             <MenuItem onClick={handleClose}>Admin Panel</MenuItem>
           </Link> }

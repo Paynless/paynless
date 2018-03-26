@@ -8,6 +8,7 @@ import {
   AdminSingleTab,
   Login,
   Register,
+  AddVenue,
 } from "../index";
 import { withAuth } from "fireview";
 
@@ -83,6 +84,12 @@ class Routes extends Component {
           exact
           path="/admin/tabs/:tabId"
           component={AdminSingleTab}
+        />
+        <PrivateRoute
+          authed={!!user}
+          exact
+          path="/addVenue"
+          component={AddVenue}
         />
         <Route render={_ => <h3>No Match</h3>} />
       </Switch>
