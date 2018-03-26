@@ -50,36 +50,39 @@ class CardSection extends Component {
     super(props);
   }
 
-  handleSubmit = event => {
+  handleSubmit = async event => {
     event.preventDefault();
     const { user } = this.props.withAuth;
     const { stripe } = this.props;
 
     let doc_id;
+    let capturedTokenId;
 
-    // for testing
-    // db
-    //   .collection("users")
-    //   .where("uid", "==", user.uid)
-    //   .get()
-    //   .then(item => item.forEach(doc => console.log(doc.data())));
-
-    db
+    const userListener = await db
       .collection("users")
       .where("uid", "==", user.uid)
       .onSnapshot(doc =>
-        doc.docs.map(doc => {
+        doc.docs[0].data(async doc => {
           doc_id = doc.id;
-          stripe.createToken().then(({ token }) => {
-            console.log("Received Stripe token:", token);
-            db
-              .collection("users")
-              .doc(`${doc_id}/stripe_source/tokens`)
-              .set({ token_id: token.id }, { merge: true });
-
-
-          });
+          const token = await stripe.createToken()
+          console.log("in", token);
+          capturedTokenId = token.token.id.slice();
         })
+      );
+
+    console.log("out", capturedTokenId);
+    console.log("doc_id", doc_id);
+    const addToken = await db
+      .collection("users")
+      .doc(`${doc_id}/stripe_source/tokens`)
+      .set({ token_id: capturedTokenId }, { merge: true });
+
+    await db
+      .collection("users")
+      .where("uid", "==", user.uid)
+      .get()
+      .then(item =>
+        item.forEach(doc => stripe.customers.createSource(doc.data().sid, { source: capturedTokenId }))
       );
   };
 

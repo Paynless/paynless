@@ -99,12 +99,13 @@ exports.addPaymentSource = functions.firestore
       .collection("users")
       .where("uid", "==", userId)
       .get()
-      .then(snap =>
+      .then(snap => {
         snap.forEach(doc => {
           console.log("doc.data()", doc.data());
           return stripe.customers.createSource(doc.data().sid, { source });
-        })
-      );
+        });
+      })
+      .catch(err => console.error(err));
   });
 
 // // When a user deletes their account, clean up after them
