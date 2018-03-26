@@ -1,22 +1,25 @@
+import { db, firebaseAuth } from "../../config";
 import React, { Component } from "react";
 import { CardNumberElement, CardExpiryElement } from "react-stripe-elements";
 import { CardCVCElement, PostalCodeElement } from "react-stripe-elements";
-import { FlatButton } from 'material-ui';
+import { FlatButton } from "material-ui";
+import { withAuth } from "fireview";
 
 const handleBlur = () => {
-  console.log("[blur]");
+  // console.log("[blur]");
 };
 
 const handleChange = change => {
-  console.log("[change]", change);
+  // console.log("[change]", change);
 };
 
-const handleClick = () => {
+const handleClick = event => {
   console.log("[click]");
+  console.log("event in click", event.target);
 };
 
 const handleFocus = () => {
-  console.log("[focus]");
+  // console.log("[focus]");
 };
 
 const handleReady = () => {
@@ -43,15 +46,42 @@ const createOptions = fontSize => {
 };
 
 class CardSection extends Component {
+  constructor(props) {
+    super(props);
+  }
 
   handleSubmit = event => {
     event.preventDefault();
-    console.log('Submitted!');
-    this.props.stripe.createToken({name: 'Alfonso Millan'})
-      .then(({token}) => {
-        console.log('Received Stripe token:', token);
-      })
-  }
+    const { user } = this.props.withAuth;
+    const { stripe } = this.props;
+
+    let doc_id;
+
+    // for testing
+    // db
+    //   .collection("users")
+    //   .where("uid", "==", user.uid)
+    //   .get()
+    //   .then(item => item.forEach(doc => console.log(doc.data())));
+
+    db
+      .collection("users")
+      .where("uid", "==", user.uid)
+      .onSnapshot(doc =>
+        doc.docs.map(doc => {
+          doc_id = doc.id;
+          stripe.createToken().then(({ token }) => {
+            console.log("Received Stripe token:", token);
+            db
+              .collection("users")
+              .doc(`${doc_id}/stripe_source/tokens`)
+              .set({ token_id: token.id }, { merge: true });
+
+
+          });
+        })
+      );
+  };
 
   render() {
     return (
@@ -108,7 +138,7 @@ class CardSection extends Component {
           <FlatButton
             label="Save Info"
             primary={true}
-            onClick={handleClick}
+            onClick={this.handleSubmit}
           />
         </div>
       </form>
@@ -116,4 +146,4 @@ class CardSection extends Component {
   }
 }
 
-export default CardSection;
+export default withAuth(CardSection);
