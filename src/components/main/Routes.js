@@ -8,11 +8,17 @@ import {
   AdminSingleTab,
   Login,
   Register,
-  AddVenue,
+  AddVenue
 } from "../index";
 import { withAuth } from "fireview";
 
-function PrivateRoute({ component: Component, authed, allOpenMerchants, ...rest }) {
+function PrivateRoute({
+  component: Component,
+  authed,
+  allOpenMerchants,
+  userObj,
+  ...rest
+}) {
   return (
     <Route
       {...rest}
@@ -23,6 +29,31 @@ function PrivateRoute({ component: Component, authed, allOpenMerchants, ...rest 
           <Redirect
             to={{ pathname: "/login", state: { from: props.location } }}
           />
+        )
+      }
+    />
+  );
+}
+
+function AdminRoute({
+  component: Component,
+  isAdmin,
+  allOpenMerchants,
+  userObj,
+  ...rest
+}) {
+  return (
+    <Route
+      {...rest}
+      render={props =>
+        isAdmin === true ? (
+          <Component
+            allOpenMerchants={allOpenMerchants}
+            userObj={userObj}
+            {...props}
+          />
+        ) : (
+          <h1>Permission DENIED</h1>
         )
       }
     />
@@ -42,53 +73,75 @@ function PublicRoute({ component: Component, authed, ...rest }) {
 
 class Routes extends Component {
   render() {
-    const { user } = this.props.withAuth || null;
-    const { allOpenMerchants } = this.props;
+    const { user } = this.props.withAuth;
+    if (!user) return null;
+    const withAuthComplete = !!user;
+
+    const { allOpenMerchants, userObj } = this.props;
+
+    const isAuthed = !user.isAnonymous;
+    const isAdmin = userObj.isAdmin;
+
     return (
       <Switch>
+        <PublicRoute
+          authed={withAuthComplete}
+          path="/login"
+          component={Login}
+        />
+        <PublicRoute
+          authed={withAuthComplete}
+          path="/register"
+          component={Register}
+        />
         <PrivateRoute
           path="/"
           exact
-          authed={!!user}
+          authed={isAuthed}
+          userObj={userObj}
           allOpenMerchants={allOpenMerchants}
           component={CheckIn}
         />
         <PrivateRoute
-          path="/payment-details"
           exact
-          authed={!!user}
+          path="/payment-details"
+          userObj={userObj}
+          authed={isAuthed}
           component={CustomerInfo}
         />
-        <PublicRoute authed={!!user} path="/login" component={Login} />
-        <PublicRoute authed={!!user} path="/register" component={Register} />
         <PrivateRoute
-          authed={!!user}
+          authed={isAuthed}
           exact
           path="/open-tabs"
+          userObj={userObj}
           component={OpenTabs}
         />
         <PrivateRoute
-          authed={!!user}
+          authed={isAuthed}
           exact
           path="/open-tabs/:id"
+          userObj={userObj}
           component={OpenTabs}
         />
-        <PrivateRoute
-          authed={!!user}
+        <AdminRoute
+          isAdmin={isAdmin}
           exact
           path="/admin"
+          userObj={userObj}
           component={AdminHome}
         />
-        <PrivateRoute
-          authed={!!user}
+        <AdminRoute
+          isAdmin={isAdmin}
           exact
           path="/admin/tabs/:tabId"
+          userObj={userObj}
           component={AdminSingleTab}
         />
         <PrivateRoute
-          authed={!!user}
+          authed={isAuthed}
           exact
           path="/addVenue"
+          userObj={userObj}
           component={AddVenue}
         />
         <Route render={_ => <h3>No Match</h3>} />

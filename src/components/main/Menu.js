@@ -4,13 +4,11 @@ import {
   Drawer, MenuItem, Avatar, Divider, List, ListItem
 } from "material-ui";
 import { green900, lightGreen600 } from "material-ui/styles/colors";
-import { withAuth } from "fireview";
 
 class Menu extends React.Component {
 
   render() {
-    const { openMenu, handleClose } = this.props;
-    const user = this.props.withAuth
+    const { openMenu, handleClose, userObj } = this.props;
     return (
       <Fragment>
         <Drawer
@@ -25,9 +23,9 @@ class Menu extends React.Component {
                 backgroundColor={lightGreen600}
                 style={{ margin: 5 }}
               >
-                U
+              {userObj.firstName.slice(0, 1)}
               </Avatar>
-              User Name
+              {userObj.firstName}
             </ListItem>
           </List>
           <Link to="/user-profile">
@@ -52,7 +50,7 @@ class Menu extends React.Component {
           <Link to="/addVenue">
             <MenuItem onClick={handleClose}>Add Business</MenuItem>
           </Link>
-          {!!user && <Link to="/admin">
+          {userObj.isAdmin && <Link to="/admin">
             <MenuItem onClick={handleClose}>Admin Panel</MenuItem>
           </Link> }
         </Drawer>
@@ -61,4 +59,4 @@ class Menu extends React.Component {
   }
 }
 
-export default withAuth(Menu)
+export default Menu

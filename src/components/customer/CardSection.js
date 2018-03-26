@@ -4,7 +4,7 @@ import { CardNumberElement, CardExpiryElement } from "react-stripe-elements";
 import { CardCVCElement, PostalCodeElement } from "react-stripe-elements";
 import { FlatButton } from "material-ui";
 import { withAuth } from "fireview";
-import { fetchUser } from "../../helpers";
+
 
 const handleBlur = () => {
   // console.log("[blur]");
@@ -51,6 +51,10 @@ class CardSection extends Component {
     super(props);
   }
 
+  async componentDidMount() {
+
+  }
+
   handleSubmit = async event => {
     event.preventDefault();
     const { user } = this.props.withAuth;
@@ -72,9 +76,15 @@ class CardSection extends Component {
       console.log(err);
     }
   };
+
+  editForm = event => {
+
+  }
+
   render() {
-    console.log(this.props.stripe);
     return (
+
+
       <form onSubmit={this.handleSubmit}>
         <div>
           <label>
@@ -123,6 +133,13 @@ class CardSection extends Component {
               {...createOptions(this.props.fontSize)}
             />
           </label>
+        </div>
+        <div>
+          <FlatButton
+            label="Edit"
+            primary={true}
+            onClick={this.editForm}
+          />
         </div>
         <div>
           <FlatButton
