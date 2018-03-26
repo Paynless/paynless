@@ -50,12 +50,11 @@ export const fetchAllMerchants = async _ => {
 
 export const fetchUser = async uid => {
   try {
-    const userQuery = await db
+    const userQuery = db
       .collection("users")
       .where("uid", "==", uid)
-
-    const user = userQuery.get()
-    if (user.docs.length) return user.docs[0];
+    const userDoc = await userQuery.get()
+    if (userDoc.docs.length) return userDoc.docs[0].data();
 
   } catch (err) {
     console.log(err);
@@ -81,9 +80,8 @@ export const findOrCreateUserOpenTab = async (userId, merchant) => {
       .where("uid", "==", userId)
       .where("merchantId", "==", merchant.id)
       .where("open", "==", true);
-      
-    const tab = await tabQuery.get();
-    if (tab.docs.length) return tab.docs[0];
+    const tabDoc = await tabQuery.get();
+    if (tabDoc.docs.length) return tabDoc.docs[0].data();
 
     //create
     const data = {
@@ -95,8 +93,12 @@ export const findOrCreateUserOpenTab = async (userId, merchant) => {
       accepted: false,
       timestamp: firestore.FieldValue.serverTimestamp()
     };
+    const tabRef = await db
+      .collection("Tabs")
+      .doc();
+    data.id = tabRef.id;
+    return tabRef.set(data);
 
-    return db.collection("Tabs").add(data);
   } catch (err) {
     console.log(err);
   }

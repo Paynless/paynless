@@ -45,6 +45,7 @@ class CheckIn extends Component {
       }
 
       const tab = await findOrCreateUserOpenTab(user.uid, selectedMerchant);
+      console.log('tab', tab)
 
       this.props.history.push(`/open-tabs/${tab.id}`);
     } catch (err) {
@@ -54,8 +55,6 @@ class CheckIn extends Component {
 
   narrowMerchantsUsingLocation = async _ => {
     try {
-      const user = await fetchUser(this.props.withAuth.user.uid)
-      console.log('user', user)
       let allOpenMerchants = this.props.allOpenMerchants.slice();
 
       this.setState(_ => ({
@@ -117,7 +116,7 @@ class CheckIn extends Component {
               <FlatButton
                 primary={true}
                 fullWidth={true}
-                onClick={this.loadTab}
+                onClick={event => this.loadTab(event, selectedMerchant)}
                 disabled={!isSelected}
               >
                 {selectedMerchant.name
