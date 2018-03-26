@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import { auth, isValidDOB, isValidEmail, setErrorMsg } from "../../helpers";
-import Dialog from "material-ui/Dialog";
+import { auth, isValidEmail, setErrorMsg } from "../../helpers";
 import RaisedButton from "material-ui/RaisedButton";
-import FlatButton from "material-ui/FlatButton";
 import TextField from "material-ui/TextField";
 
 export default class Register extends Component {
@@ -14,13 +12,12 @@ export default class Register extends Component {
       password: "",
       firstName: "",
       lastName: "",
-      dob: "",
     };
   }
 
   handleSubmit = event => {
     event.preventDefault();
-    const { email, password, firstName, lastName, dob } = this.state;
+    const { email, password, firstName, lastName } = this.state;
     if (!isValidEmail(email) || password.length < 6) {
       this.setState(_ => {
         return setErrorMsg(Error('Email Must Be Valid And Password Must Be At Least 6 Characters'))
@@ -31,9 +28,9 @@ export default class Register extends Component {
         return setErrorMsg(Error('First And Last Name Cannot Be Left Blank'))
       });
       return;
-    } 
+    }
 
-    auth(email, password, firstName, lastName, dob).catch(err =>
+    auth(email, password, firstName, lastName).catch(err =>
       this.setState(setErrorMsg(err))
     );
   };
