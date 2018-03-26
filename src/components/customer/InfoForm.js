@@ -5,8 +5,9 @@ import CardSection from "./CardSection";
 
 class InfoForm extends Component {
   render() {
+    /* inject stripe object to CardSection */
     return (
-      <CardSection />
+      <CardSection stripe={this.props.stripe}/>
     );
   }
 }

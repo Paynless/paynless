@@ -1,22 +1,26 @@
+import { db, firebaseAuth } from "../../config";
 import React, { Component } from "react";
 import { CardNumberElement, CardExpiryElement } from "react-stripe-elements";
 import { CardCVCElement, PostalCodeElement } from "react-stripe-elements";
-import { FlatButton } from 'material-ui';
+import { FlatButton } from "material-ui";
+import { withAuth } from "fireview";
+import { fetchUser } from "../../helpers";
 
 const handleBlur = () => {
-  console.log("[blur]");
+  // console.log("[blur]");
 };
 
 const handleChange = change => {
-  console.log("[change]", change);
+  // console.log("[change]", change);
 };
 
-const handleClick = () => {
+const handleClick = event => {
   console.log("[click]");
+  console.log("event in click", event.target);
 };
 
 const handleFocus = () => {
-  console.log("[focus]");
+  // console.log("[focus]");
 };
 
 const handleReady = () => {
@@ -43,17 +47,33 @@ const createOptions = fontSize => {
 };
 
 class CardSection extends Component {
-
-  handleSubmit = event => {
-    event.preventDefault();
-    console.log('Submitted!');
-    this.props.stripe.createToken({name: 'Alfonso Millan'})
-      .then(({token}) => {
-        console.log('Received Stripe token:', token);
-      })
+  constructor(props) {
+    super(props);
   }
 
+  handleSubmit = async event => {
+    event.preventDefault();
+    const { user } = this.props.withAuth;
+    const { stripe } = this.props;
+    try {
+      const userListener = await db
+        .collection("users")
+        .where("uid", "==", user.uid)
+        .onSnapshot(async doc => {
+          let doc_id = doc.docs[0].id;
+          const token = await stripe.createToken();
+          let source = token.token.id;
+          const updateUserWithToken = await db
+            .collection("users")
+            .doc(`${doc_id}/stripe_source/tokens`)
+            .set({ token_id: source }, { merge: true });
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   render() {
+    console.log(this.props.stripe);
     return (
       <form onSubmit={this.handleSubmit}>
         <div>
@@ -108,7 +128,7 @@ class CardSection extends Component {
           <FlatButton
             label="Save Info"
             primary={true}
-            onClick={handleClick}
+            onClick={this.handleSubmit}
           />
         </div>
       </form>
@@ -116,4 +136,4 @@ class CardSection extends Component {
   }
 }
 
-export default CardSection;
+export default withAuth(CardSection);
