@@ -24,11 +24,11 @@ class OpenTabs extends Component {
   }
 
   listen(props){
-    const {user} = props.withAuth;
+    const {userObj} = props;
 
-    if(!user) return;
+    if(!userObj) return;
     if(this.removeListenerTabs) this.removeListenerTabs();
-    this.removeListenerTabs = db.collection("Tabs").where("uid", "==", user.uid).where("open", "==", true)
+    this.removeListenerTabs = db.collection("Tabs").where("uid", "==", userObj.uid).where("open", "==", true)
     .onSnapshot((snapshot) => {
       this.setState({openTabs: snapshot.docs.map(doc => doc.data()), isLoaded: true})
     });
@@ -48,6 +48,7 @@ class OpenTabs extends Component {
           {this.state.openTabs.map((tab, idx )=> (
             <div key={idx}>
               <Tab
+                userObj={this.props.userObj}
                 merchantName={tab.merchantName}
                 items={tab.items}
               />
@@ -65,4 +66,4 @@ class OpenTabs extends Component {
   }
 }
 
-export default withAuth(OpenTabs);
+export default OpenTabs;
