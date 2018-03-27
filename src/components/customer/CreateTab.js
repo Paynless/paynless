@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from "react";
-import {
-  FlatButton,
+import { FlatButton,
   DropDownMenu,
   MenuItem,
   CircularProgress
@@ -32,7 +31,7 @@ export default class CreateTab extends Component {
     const selectedMerchant = allOpenMerchants.find(merchant => {
       return merchant.name === name;
     });
-    this.setState(_ => ({ selectedMerchant }));
+    this.setState({ selectedMerchant });
   };
 
   loadTab = (event, merchant) => {
@@ -47,26 +46,24 @@ export default class CreateTab extends Component {
   narrowMerchantsUsingLocation = async _ => {
     try {
       let allOpenMerchants = this.props.allOpenMerchants.slice();
-
-      this.setState(_ => ({
+      this.setState({
         isLoadingUserLocation: true
-      }));
+      });
 
       const userCoords = await getCurrentPosition();
-
       const nearbyMerchants = await findNearbyMerchants(
         userCoords,
         allOpenMerchants,
         halfMile
       );
 
-      this.setState(_ => ({
+      this.setState({
         userCoords,
         useLocation: true,
         isLoadingUserLocation: false,
         locationSearchConducted: nearbyMerchants.length > 0,
         nearbyMerchants
-      }));
+      });
     } catch (err) {
       console.log(err);
     }

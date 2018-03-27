@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Router, Link } from "react-router-dom";
+import { Router } from "react-router-dom";
 import {
   Routes,
   SplashScreen,
@@ -9,7 +9,6 @@ import {
   history
 } from "../index";
 import { fetchAllMerchants } from "../../helpers";
-import { FlatButton } from "material-ui";
 import { withAuth } from "fireview";
 import { db } from "../../config";
 
@@ -23,9 +22,7 @@ class App extends Component {
   async componentDidMount() {
     try {
       const allOpenMerchants = await fetchAllMerchants();
-      this.setState(_ => ({
-        allOpenMerchants
-      }));
+      this.setState({ allOpenMerchants});
     } catch (err) {
       console.log(err);
     }
@@ -56,7 +53,7 @@ class App extends Component {
         !this.props.withAuth.ready ||
         this.state.allOpenMerchants.length === 0
       ) {
-        this.setState(_ => ({ isLoading: false }));
+        this.setState({ isLoading: false });
       }
     }
   }
@@ -65,25 +62,23 @@ class App extends Component {
     this.removeUserListener();
   }
 
-  toggleMenu = _ => this.setState(_ => ({ openMenu: !this.state.openMenu }));
+  toggleMenu = _ => this.setState({ openMenu: !this.state.openMenu });
 
-  handleClose = _ => this.setState(_ => ({ openMenu: false }));
+  handleClose = _ => this.setState({ openMenu: false });
 
   render() {
-    const { user } = this.props.withAuth;
-
     const { allOpenMerchants, userObj, isLoading } = this.state;
-
+    
     const tabData = {
       0: {
-        path: !!user ? "/" : "/login",
-        icon: !!user ? "plus-circle" : "sign-in",
-        label: !!user ? "New Tab" : "Login"
+        path: !!userObj ? "/" : "/login",
+        icon: !!userObj ? "plus-circle" : "sign-in",
+        label: !!userObj ? "New Tab" : "Login"
       },
       1: {
-        path: !!user ? "/open-tabs" : "/register",
-        icon: !!user ? "sticky-note" : "user-plus",
-        label: !!user ? "Open Tabs" : "Register"
+        path: !!userObj ? "/open-tabs" : "/register",
+        icon: !!userObj ? "sticky-note" : "user-plus",
+        label: !!userObj ? "Open Tabs" : "Register"
       }
     };
 
