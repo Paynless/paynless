@@ -3,6 +3,7 @@ import { db } from "../../config";
 import { withAuth } from "fireview";
 import { Favorite } from "./index";
 import { CircularProgress, List, ListItem, TextField } from "material-ui";
+import { escapeRegExp } from 'lodash';
 
 class SelectMerchant extends Component {
   constructor(props) {
@@ -26,6 +27,7 @@ class SelectMerchant extends Component {
     this.removeListener && this.removeListener();
   }
 
+
   listenUser(props) {
     const { user } = props.withAuth;
     if (!user) return;
@@ -40,6 +42,15 @@ class SelectMerchant extends Component {
         });
         this.setState({ user, isLoaded: true });
       });
+  }
+
+  updateSearch = event => {
+    // prevents re-renders from crashing due to expected regex statement
+    // i.e in search box: '\' or other regex chars need to be closed \ \ to be valid
+    const escapedRegexValue = escapeRegExp(event.target.value);
+    // disables special chars in search field
+    const cleanString = escapedRegexValue.replace(/[\\|&;$%@"<>()+,*]/g, '');
+    this.setState({ search: cleanString });
   }
 
   toggleFavorite = merchantId => {
@@ -60,7 +71,7 @@ class SelectMerchant extends Component {
 
   render() {
     const { openMerchants } = this.props;
-    const { user } = this.state; 
+    const { user } = this.state;
     if (!this.state.isLoaded) {
       return (
         <div>
@@ -69,7 +80,7 @@ class SelectMerchant extends Component {
       );
     }
     let favoriteMerchants = openMerchants.filter(merchant => {
-      return user.favorites[merchant]
+      return user.favorites[merchant.id]
     });
     let foundMerchants = openMerchants.filter(merchant =>
       merchant.name.match(RegExp(this.state.search, "i"))
@@ -83,7 +94,7 @@ class SelectMerchant extends Component {
           id="text-field-default"
           hintText="Find a spot!"
           value={this.state.search}
-          onChange={event => this.setState({ search: event.target.value })}
+          onChange={this.updateSearch}
         />
         <List>
           {displayMerchants.map(merchant => (
