@@ -48,7 +48,7 @@ exports.createStripeCharge = functions.firestore
 
 // When a user is created, register them with Stripe
 exports.createStripeCustomer = functions.firestore
-  .document("Users/{userId}")
+  .document("/Users/{userId}")
   .onCreate(event => {
     const data = event.data.data();
     const docId = event.data.id;
