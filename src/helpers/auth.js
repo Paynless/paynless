@@ -9,17 +9,16 @@ export function googleSignIn() {
 firebaseAuth().onAuthStateChanged(user => {
   if (user) {
     db
-      .collection("users")
-      .where("uid", "==", user.uid)
+      .collection("Users")
+      .doc(user.uid)
       .get()
       .then(foundUser => {
-        if (!foundUser.docs.length) {
-          return db
-            .collection("users")
-            .add({
-              email: user.email,
-              uid: user.uid
-            })
+        if (!foundUser) {
+          const userRef = db.collection("Users").doc();
+          return userRef.set({
+            email: user.email,
+            uid: userRef.id
+          })
             .then(docRef => docRef)
             .catch(function(error) {
               console.error("Error adding document: ", error);
@@ -29,21 +28,18 @@ firebaseAuth().onAuthStateChanged(user => {
   }
 });
 
-export const saveUser = async (user, firstName, lastName) => {
-  try {
-    const data = {
-      email: user.email,
-      uid: user.uid,
-      firstName: firstName,
-      lastName: lastName,
-      favorites: {}
-    };
-    const userRef = await db.collection("users").doc();
-    data.id = userRef.id;
-    return userRef.set(data);
-  } catch (error) {
-    console.error("Error adding document: ", error);
-  }
+const saveUser = (user, firstName, lastName) => {
+  const data = {
+    email: user.email,
+    uid: user.uid,
+    firstName: firstName,
+    lastName: lastName,
+    favorites: {}
+  };
+  return db.collection("Users").doc(user.uid).set(data)
+    .catch(error => {
+      console.error("Error adding document: ", error);
+    })
 };
 
 export const auth = async (email, pw, firstName, lastName) => {

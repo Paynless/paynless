@@ -61,7 +61,7 @@ class CardSection extends Component {
     const { stripe } = this.props;
     try {
       const userListener = await db
-        .collection("users")
+        .collection("Users")
         .where("uid", "==", user.uid)
         .onSnapshot(async doc => {
           let doc_id = doc.docs[0].id;
@@ -69,7 +69,7 @@ class CardSection extends Component {
           console.log("token", token);
           let source = token.token.id;
           const updateUserWithToken = await db
-            .collection("users")
+            .collection("Users")
             .doc(`${doc_id}/stripe_source/tokens`)
             .set({ token_id: source }, { merge: true });
         });
