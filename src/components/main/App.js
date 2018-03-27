@@ -1,15 +1,14 @@
 import React, { Component } from "react";
-import { Router, Link } from "react-router-dom";
+import { Router } from "react-router-dom";
 import {
   Routes,
   SplashScreen,
   Menu,
-  Logo,
+  TopBar,
   BottomNavigationBar,
   history
 } from "../index";
-import { logout, fetchAllMerchants, fetchUser } from "../../helpers";
-import { AppBar, FlatButton } from "material-ui";
+import { fetchAllMerchants } from "../../helpers";
 import { withAuth } from "fireview";
 import { db } from "../../config";
 
@@ -23,34 +22,29 @@ class App extends Component {
   async componentDidMount() {
     try {
       const allOpenMerchants = await fetchAllMerchants();
-      this.setState(_ => ({
-        allOpenMerchants
-      }));
+      this.setState({ allOpenMerchants});
     } catch (err) {
       console.log(err);
     }
   }
 
-  async componentWillReceiveProps(nextProps) {
-    try {
-      if (
-        (!this.props.withAuth.ready && nextProps.withAuth.ready) ||
-        (!this.props.withAuth.user && nextProps.withAuth.user)
-      ) {
-        if (!!nextProps.withAuth.user) {
-          const { user } = nextProps.withAuth;
-          this.removeUserListener = await db
-            .collection("users")
-            .where("uid", "==", user.uid)
-            .onSnapshot(snapshot => {
-              const userObj = snapshot.docs[0].data();
-              this.setState(_ => ({ userObj }));
-            });
-        }
-      }
-    } catch (err) {
-      console.log(err);
+  componentWillReceiveProps(nextProps) {
+    const { user: nextUser } = nextProps.withAuth
+    const { user: prevUser } = this.props.withAuth
+    if (nextUser === prevUser) {
+      return;
     }
+
+    this.removeUserListener && this.removeUserListener()
+    if (!nextUser) return this.setState({ userObj: null });
+    
+    this.removeUserListener = db
+      .collection("users")
+      .where("uid", "==", nextUser.uid) //make uid doc id
+      .onSnapshot(snapshot => {
+        const userObj = snapshot.docs[0].data();
+        this.setState({ userObj });
+      });
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -59,7 +53,7 @@ class App extends Component {
         !this.props.withAuth.ready ||
         this.state.allOpenMerchants.length === 0
       ) {
-        this.setState(_ => ({ isLoading: false }));
+        this.setState({ isLoading: false });
       }
     }
   }
@@ -68,40 +62,23 @@ class App extends Component {
     this.removeUserListener();
   }
 
-  toggleMenu = _ => this.setState(_ => ({ openMenu: !this.state.openMenu }));
+  toggleMenu = _ => this.setState({ openMenu: !this.state.openMenu });
 
-  handleClose = _ => this.setState(_ => ({ openMenu: false }));
+  handleClose = _ => this.setState({ openMenu: false });
 
   render() {
-    const { user } = this.props.withAuth;
-
     const { allOpenMerchants, userObj, isLoading } = this.state;
-
-    const authButtons = !!user ? (
-      <Link to="/login">
-        <FlatButton
-          label="Logout"
-          onClick={() => {
-            logout();
-            this.setState(_ => ({ userObj: null }));
-          }}
-          style={{ color: "#fff" }}
-        />
-      </Link>
-    ) : null;
-
-    const topbarButtons = <div>{authButtons}</div>;
-
+    
     const tabData = {
       0: {
-        path: !!user ? "/" : "/login",
-        icon: !!user ? "plus-circle" : "sign-in",
-        label: !!user ? "New Tab" : "Login"
+        path: !!userObj ? "/" : "/login",
+        icon: !!userObj ? "plus-circle" : "sign-in",
+        label: !!userObj ? "New Tab" : "Login"
       },
       1: {
-        path: !!user ? "/open-tabs" : "/register",
-        icon: !!user ? "sticky-note" : "user-plus",
-        label: !!user ? "Open Tabs" : "Register"
+        path: !!userObj ? "/open-tabs" : "/register",
+        icon: !!userObj ? "sticky-note" : "user-plus",
+        label: !!userObj ? "Open Tabs" : "Register"
       }
     };
 
@@ -111,22 +88,13 @@ class App extends Component {
       <Router history={history}>
         <div className="fullheight">
           <div>
-            <AppBar
-              title={<Logo />}
-              iconElementRight={topbarButtons}
-              iconStyleRight={{
-                display: "flex",
-                alignItems: "center",
-                marginTop: "0"
-              }}
-              style={{
-                height: "64px",
-                flexShrink: 0,
-                background: "linear-gradient(to bottom right, #0a2009, #0d2d0b)"
-              }}
-              onLeftIconButtonTouchTap={this.toggleMenu}
+            <TopBar
+              userObj={userObj}
+              history={history}
+              toggleMenu={this.toggleMenu}
             />
             <Menu
+              history={history}
               userObj={userObj}
               toggleMenu={this.toggleMenu}
               openMenu={this.state.openMenu}

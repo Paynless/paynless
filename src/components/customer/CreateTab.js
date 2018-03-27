@@ -1,22 +1,19 @@
 import React, { Component, Fragment } from "react";
-import {
-  FlatButton,
+import { FlatButton,
   DropDownMenu,
   MenuItem,
   CircularProgress
 } from "material-ui";
-import { withAuth } from "fireview";
 import {
   getCurrentPosition,
   findNearbyMerchants,
-  findOrCreateUserOpenTab,
-  fetchUser
+  findOrCreateUserOpenTab
 } from "../../helpers/";
-import SelectMerchant from "./SelectMerchant";
+import { SelectMerchant } from "./index";
 
 const halfMile = 1 / 69 / 2;
 
-class CheckIn extends Component {
+export default class CreateTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -34,44 +31,39 @@ class CheckIn extends Component {
     const selectedMerchant = allOpenMerchants.find(merchant => {
       return merchant.name === name;
     });
-    this.setState(_ => ({ selectedMerchant }));
+    this.setState({ selectedMerchant });
   };
 
-  loadTab = async (event, merchant) => {
-    try {
-      event && event.preventDefault();
-      const { user } = this.props.withAuth;
-      if (!user) return;
-      const tab = await findOrCreateUserOpenTab(user.uid, merchant);
-      this.props.history.push(`/open-tabs/${tab.id}`);
-    } catch (err) {
-      console.log(err);
-    }
+  loadTab = (event, merchant) => {
+    event && event.preventDefault();
+    const { userObj } = this.props;
+    if (!userObj) return;
+
+    findOrCreateUserOpenTab(userObj.uid, merchant);
+    this.props.history.push(`/open-tabs`);
   };
 
   narrowMerchantsUsingLocation = async _ => {
     try {
       let allOpenMerchants = this.props.allOpenMerchants.slice();
-
-      this.setState(_ => ({
+      this.setState({
         isLoadingUserLocation: true
-      }));
+      });
 
       const userCoords = await getCurrentPosition();
-
       const nearbyMerchants = await findNearbyMerchants(
         userCoords,
         allOpenMerchants,
         halfMile
       );
 
-      this.setState(_ => ({
+      this.setState({
         userCoords,
         useLocation: true,
         isLoadingUserLocation: false,
         locationSearchConducted: nearbyMerchants.length > 0,
         nearbyMerchants
-      }));
+      });
     } catch (err) {
       console.log(err);
     }
@@ -87,6 +79,10 @@ class CheckIn extends Component {
     } = this.state;
     const { allOpenMerchants } = this.props;
     const isSelected = selectedMerchant.hasOwnProperty("name");
+    const checkInText = selectedMerchant.name
+      ? `Create a tab with ${selectedMerchant.name}`
+      : "Select a Merchant";
+
     return (
       <Fragment>
         {!useLocation && (
@@ -117,9 +113,7 @@ class CheckIn extends Component {
                 onClick={event => this.loadTab(event, selectedMerchant)}
                 disabled={!isSelected}
               >
-                {selectedMerchant.name
-                  ? `Check in with ${selectedMerchant.name}`
-                  : "Select a Merchant"}
+                {checkInText}
               </FlatButton>
               <DropDownMenu
                 value={selectedMerchant.name}
@@ -138,5 +132,3 @@ class CheckIn extends Component {
     );
   }
 }
-
-export default withAuth(CheckIn);
