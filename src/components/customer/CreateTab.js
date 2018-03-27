@@ -39,7 +39,7 @@ export default class CreateTab extends Component {
     const { userObj } = this.props;
     if (!userObj) return;
 
-    findOrCreateUserOpenTab(userObj.uid, merchant);
+    findOrCreateUserOpenTab(userObj, merchant);
     this.props.history.push(`/open-tabs`);
   };
 
