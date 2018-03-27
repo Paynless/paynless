@@ -12,6 +12,7 @@
     "fireview": "0.0.8",
     "gh-pages": "^1.1.0",
     "history": "^4.7.2",
+    "lodash": "^4.17.5",
     "material-ui": "^0.19.4",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
