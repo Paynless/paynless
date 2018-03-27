@@ -9,7 +9,6 @@ admin.initializeApp(functions.config().firebase);
 const stripe = require("stripe")(functions.config().stripe.token);
 const currency = functions.config().stripe.currency || "USD";
 
-// [START chargecustomer]
 exports.createStripeCharge = functions.firestore
   .document("/Users/{docId}/payments/{paymentId}")
   .onWrite(event => {
@@ -25,7 +24,6 @@ exports.createStripeCharge = functions.firestore
         .firestore()
         .collection("Users")
         .doc(docId)
-        // .collection("stripe_source")
         .get()
         .then(doc => {
           // amount must be in cents
@@ -110,7 +108,6 @@ exports.addPaymentSource = functions.firestore
 //     });
 // });
 
-// [START reporterror]
 function reportError(err, context = {}) {
   // This is the name of the StackDriver log stream that will receive the log
   // entry. This name can be any valid log stream name, but must contain "err"
