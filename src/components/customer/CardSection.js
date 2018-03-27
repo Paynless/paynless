@@ -51,43 +51,7 @@ class CardSection extends Component {
 
     if (!this.state.cardSaved) {
       return (
-
-      );
-    }
-  }
-
-  handleSubmit = async event => {
-    event.preventDefault();
-    console.log("[click]");
-    const { userObj } = this.props;
-    const { stripe } = this.props;
-    try {
-      // listening to user
-      await db
-        .collection("Users")
-        .where("uid", "==", userObj.uid)
-        .onSnapshot(async doc => {
-          let doc_id = doc.docs[0].id;
-          const token = await stripe.createToken();
-          let source = token.token.id;
-          await db // updating user with token
-            .collection("Users")
-            .doc(`${doc_id}/stripe_source/tokens`)
-            .set({ token_id: source }, { merge: true });
-        });
-      this.setState(_ => ({
-        cardSaved: true,
-      }));
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  editForm = event => {};
-
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit}>
         <div>
           <label>
             Card number
@@ -147,6 +111,42 @@ class CardSection extends Component {
           />
         </div>
       </form>
+      );
+    }
+  }
+
+  handleSubmit = async event => {
+    event.preventDefault();
+    console.log("[click]");
+    const { userObj } = this.props;
+    const { stripe } = this.props;
+    try {
+      // listening to user
+      await db
+        .collection("Users")
+        .where("uid", "==", userObj.uid)
+        .onSnapshot(async doc => {
+          let doc_id = doc.docs[0].id;
+          const token = await stripe.createToken();
+          let source = token.token.id;
+          await db // updating user with token
+            .collection("Users")
+            .doc(`${doc_id}/stripe_source/tokens`)
+            .set({ token_id: source }, { merge: true });
+        });
+      this.setState(_ => ({
+        cardSaved: true,
+      }));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  editForm = event => {};
+
+  render() {
+    return (
+      this.renderCardForm()
     );
   }
 }
