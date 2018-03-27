@@ -11,7 +11,7 @@ const currency = functions.config().stripe.currency || "USD";
 
 // [START chargecustomer]
 exports.createStripeCharge = functions.firestore
-  .document("/users/{docId}/payments/{paymentId}")
+  .document("/Users/{docId}/payments/{paymentId}")
   .onWrite(event => {
     const payment = event.data.data();
     const docId = event.params.docId;
@@ -41,7 +41,7 @@ exports.createStripeCharge = functions.firestore
           // If the result is successful, write it back to the database
           admin
             .firestore()
-            .doc(`/users/${docId}/payments/${paymentId}`)
+            .doc(`/Users/${docId}/payments/${paymentId}`)
             .set({ charge }, { merge: true });
         })
         .catch(err => console.error(err))
