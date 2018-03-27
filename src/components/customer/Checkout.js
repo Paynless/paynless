@@ -43,7 +43,7 @@ class Checkout extends Component {
     const { userObj } = this.props;
     let paymentId = uuidv4();
 
-    db.collection("User")
+    db.collection("Users")
       .doc(`${userObj.uid}/payments/${paymentId}`)
       .set({ price: (this.props.total * (this.state.tip + 1)) }, { merge: true });
   };
