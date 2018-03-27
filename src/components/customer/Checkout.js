@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import Dialog from "material-ui/Dialog";
-import FlatButton from "material-ui/FlatButton";
+import { Dialog, FlatButton, Slider } from "material-ui";
 import CreditCardDropdown from "./CreditCardDropdown";
 import {
   Table,
@@ -10,15 +9,19 @@ import {
   TableRow,
   TableRowColumn
 } from "material-ui/Table";
-import Slider from "material-ui/Slider";
 import currencyFormatter from "currency-formatter";
+import { injectStripe } from "react-stripe-elements";
+import { db } from "../../config";
+import { withAuth } from "fireview";
+import uuidv4 from "uuid/v4";
+
 
 const customContentStyle = {
   width: "95vw",
   maxWidth: "none"
 };
 
-export default class Checkout extends Component {
+class Checkout extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -31,9 +34,33 @@ export default class Checkout extends Component {
     this.setState({ open: true });
   };
 
-  handleClose = () => {
+  handleClose = event => {
+    event.preventDefault();
     this.setState({ open: false });
+
+    const { user } = this.props.withAuth;
+    const { stripe } = this.props;
+
+    try {
+      console.log("Updating db for charge...");
+      db
+        .collection("users")
+        .where("uid", "==", user.uid)
+        .get()
+        .then(doc => {
+          let doc_id = doc.docs[0].id;
+          let paymentId = uuidv4();
+
+          db
+            .collection("users")
+            .doc(`${doc_id}/payments/${paymentId}`)
+            .set({ price: 0.50 }, { merge: true });
+        });
+    } catch (err) {
+      console.log(err);
+    }
   };
+
 
   handleSlider = (event, value) => {
     this.setState({ tip: Math.round(value * 100) / 100 });
@@ -118,3 +145,5 @@ export default class Checkout extends Component {
     );
   }
 }
+
+export default injectStripe(withAuth(Checkout));

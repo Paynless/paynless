@@ -60,7 +60,7 @@ class SelectMerchant extends Component {
 
   render() {
     const { openMerchants } = this.props;
-    const { user } = this.state; 
+    const { user } = this.state;
     if (!this.state.isLoaded) {
       return (
         <div>
@@ -91,7 +91,7 @@ class SelectMerchant extends Component {
               key={merchant.id}
               className="checkinItem"
             >
-              <div className="checkinName" onClick={() => this.props.loadTab(null, merchant.name)}>
+              <div className="checkinName" onClick={_ => this.props.loadTab(null, merchant)}>
                 <ListItem primaryText={merchant.name} />
               </div>
               <Favorite

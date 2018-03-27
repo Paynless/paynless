@@ -1,13 +1,13 @@
-import React, {Component} from 'react';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
+import React, { Component } from "react";
+import SelectField from "material-ui/SelectField";
+import MenuItem from "material-ui/MenuItem";
 
 export default class CreditCardDropdown extends Component {
   state = {
-    value: 1,
+    value: 1
   };
 
-  handleChange = (event, index, value) => this.setState({value});
+  handleChange = (event, index, value) => this.setState({ value });
 
   render() {
     return (
@@ -22,6 +22,6 @@ export default class CreditCardDropdown extends Component {
           <MenuItem value={3} primaryText="Mastercard Ending in 1999" />
         </SelectField>
       </div>
-    )
+    );
   }
 }

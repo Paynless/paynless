@@ -1,8 +1,18 @@
 import React, { Component, Fragment } from "react";
-import { FlatButton, DropDownMenu, MenuItem, CircularProgress } from "material-ui";
+import {
+  FlatButton,
+  DropDownMenu,
+  MenuItem,
+  CircularProgress
+} from "material-ui";
 import { withAuth } from "fireview";
-import { getCurrentPosition, findNearbyMerchants, findOrCreateUserOpenTab, fetchUser } from "../../helpers/";
-import SelectMerchant from './SelectMerchant';
+import {
+  getCurrentPosition,
+  findNearbyMerchants,
+  findOrCreateUserOpenTab,
+  fetchUser
+} from "../../helpers/";
+import SelectMerchant from "./SelectMerchant";
 
 const halfMile = 1 / 69 / 2;
 
@@ -27,26 +37,12 @@ class CheckIn extends Component {
     this.setState(_ => ({ selectedMerchant }));
   };
 
-  loadTab = async (event, merchant)=> {
+  loadTab = async (event, merchant) => {
     try {
       event && event.preventDefault();
       const { user } = this.props.withAuth;
-      const {name, id} = merchant
-
       if (!user) return;
-
-      let selectedMerchant;
-      if (name) {
-        selectedMerchant = this.props.allOpenMerchants.find(merchant => {
-          return merchant.name === name;
-        });
-      } else {
-        selectedMerchant = this.state.selectedMerchant;
-      }
-
-      const tab = await findOrCreateUserOpenTab(user.uid, selectedMerchant);
-      console.log('tab', tab)
-
+      const tab = await findOrCreateUserOpenTab(user.uid, merchant);
       this.props.history.push(`/open-tabs/${tab.id}`);
     } catch (err) {
       console.log(err);
@@ -93,26 +89,28 @@ class CheckIn extends Component {
     const isSelected = selectedMerchant.hasOwnProperty("name");
     return (
       <Fragment>
-      {!useLocation && (
-        <div className="checkIn">
-          <SelectMerchant openMerchants={allOpenMerchants} loadTab={this.loadTab}/>
-          <div></div>
-          <div className="findNearMe">
-            <FlatButton
-            label="Find Near Me"
-            onClick={this.narrowMerchantsUsingLocation}
-            primary={true}
+        {!useLocation && (
+          <div className="checkIn">
+            <SelectMerchant
+              openMerchants={allOpenMerchants}
+              loadTab={this.loadTab}
             />
+            <div />
+            <div className="findNearMe">
+              <FlatButton
+                label="Find Near Me"
+                onClick={this.narrowMerchantsUsingLocation}
+                primary={true}
+              />
+            </div>
           </div>
-        </div>
-      )}
-      {isLoadingUserLocation &&
-        <CircularProgress size={60} thickness={7} />}
+        )}
+        {isLoadingUserLocation && <CircularProgress size={60} thickness={7} />}
         {locationSearchConducted &&
           nearbyMerchants.length < 1 && <h3>No Restaurants Nearby</h3>}
-          {locationSearchConducted &&
-            nearbyMerchants.length > 0 && (
-              <Fragment>
+        {locationSearchConducted &&
+          nearbyMerchants.length > 0 && (
+            <Fragment>
               <FlatButton
                 primary={true}
                 fullWidth={true}
