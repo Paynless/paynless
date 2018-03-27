@@ -39,11 +39,13 @@ class App extends Component {
     if (!nextUser) return this.setState({ userObj: null });
     
     this.removeUserListener = db
-      .collection("users")
-      .where("uid", "==", nextUser.uid) //make uid doc id
+      .collection("Users")
+      .doc(nextUser.uid)
       .onSnapshot(snapshot => {
-        const userObj = snapshot.docs[0].data();
-        this.setState({ userObj });
+        if (snapshot.exists) {
+          const userObj = snapshot.data();
+          this.setState({ userObj });
+        }
       });
   }
 
