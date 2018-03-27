@@ -17,7 +17,9 @@ class App extends Component {
   state = {
     allOpenMerchants: [],
     openMenu: false,
-    userObj: {}
+    userObj: null,
+    isLoading: true
+    
   };
   async componentDidMount() {
     try {
@@ -32,9 +34,9 @@ class App extends Component {
 
   async componentWillReceiveProps(nextProps) {
     try {
-      if (!!nextProps.withAuth.user) {
-        const { user } = nextProps.withAuth;
-        if (!user.isAnonymous) {
+      if (!this.props.withAuth.ready && nextProps.withAuth.ready) {
+        if (!!nextProps.withAuth.user) {
+          const { user } = nextProps.withAuth;
           this.removeUserListener = await db
             .collection("users")
             .where("uid", "==", user.uid)
@@ -49,6 +51,14 @@ class App extends Component {
     }
   }
 
+  componentWillUpdate(nextProps, nextState) {
+    if (nextProps.withAuth.ready &&nextState.allOpenMerchants.length > 0) {
+      if (!this.props.withAuth.ready || this.state.allOpenMerchants.length === 0) {
+        this.setState(_ => ({ isLoading: false }));
+      }
+    }
+  }
+
   componentWillUnmount() {
     this.removeUserListener();
   }
@@ -60,8 +70,7 @@ class App extends Component {
   render() {
     const { user } = this.props.withAuth;
 
-    const { allOpenMerchants, userObj } = this.state;
-    const loaded = userObj.hasOwnProperty('email') && allOpenMerchants.length > 0;
+    const { allOpenMerchants, userObj, isLoading } = this.state;
 
     const authButtons = !!user ? (
       <FlatButton
@@ -88,7 +97,7 @@ class App extends Component {
       }
     };
 
-    return !loaded ? (
+    return  isLoading ? (
       <SplashScreen />
     ) : (
       <Router history={history}>

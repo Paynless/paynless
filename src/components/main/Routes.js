@@ -24,7 +24,7 @@ function PrivateRoute({
       {...rest}
       render={props =>
         authed === true ? (
-          <Component allOpenMerchants={allOpenMerchants} {...props} />
+          <Component allOpenMerchants={allOpenMerchants} userObj={userObj} {...props} />
         ) : (
           <Redirect
             to={{ pathname: "/login", state: { from: props.location } }}
@@ -73,27 +73,16 @@ function PublicRoute({ component: Component, authed, ...rest }) {
 
 class Routes extends Component {
   render() {
-    const { user } = this.props.withAuth;
-    if (!user) return null;
-    const withAuthComplete = !!user;
+    const { ready } = this.props.withAuth;
+    if (!ready) return null;
 
     const { allOpenMerchants, userObj } = this.props;
 
-    const isAuthed = !user.isAnonymous;
-    const isAdmin = userObj.isAdmin;
+    const isAuthed = !!userObj;
+    const isAdmin = !userObj ? false : userObj.isAdmin;
 
     return (
       <Switch>
-        <PublicRoute
-          authed={withAuthComplete}
-          path="/login"
-          component={Login}
-        />
-        <PublicRoute
-          authed={withAuthComplete}
-          path="/register"
-          component={Register}
-        />
         <PrivateRoute
           path="/"
           exact
@@ -123,6 +112,8 @@ class Routes extends Component {
           userObj={userObj}
           component={OpenTabs}
         />
+        <PublicRoute authed={isAuthed} path="/login" component={Login} />
+        <PublicRoute authed={isAuthed} path="/register" component={Register} />
         <AdminRoute
           isAdmin={isAdmin}
           exact
