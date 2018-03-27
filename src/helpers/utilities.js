@@ -59,7 +59,7 @@ export const updateUser = async (uid, data) => {
   }
 };
 
-export const findOrCreateUserOpenTab = async (userId, merchant) => {
+export const findOrCreateUserOpenTab = async (user, merchant) => {
   try {
     //find
     const tabQuery = db
@@ -76,7 +76,8 @@ export const findOrCreateUserOpenTab = async (userId, merchant) => {
       merchantId: merchant.id,
       merchantName: merchant.name,
       open: true,
-      uid: userId,
+      userName: `${user.firstName} ${user.lastName}`,
+      uid: user.id,
       accepted: false,
       timestamp: firestore.FieldValue.serverTimestamp()
     };
