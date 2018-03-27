@@ -7,7 +7,7 @@ class InfoForm extends Component {
   render() {
     /* inject stripe object to CardSection */
     return (
-      <CardSection stripe={this.props.stripe}/>
+      <CardSection userObj={this.props.userObj} stripe={this.props.stripe} />
     );
   }
 }

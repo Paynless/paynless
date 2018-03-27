@@ -6,7 +6,7 @@ class CustomerInfo extends Component {
   render() {
     return (
       <Elements>
-        <InjectedInfoForm />
+        <InjectedInfoForm userObj={this.props.userObj} />
       </Elements>
     );
   }

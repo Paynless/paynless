@@ -1,10 +1,8 @@
-import { db, firebaseAuth } from "../../config";
+import { db } from "../../config";
 import React, { Component } from "react";
 import { CardNumberElement, CardExpiryElement } from "react-stripe-elements";
 import { CardCVCElement, PostalCodeElement } from "react-stripe-elements";
 import { FlatButton } from "material-ui";
-import { withAuth } from "fireview";
-
 
 const handleBlur = () => {
   // console.log("[blur]");
@@ -12,11 +10,6 @@ const handleBlur = () => {
 
 const handleChange = change => {
   // console.log("[change]", change);
-};
-
-const handleClick = event => {
-  console.log("[click]");
-  console.log("event in click", event.target);
 };
 
 const handleFocus = () => {
@@ -51,23 +44,22 @@ class CardSection extends Component {
     super(props);
   }
 
-  async componentDidMount() {
-
-  }
-
   handleSubmit = async event => {
     event.preventDefault();
-    const { user } = this.props.withAuth;
+    console.log("[click]");
+
+    const { userObj } = this.props;
     const { stripe } = this.props;
     try {
-      const userListener = await db
+      // listening to user
+      await db
         .collection("Users")
-        .where("uid", "==", user.uid)
+        .where("uid", "==", userObj.uid)
         .onSnapshot(async doc => {
           let doc_id = doc.docs[0].id;
           const token = await stripe.createToken();
           let source = token.token.id;
-          const updateUserWithToken = await db
+          await db // updating user with token
             .collection("Users")
             .doc(`${doc_id}/stripe_source/tokens`)
             .set({ token_id: source }, { merge: true });
@@ -77,14 +69,10 @@ class CardSection extends Component {
     }
   };
 
-  editForm = event => {
-
-  }
+  editForm = event => {};
 
   render() {
     return (
-
-
       <form onSubmit={this.handleSubmit}>
         <div>
           <label>
@@ -135,11 +123,7 @@ class CardSection extends Component {
           </label>
         </div>
         <div>
-          <FlatButton
-            label="Edit"
-            primary={true}
-            onClick={this.editForm}
-          />
+          <FlatButton label="Edit" primary={true} onClick={this.editForm} />
         </div>
         <div>
           <FlatButton
@@ -153,4 +137,4 @@ class CardSection extends Component {
   }
 }
 
-export default withAuth(CardSection);
+export default CardSection;

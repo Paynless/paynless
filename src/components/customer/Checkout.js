@@ -39,7 +39,6 @@ class Checkout extends Component {
     this.setState({ open: false });
 
     const { user } = this.props.withAuth;
-    const { stripe } = this.props;
 
     try {
       console.log("Updating db for charge...");
