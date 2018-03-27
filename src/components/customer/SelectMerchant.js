@@ -102,7 +102,7 @@ class SelectMerchant extends Component {
               key={merchant.id}
               className="checkinItem"
             >
-              <div className="checkinName" onClick={() => this.props.loadTab(null, merchant.name)}>
+              <div className="checkinName" onClick={_ => this.props.loadTab(null, merchant)}>
                 <ListItem primaryText={merchant.name} />
               </div>
               <Favorite

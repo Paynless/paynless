@@ -9,62 +9,44 @@ admin.initializeApp(functions.config().firebase);
 const stripe = require("stripe")(functions.config().stripe.token);
 const currency = functions.config().stripe.currency || "USD";
 
-// // [START chargecustomer]
-// exports.createStripeCharge = functions.firestore
-//   .ref("/users/{userId}/payments/{paymentId}")
-//   .onWrite(event => {
-//     const payment = event.data.data();
-//     const userId = event.params.userId;
-//     const paymentId = event.params.paymentId;
+// [START chargecustomer]
+exports.createStripeCharge = functions.firestore
+  .document("/users/{docId}/payments/{paymentId}")
+  .onWrite(event => {
+    const payment = event.data.data();
+    const docId = event.params.docId;
+    const paymentId = event.params.paymentId;
+    // Checks if payment exists or if it has already been charged
+    if (!payment || payment.charge) return;
 
-//     // checks if payment exists or if it has already been charged
-//     if (!payment || payment.charge) return;
-
-//     // Look up the Stripe customer id written in createStripeCustomer
-//     return admin
-//       .firestore()
-//       .doc(`/users/${userId}`)
-//       .get()
-//       .then(snapshot => {
-//         return snapshot;
-//       })
-//       .then(customer => {
-//         // amount must be in cents
-//         const amount = payment.price * 100;
-//         const idempotency_key = paymentId;
-//         // prevent duplicate charges
-//         const soure = payment.token.id;
-//         const currency = "usd";
-//         const description = "Paynless test desc...";
-//         const charge = { amount, currency, source };
-
-//         return stripe.charges.create(charge, { idempotency_key });
-//       })
-//       .then(charge => {
-//         // If the result is successful, write it back to the database
-//         admin
-//           .firestore()
-//           .doc(`/users/${userId}/payments/${paymentId}`)
-//           .set(
-//             {
-//               charge: charge
-//             },
-//             {
-//               merge: true
-//             }
-//           );
-//       })
-//       .catch(err => console.error(err));
-//     // .catch(error => {
-//     //   // We want to capture errors and render them in a user-friendly way, while
-//     //   // still logging an exception with Stackdriver
-//     //   return event.data.adminRef.child("error").set(userFacingMessage(error));
-//     // })
-//     // .then(() => {
-//     //   return reportError(error, { user: event.params.userId });
-//     // });
-//   });
-// // [END chargecustomer]]
+    // Look up the Stripe customer id
+    return (
+      admin
+        .firestore()
+        .collection("users")
+        .doc(docId)
+        // .collection("stripe_source")
+        .get()
+        .then(doc => {
+          // amount must be in cents
+          const amount = payment.price * 100;
+          const idempotency_key = paymentId;
+          // prevent duplicate charges
+          const customer = doc.data().sid;
+          const currency = "usd";
+          const charge = { amount, currency, customer };
+          return stripe.charges.create(charge, { idempotency_key });
+        })
+        .then(charge => {
+          // If the result is successful, write it back to the database
+          admin
+            .firestore()
+            .doc(`/users/${docId}/payments/${paymentId}`)
+            .set({ charge }, { merge: true });
+        })
+        .catch(err => console.error(err))
+    );
+  });
 
 // When a user is created, register them with Stripe
 exports.createStripeCustomer = functions.firestore
@@ -101,7 +83,9 @@ exports.addPaymentSource = functions.firestore
       .where("id", "==", docId) // .doc(docId) should work but does not here
       .get() // work-around
       .then(snap => {
-        snap.forEach(doc => stripe.customers.createSource(doc.data().sid, { source }));
+        snap.forEach(doc =>
+          stripe.customers.createSource(doc.data().sid, { source })
+        );
       })
       .catch(err => console.error(err));
   });
@@ -162,7 +146,6 @@ function reportError(err, context = {}) {
     });
   });
 }
-// [END reporterror]
 
 // Sanitize the error message for the user
 function userFacingMessage(error) {
