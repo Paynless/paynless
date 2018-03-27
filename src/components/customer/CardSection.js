@@ -42,12 +42,23 @@ const createOptions = fontSize => {
 class CardSection extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      cardSaved: false,
+    }
+  }
+
+  renderCardForm = () => {
+
+    if (!this.state.cardSaved) {
+      return (
+
+      );
+    }
   }
 
   handleSubmit = async event => {
     event.preventDefault();
     console.log("[click]");
-
     const { userObj } = this.props;
     const { stripe } = this.props;
     try {
@@ -64,6 +75,9 @@ class CardSection extends Component {
             .doc(`${doc_id}/stripe_source/tokens`)
             .set({ token_id: source }, { merge: true });
         });
+      this.setState(_ => ({
+        cardSaved: true,
+      }));
     } catch (err) {
       console.log(err);
     }
