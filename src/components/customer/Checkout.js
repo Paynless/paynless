@@ -32,16 +32,20 @@ class Checkout extends Component {
     this.setState({ open: true });
   };
 
-  handleClose = event => {
+  handleCloseCancel = event => {
     event.preventDefault();
-    console.log('closing event: ', event);
+    this.setState({open: false})
+  }
+
+  handleClosePay = event => {
+    event.preventDefault();
     this.setState({ open: false });
     const { userObj } = this.props;
     let paymentId = uuidv4();
 
     db.collection("User")
       .doc(`${userObj.uid}/payments/${paymentId}`)
-      .set({ price: 0.5 }, { merge: true });
+      .set({ price: (this.props.total * (this.state.tip + 1)) }, { merge: true });
   };
 
   handleSlider = (event, value) => {
@@ -50,8 +54,8 @@ class Checkout extends Component {
 
   render() {
     const actions = [
-      <FlatButton label="Cancel" primary={true} onClick={this.handleClose} />,
-      <FlatButton label="Pay" primary={true} onClick={this.handleClose} />
+      <FlatButton label="Cancel" primary={true} onClick={this.handleCloseCancel} />,
+      <FlatButton label="Pay" primary={true} onClick={this.handleClosePay} />
     ];
 
     return (
