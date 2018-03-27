@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Router } from "react-router-dom";
+import { Router, Link } from "react-router-dom";
 import {
   Routes,
   SplashScreen,
@@ -19,7 +19,6 @@ class App extends Component {
     openMenu: false,
     userObj: null,
     isLoading: true
-    
   };
   async componentDidMount() {
     try {
@@ -34,9 +33,10 @@ class App extends Component {
 
   async componentWillReceiveProps(nextProps) {
     try {
-      if ((!this.props.withAuth.ready && nextProps.withAuth.ready) || 
-      (!this.props.withAuth.user && nextProps.withAuth.user)
-    ) {
+      if (
+        (!this.props.withAuth.ready && nextProps.withAuth.ready) ||
+        (!this.props.withAuth.user && nextProps.withAuth.user)
+      ) {
         if (!!nextProps.withAuth.user) {
           const { user } = nextProps.withAuth;
           this.removeUserListener = await db
@@ -54,8 +54,11 @@ class App extends Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    if (nextProps.withAuth.ready &&nextState.allOpenMerchants.length > 0) {
-      if (!this.props.withAuth.ready || this.state.allOpenMerchants.length === 0) {
+    if (nextProps.withAuth.ready && nextState.allOpenMerchants.length > 0) {
+      if (
+        !this.props.withAuth.ready ||
+        this.state.allOpenMerchants.length === 0
+      ) {
         this.setState(_ => ({ isLoading: false }));
       }
     }
@@ -75,13 +78,16 @@ class App extends Component {
     const { allOpenMerchants, userObj, isLoading } = this.state;
 
     const authButtons = !!user ? (
-      <FlatButton
-        label="Logout"
-        onClick={() => {
-          logout();
-        }}
-        style={{ color: "#fff" }}
-      />
+      <Link to="/login">
+        <FlatButton
+          label="Logout"
+          onClick={() => {
+            logout();
+            this.setState(_ => ({ userObj: null }));
+          }}
+          style={{ color: "#fff" }}
+        />
+      </Link>
     ) : null;
 
     const topbarButtons = <div>{authButtons}</div>;
@@ -99,7 +105,7 @@ class App extends Component {
       }
     };
 
-    return  isLoading ? (
+    return isLoading ? (
       <SplashScreen />
     ) : (
       <Router history={history}>
