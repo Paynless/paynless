@@ -4,3 +4,4 @@ export { default as BottomNavigationBar } from "./BottomBar";
 export { default as SplashScreen } from "./splashScreen";
 export { default as Menu } from "./Menu";
 export { default as Logo } from "./Logo";
+export { default as TopBar } from "./TopBar";
