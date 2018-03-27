@@ -48,24 +48,11 @@ export const fetchAllMerchants = async _ => {
   }
 };
 
-export const fetchUser = async uid => {
-  try {
-    const userQuery = db
-      .collection("users")
-      .where("uid", "==", uid)
-    const userDoc = await userQuery.get()
-    if (userDoc.docs.length) return userDoc.docs[0].data();
-
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 export const updateUser = async (uid, data) => {
   try {
     await db
-      .collection(`users`)
-      .where("uid", "==", uid)
+      .collection("Users")
+      .doc(uid)
       .update(data);
   } catch (error) {
     console.error("Error adding document: ", error);

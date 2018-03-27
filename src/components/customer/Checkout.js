@@ -44,7 +44,7 @@ class Checkout extends Component {
     try {
       console.log("Updating db for charge...");
       db
-        .collection("users")
+        .collection("Users")
         .where("uid", "==", user.uid)
         .get()
         .then(doc => {
@@ -52,7 +52,7 @@ class Checkout extends Component {
           let paymentId = uuidv4();
 
           db
-            .collection("users")
+            .collection("User")
             .doc(`${doc_id}/payments/${paymentId}`)
             .set({ price: 0.50 }, { merge: true });
         });

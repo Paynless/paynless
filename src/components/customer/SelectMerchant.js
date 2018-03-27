@@ -24,15 +24,16 @@ class SelectMerchant extends Component {
   }
 
   toggleFavorite = merchantId => {
-    const currFavs = Object.assign({}, this.state.user.favorites);
+    const { userObj } = this.props
+    const currFavs = Object.assign({}, userObj.favorites);
     if (currFavs[merchantId]) {
       currFavs[merchantId] = false;
     } else {
       currFavs[merchantId] = true;
     }
     db
-      .collection("users")
-      .doc(this.state.user.docId)
+      .collection("Users")
+      .doc(userObj.uid)
       .update({
         favorites: currFavs
       })

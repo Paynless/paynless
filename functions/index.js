@@ -23,7 +23,7 @@ exports.createStripeCharge = functions.firestore
     return (
       admin
         .firestore()
-        .collection("users")
+        .collection("Users")
         .doc(docId)
         // .collection("stripe_source")
         .get()
@@ -50,7 +50,7 @@ exports.createStripeCharge = functions.firestore
 
 // When a user is created, register them with Stripe
 exports.createStripeCustomer = functions.firestore
-  .document("users/{userId}")
+  .document("Users/{userId}")
   .onCreate(event => {
     const data = event.data.data();
     const docId = event.data.id;
@@ -61,7 +61,7 @@ exports.createStripeCustomer = functions.firestore
       .then(customer => {
         return admin
           .firestore()
-          .collection("users")
+          .collection("Users")
           .doc(docId)
           .set({ sid: customer.id }, { merge: true });
       })
@@ -71,7 +71,7 @@ exports.createStripeCustomer = functions.firestore
 // Add a payment source (card) for a user by writing a stripe payment source token
 // to firestore database
 exports.addPaymentSource = functions.firestore
-  .document("/users/{docId}/stripe_source/{tokens}")
+  .document("/Users/{docId}/stripe_source/{tokens}")
   .onWrite(event => {
     const docId = event.params.docId;
     const source = event.data.data().token_id;
@@ -79,7 +79,7 @@ exports.addPaymentSource = functions.firestore
 
     return admin
       .firestore()
-      .collection("users")
+      .collection("Users")
       .where("id", "==", docId) // .doc(docId) should work but does not here
       .get() // work-around
       .then(snap => {
