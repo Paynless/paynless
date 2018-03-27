@@ -34,7 +34,9 @@ class App extends Component {
 
   async componentWillReceiveProps(nextProps) {
     try {
-      if (!this.props.withAuth.ready && nextProps.withAuth.ready) {
+      if ((!this.props.withAuth.ready && nextProps.withAuth.ready) || 
+      (!this.props.withAuth.user && nextProps.withAuth.user)
+    ) {
         if (!!nextProps.withAuth.user) {
           const { user } = nextProps.withAuth;
           this.removeUserListener = await db
