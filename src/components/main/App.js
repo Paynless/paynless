@@ -8,7 +8,7 @@ import {
   BottomNavigationBar,
   history
 } from "../index";
-import { logout, fetchAllMerchants, fetchUser } from "../../helpers";
+import { logout, fetchAllMerchants } from "../../helpers";
 import { AppBar, FlatButton } from "material-ui";
 import { withAuth } from "fireview";
 import { db } from "../../config";
@@ -112,6 +112,7 @@ class App extends Component {
         <div className="fullheight">
           <div>
             <AppBar
+              history={history}
               title={<Logo />}
               iconElementRight={topbarButtons}
               iconStyleRight={{
@@ -125,8 +126,10 @@ class App extends Component {
                 background: "linear-gradient(to bottom right, #0a2009, #0d2d0b)"
               }}
               onLeftIconButtonTouchTap={this.toggleMenu}
+              onTitleTouchTap={_ => this.history.push('/')}
             />
             <Menu
+              history={history}
               userObj={userObj}
               toggleMenu={this.toggleMenu}
               openMenu={this.state.openMenu}

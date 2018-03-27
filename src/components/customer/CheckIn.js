@@ -1,12 +1,20 @@
 import React, { Component, Fragment } from "react";
-import { FlatButton, DropDownMenu, MenuItem, CircularProgress } from "material-ui";
-import { withAuth } from "fireview";
-import { getCurrentPosition, findNearbyMerchants, findOrCreateUserOpenTab, fetchUser } from "../../helpers/";
-import SelectMerchant from './SelectMerchant';
+import {
+  FlatButton,
+  DropDownMenu,
+  MenuItem,
+  CircularProgress
+} from "material-ui";
+import {
+  getCurrentPosition,
+  findNearbyMerchants,
+  findOrCreateUserOpenTab
+} from "../../helpers/";
+import { SelectMerchant } from "./index";
 
 const halfMile = 1 / 69 / 2;
 
-class CheckIn extends Component {
+export default class CreateTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,30 +35,13 @@ class CheckIn extends Component {
     this.setState(_ => ({ selectedMerchant }));
   };
 
-  loadTab = async (event, merchant)=> {
-    try {
-      event && event.preventDefault();
-      const { user } = this.props.withAuth;
-      const {name, id} = merchant
+  loadTab = (event, merchant) => {
+    event && event.preventDefault();
+    const { userObj } = this.props;
+    if (!userObj) return;
 
-      if (!user) return;
-
-      let selectedMerchant;
-      if (name) {
-        selectedMerchant = this.props.allOpenMerchants.find(merchant => {
-          return merchant.name === name;
-        });
-      } else {
-        selectedMerchant = this.state.selectedMerchant;
-      }
-
-      const tab = await findOrCreateUserOpenTab(user.uid, selectedMerchant);
-      console.log('tab', tab)
-
-      this.props.history.push(`/open-tabs/${tab.id}`);
-    } catch (err) {
-      console.log(err);
-    }
+    findOrCreateUserOpenTab(userObj.uid, merchant);
+    this.props.history.push(`/open-tabs`);
   };
 
   narrowMerchantsUsingLocation = async _ => {
@@ -91,37 +82,41 @@ class CheckIn extends Component {
     } = this.state;
     const { allOpenMerchants } = this.props;
     const isSelected = selectedMerchant.hasOwnProperty("name");
+    const checkInText = selectedMerchant.name
+      ? `Create a tab with ${selectedMerchant.name}`
+      : "Select a Merchant";
+
     return (
       <Fragment>
-      {!useLocation && (
-        <div className="checkIn">
-          <SelectMerchant openMerchants={allOpenMerchants} loadTab={this.loadTab}/>
-          <div></div>
-          <div className="findNearMe">
-            <FlatButton
-            label="Find Near Me"
-            onClick={this.narrowMerchantsUsingLocation}
-            primary={true}
+        {!useLocation && (
+          <div className="checkIn">
+            <SelectMerchant
+              openMerchants={allOpenMerchants}
+              loadTab={this.loadTab}
             />
+            <div />
+            <div className="findNearMe">
+              <FlatButton
+                label="Find Near Me"
+                onClick={this.narrowMerchantsUsingLocation}
+                primary={true}
+              />
+            </div>
           </div>
-        </div>
-      )}
-      {isLoadingUserLocation &&
-        <CircularProgress size={60} thickness={7} />}
+        )}
+        {isLoadingUserLocation && <CircularProgress size={60} thickness={7} />}
         {locationSearchConducted &&
           nearbyMerchants.length < 1 && <h3>No Restaurants Nearby</h3>}
-          {locationSearchConducted &&
-            nearbyMerchants.length > 0 && (
-              <Fragment>
+        {locationSearchConducted &&
+          nearbyMerchants.length > 0 && (
+            <Fragment>
               <FlatButton
                 primary={true}
                 fullWidth={true}
                 onClick={event => this.loadTab(event, selectedMerchant)}
                 disabled={!isSelected}
               >
-                {selectedMerchant.name
-                  ? `Check in with ${selectedMerchant.name}`
-                  : "Select a Merchant"}
+                {checkInText}
               </FlatButton>
               <DropDownMenu
                 value={selectedMerchant.name}
@@ -140,5 +135,3 @@ class CheckIn extends Component {
     );
   }
 }
-
-export default withAuth(CheckIn);
