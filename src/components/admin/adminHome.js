@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from '../../config';
-import { withAuth } from 'fireview';
 import AdminTab from './adminTab';
 import CircularProgress from 'material-ui/CircularProgress';
 
@@ -25,32 +24,13 @@ class AdminHome extends Component {
 
   async listen(props){
     try {
-      const {user} = props.withAuth;
-      if(!user) return;
       if(this.removeListenerTabs) this.removeListenerTabs();
 
-      const  { merchantId } = await db.collection("users").where("uid", "==", user.uid).get()
-      .then(snapshot => {
-        return snapshot.docs;
-      })
-      .then(docs => docs[0].data())
-
-      const users = await db.collection("users").get()
-      .then(snapshot => {
-        return snapshot.docs;
-      })
-      .then(docs => docs.map(doc => doc.data()))
+      const  { merchantId } = props.userObj
 
       this.removeListenerTabs = db.collection("Tabs").where("merchantId", "==", merchantId).where("open", "==", true)
       .onSnapshot((snapshot) => {
-        let tabData = snapshot.docs.map(doc => ({
-          id: doc.id,
-          data: doc.data()
-        }))
-        tabData = tabData.map(tab => {
-          let user = users.filter(user => user.uid === tab.data.uid)[0]
-          return Object.assign({}, tab, {user: user})
-        })
+        let tabData = snapshot.docs.map(doc => doc.data())
         this.setState({openTabs: tabData, isLoaded: true})
       });
     } catch (err) {
@@ -65,6 +45,7 @@ class AdminHome extends Component {
       <CircularProgress size={80} thickness={10} />
       </div>)
     }
+    console.log('state: ', this.state)
     return (
       <div>
         {this.state.openTabs.length ?
@@ -75,8 +56,8 @@ class AdminHome extends Component {
               to={`/admin/tabs/${tab.id}`}
             >
               <AdminTab
-                userName={tab.user && tab.user.email}
-                items={tab.data.items}
+                userName={tab.userName}
+                items={tab.items}
                 value={tab.id}
               />
             </Link>
@@ -93,4 +74,4 @@ class AdminHome extends Component {
   }
 }
 
-export default withAuth(AdminHome);
+export default AdminHome;

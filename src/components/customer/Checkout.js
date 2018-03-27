@@ -34,6 +34,7 @@ class Checkout extends Component {
 
   handleClose = event => {
     event.preventDefault();
+    console.log('closing event: ', event);
     this.setState({ open: false });
     const { userObj } = this.props;
     let paymentId = uuidv4();
