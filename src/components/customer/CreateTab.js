@@ -88,6 +88,7 @@ export default class CreateTab extends Component {
         {!useLocation && (
           <div className="checkIn">
             <SelectMerchant
+              userObj={this.props.userObj}
               openMerchants={allOpenMerchants}
               loadTab={this.loadTab}
             />

@@ -11,37 +11,7 @@ class SelectMerchant extends Component {
     this.state = {
       search: "",
       isLoaded: false,
-      user: {}
     };
-  }
-
-  componentDidMount() {
-    this.listenUser(this.props);
-  }
-
-  componentWillReceiveProps(props) {
-    this.listenUser(props);
-  }
-
-  componentWillUnmount() {
-    this.removeListener && this.removeListener();
-  }
-
-
-  listenUser(props) {
-    const { user } = props.withAuth;
-    if (!user) return;
-    if (this.removeListener) this.removeListener();
-
-    this.removeListener = db
-      .collection("users")
-      .where("uid", "==", user.uid)
-      .onSnapshot(userDocs => {
-        const user = Object.assign({}, userDocs.docs[0].data(), {
-          docId: userDocs.docs[0].id
-        });
-        this.setState({ user, isLoaded: true });
-      });
   }
 
   updateSearch = event => {
@@ -70,17 +40,10 @@ class SelectMerchant extends Component {
   };
 
   render() {
-    const { openMerchants } = this.props;
-    const { user } = this.state;
-    if (!this.state.isLoaded) {
-      return (
-        <div>
-          <CircularProgress size={80} thickness={10} />
-        </div>
-      );
-    }
+    const { openMerchants, userObj } = this.props;
+    
     let favoriteMerchants = openMerchants.filter(merchant => {
-      return user.favorites[merchant.id]
+      return userObj.favorites[merchant.id]
     });
     let foundMerchants = openMerchants.filter(merchant =>
       merchant.name.match(RegExp(this.state.search, "i"))
@@ -106,7 +69,7 @@ class SelectMerchant extends Component {
                 <ListItem primaryText={merchant.name} />
               </div>
               <Favorite
-                isFavorite={this.state.user.favorites[merchant.id]}
+                isFavorite={userObj.favorites[merchant.id]}
                 merchantId={merchant.id}
                 toggle={this.toggleFavorite}
               />
