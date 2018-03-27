@@ -66,7 +66,6 @@ class CardSection extends Component {
         .onSnapshot(async doc => {
           let doc_id = doc.docs[0].id;
           const token = await stripe.createToken();
-          console.log("token", token);
           let source = token.token.id;
           const updateUserWithToken = await db
             .collection("Users")

@@ -13,12 +13,17 @@ firebaseAuth().onAuthStateChanged(user => {
       .doc(user.uid)
       .get()
       .then(foundUser => {
-        if (!foundUser) {
-          const userRef = db.collection("Users").doc();
-          return userRef.set({
-            email: user.email,
-            uid: userRef.id
-          })
+        if (!foundUser.exists) {
+          const userRef = db.collection("Users").doc(user.uid);
+          let displayName = user.displayName.split(" ");
+          return userRef
+            .set({
+              email: user.email,
+              uid: user.uid,
+              firstName: displayName[0] && displayName[0],
+              lastName: displayName[1] && displayName[1],
+              favorites: {}
+            })
             .then(docRef => docRef)
             .catch(function(error) {
               console.error("Error adding document: ", error);
@@ -36,10 +41,13 @@ const saveUser = (user, firstName, lastName) => {
     lastName: lastName,
     favorites: {}
   };
-  return db.collection("Users").doc(user.uid).set(data)
+  return db
+    .collection("Users")
+    .doc(user.uid)
+    .set(data)
     .catch(error => {
       console.error("Error adding document: ", error);
-    })
+    });
 };
 
 export const auth = async (email, pw, firstName, lastName) => {
