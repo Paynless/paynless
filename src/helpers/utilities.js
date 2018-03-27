@@ -64,7 +64,7 @@ export const findOrCreateUserOpenTab = async (user, merchant) => {
     //find
     const tabQuery = db
       .collection("Tabs")
-      .where("uid", "==", userId)
+      .where("uid", "==", user.id)
       .where("merchantId", "==", merchant.id)
       .where("open", "==", true);
     const tabDoc = await tabQuery.get();
