@@ -12,9 +12,7 @@ import {
 import currencyFormatter from "currency-formatter";
 import { injectStripe } from "react-stripe-elements";
 import { db } from "../../config";
-import { withAuth } from "fireview";
 import uuidv4 from "uuid/v4";
-
 
 const customContentStyle = {
   width: "95vw",
@@ -37,29 +35,13 @@ class Checkout extends Component {
   handleClose = event => {
     event.preventDefault();
     this.setState({ open: false });
+    const { userObj } = this.props;
+    let paymentId = uuidv4();
 
-    const { user } = this.props.withAuth;
-
-    try {
-      console.log("Updating db for charge...");
-      db
-        .collection("Users")
-        .where("uid", "==", user.uid)
-        .get()
-        .then(doc => {
-          let doc_id = doc.docs[0].id;
-          let paymentId = uuidv4();
-
-          db
-            .collection("User")
-            .doc(`${doc_id}/payments/${paymentId}`)
-            .set({ price: 0.50 }, { merge: true });
-        });
-    } catch (err) {
-      console.log(err);
-    }
+    db.collection("User")
+      .doc(`${userObj.uid}/payments/${paymentId}`)
+      .set({ price: 0.5 }, { merge: true });
   };
-
 
   handleSlider = (event, value) => {
     this.setState({ tip: Math.round(value * 100) / 100 });
@@ -145,4 +127,4 @@ class Checkout extends Component {
   }
 }
 
-export default injectStripe(withAuth(Checkout));
+export default injectStripe(Checkout);

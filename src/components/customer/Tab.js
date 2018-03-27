@@ -37,6 +37,7 @@ const Tab = props => {
         <CardActions>
           <Elements>
             <Checkout
+              userObj={props.userObj}
               merchantName={props.merchantName}
               total={totalCents}
               items={props.items}
