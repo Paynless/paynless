@@ -1,10 +1,12 @@
 import React from 'react';
 import {Card, CardHeader} from 'material-ui/Card';
 import currencyFormatter from 'currency-formatter';
+import { UserAvatar } from './index';
 
 const styles = {
   card: {
-    width: 400,
+    width: 300,
+    height: 200,
     overflow: 'hidden',
     margin: '20px auto 0',
   }
@@ -19,6 +21,7 @@ const AdminTab = (props) => {
   return (
   <Card style={styles.card}>
     <CardHeader
+      avatar={<UserAvatar imgUrl={props.tab.photoUrl} userName={props.userName} size={100}/>}
       title={props.userName}
       subtitle={total}
       actAsExpander={false}

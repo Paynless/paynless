@@ -83,7 +83,6 @@
   left: 0px;
   z-index: 0;
   border-radius: 10%;
-  /* background-color: rgb(82, 175, 20); */
   background-color: #7CB342;
 }
 .adminMenuItems {
@@ -211,6 +210,34 @@ form {
   flex-direction: column;
 }
 
+.profileImgOutline {
+  /* width: 45px;
+  height: 45px; */
+  border-radius: 100%;
+  background-color: #7CB342;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profileImage {
+  /* width: 45px;
+  height: 45px; */
+  border-radius: 100%;
+}
+
+.initials {
+  position: relative;
+}
+
+.adminTabs {
+  width: 90vw;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
 .profile {
   display: flex;
   flex-direction: column;
@@ -228,5 +255,22 @@ form {
 
 .profile h6 {
   display: flex;
-  background: lightcyan;
+}
+
+.profileHeader {
+  width: 90vw;
+  height: 40vh;
+  display: flex;
+}
+
+.profileInfo {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 3;
+}
+
+.noTabsText {
+  padding: 20px;
 }

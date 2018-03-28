@@ -48,10 +48,9 @@ export default class OpenTabs extends Component {
                 <Tab userObj={this.props.userObj} tab={tab} />
               </div>
             ))}
-          </div>
-        ) : (
-          <h3>{noTabsText}</h3>
-        )}
+            </div>
+          ) : ( <p className="noTabsText">{noTabsText}</p>)
+        }
       </Fragment>
     );
   }
