@@ -37,6 +37,7 @@ class CardSection extends Component {
       lastFour: "",
       brand: "",
       cardId: "",
+      errorMessage: "",
     };
   }
 
@@ -63,19 +64,24 @@ class CardSection extends Component {
           let doc_id = doc.docs[0].id;
           const token = await stripe.createToken();
           console.log("Token on adding card", token);
-          let source = token.token.id;
-          await db // updating user with token
+          if (token.error){
+            this.setState({errorMessage: token.error.message});
+          } else {
+            let source = token.token.id;
+            await db // updating user with token
             .collection("Users")
             .doc(`${doc_id}/stripe_source/tokens`)
             .set({ token_id: source }, { merge: true });
 
-          this.setState(_ => ({
-            cardSaved: true,
-            cardIsLoaded: true,
-            lastFour: token.token.card.last4,
-            brand: token.token.card.brand,
-            cardId: token.token.card.id
-          }));
+            this.setState(_ => ({
+              cardSaved: true,
+              cardIsLoaded: true,
+              lastFour: token.token.card.last4,
+              brand: token.token.card.brand,
+              cardId: token.token.card.id
+            }));
+          }
+
         });
     } catch (err) {
       console.log(err);
@@ -119,6 +125,12 @@ class CardSection extends Component {
       return (
         <div>
           <h6>Add a payment method</h6>
+          {this.state.errorMessage.length ?
+          (<div className="ErrorMessage">
+          {this.state.errorMessage}
+        </div>) :
+        null
+          }
           <form onSubmit={this.handleSubmit}>
             <div>
               <label>
