@@ -78,12 +78,12 @@ exports.addPaymentSource = functions.firestore
     return admin
       .firestore()
       .collection("Users")
-      .where("id", "==", docId) // .doc(docId) should work but does not here
+      .where("uid", "==", docId) // .doc(docId) should work but does not here
       .get() // work-around
       .then(snap => {
-        snap.forEach(doc =>
-          stripe.customers.createSource(doc.data().sid, { source })
-        );
+        snap.forEach(doc => {
+          stripe.customers.createSource(doc.data().sid, { source });
+        });
       })
       .catch(err => console.error(err));
   });
