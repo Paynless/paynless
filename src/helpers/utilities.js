@@ -25,7 +25,7 @@ export const findOrCreateMerchant = async (id, data) => {
     const merchantRef = await db
       .collection("Merchants")
       .doc();
-    
+
     data.id = merchantRef.id;
     return merchantRef.set(data);
   } catch (err) {
@@ -71,12 +71,14 @@ export const findOrCreateUserOpenTab = async (user, merchant) => {
     if (tabDoc.docs.length) return tabDoc.docs[0].data();
 
     //create
+    console.log('data in utilities: ', user)
     const data = {
       items: [],
       merchantId: merchant.id,
       merchantName: merchant.name,
       open: true,
       userName: `${user.firstName} ${user.lastName}`,
+      photoUrl: user.photoUrl || null,
       uid: user.uid,
       accepted: false,
       timestamp: firestore.FieldValue.serverTimestamp()

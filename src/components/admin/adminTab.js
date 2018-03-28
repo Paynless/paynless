@@ -1,10 +1,12 @@
 import React from 'react';
 import {Card, CardHeader} from 'material-ui/Card';
 import currencyFormatter from 'currency-formatter';
+import UserAvatar from './userAvatar';
 
 const styles = {
   card: {
-    width: 400,
+    width: 300,
+    height: 200,
     overflow: 'hidden',
     margin: '20px auto 0',
   }
@@ -16,9 +18,11 @@ const AdminTab = (props) => {
     totalCents += (item.price * item.quantity);
   })
   let total = currencyFormatter.format(totalCents / 100, { code: 'USD' });
+  console.log('props on adminTab', props)
   return (
   <Card style={styles.card}>
     <CardHeader
+      avatar={<UserAvatar imgUrl={null} userName={props.userName} size={100}/>}
       title={props.userName}
       subtitle={total}
       actAsExpander={false}

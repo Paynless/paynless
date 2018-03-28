@@ -55,12 +55,12 @@ export default class CreateTab extends Component {
     });
     this.setState({ selectedMerchant });
   };
-  
+
   loadTab = (event, merchant) => {
     event && event.preventDefault();
     const { userObj } = this.props;
     if (!userObj) return;
-
+    console.log('props in create tab:', this.props)
     const { userHasPayment } = this.state;
     if (userHasPayment) {
       findOrCreateUserOpenTab(userObj, merchant);
@@ -113,7 +113,7 @@ export default class CreateTab extends Component {
       : "Select a Merchant";
 
     const addPaymentBtn = <Link to="/payment-details">
-    <FlatButton>Add Payment Method</FlatButton> 
+    <FlatButton>Add Payment Method</FlatButton>
     </Link>
     return (
       <Fragment>

@@ -49,7 +49,7 @@ class AdminHome extends Component {
     return (
       <div>
         {this.state.openTabs.length ?
-        (<div>
+        (<div className="adminTabs">
           {this.state.openTabs.map((tab)=> (
             <Link
               key={tab.id}
@@ -59,6 +59,8 @@ class AdminHome extends Component {
                 userName={tab.userName}
                 items={tab.items}
                 value={tab.id}
+                userObj={this.props.userObj}
+                tab={tab}
               />
             </Link>
           ))}
