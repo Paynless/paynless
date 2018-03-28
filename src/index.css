@@ -237,3 +237,23 @@ form {
   flex-wrap: wrap;
   justify-content: space-around;
 }
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile img {
+  display: flex;
+}
+
+.profile h5 {
+  display: flex;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+
+.profile h6 {
+  display: flex;
+  background: lightcyan;
+}

@@ -22,7 +22,8 @@ firebaseAuth().onAuthStateChanged(user => {
               uid: user.uid,
               firstName: displayName[0] && displayName[0],
               lastName: displayName[1] && displayName[1],
-              favorites: {}
+              favorites: {},
+              photoUrl: user.photoURL
             })
             .then(docRef => docRef)
             .catch(function(error) {
