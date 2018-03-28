@@ -1,12 +1,9 @@
 import { db } from "../../config";
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { CardNumberElement, CardExpiryElement } from "react-stripe-elements";
 import { CardCVCElement, PostalCodeElement } from "react-stripe-elements";
-import { FlatButton } from "material-ui";
-
-const handleChange = change => {
-  // console.log("[change]", change);
-};
+import { FlatButton, CircularProgress } from "material-ui";
 
 const handleReady = () => {
   console.log("[ready]");
@@ -35,15 +32,28 @@ class CardSection extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cardSaved: false
+      cardSaved: false,
+      cardIsLoaded: false,
+      lastFour: "",
+      brand: "",
+      cardId: "",
     };
   }
+
+  handleChange = (element, name) => {
+    if (!element.empty && element.complete) {
+      this.setState({ [name]: true });
+    } else {
+      this.setState({ [name]: false });
+    }
+  };
 
   handleSubmit = async event => {
     event.preventDefault();
     console.log("[click]");
     const { userObj } = this.props;
     const { stripe } = this.props;
+
     try {
       // listening to user
       await db
@@ -60,7 +70,11 @@ class CardSection extends Component {
             .set({ token_id: source }, { merge: true });
 
           this.setState(_ => ({
-            cardSaved: true
+            cardSaved: true,
+            cardIsLoaded: true,
+            lastFour: token.token.card.last4,
+            brand: token.token.card.brand,
+            cardId: token.token.card.id
           }));
         });
     } catch (err) {
@@ -71,12 +85,30 @@ class CardSection extends Component {
   editForm = event => {
     event.preventDefault();
     console.log("Editing existing card info");
+    this.setState({
+      cardSaved: false,
+      card_number: false,
+      card_expiration: false,
+      card_cvc: false,
+      card_postal: false
+    });
   };
 
-  deleteCard = event => {
-    event.preventDefault();
-    console.log("Deleting card...");
-  };
+  componentDidMount() {
+    const { userObj } = this.props;
+
+    db // check if token exists
+      .collection("Users")
+      .doc(`${userObj.uid}/stripe_source/tokens`)
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          this.setState({ cardSaved: true, cardIsLoaded: true });
+        } else {
+          this.setState({ cardSaved: false, cardIsLoaded: true });
+        }
+      });
+  }
 
   renderCardForm = () => {
     if (!this.state.cardSaved) {
@@ -88,7 +120,9 @@ class CardSection extends Component {
               <label>
                 Card number
                 <CardNumberElement
-                  onChange={handleChange}
+                  onChange={element =>
+                    this.handleChange(element, "card_number")
+                  }
                   onReady={handleReady}
                   {...createOptions(this.props.fontSize)}
                 />
@@ -98,7 +132,9 @@ class CardSection extends Component {
               <label>
                 Expiration date
                 <CardExpiryElement
-                  onChange={handleChange}
+                  onChange={element =>
+                    this.handleChange(element, "card_expiration")
+                  }
                   onReady={handleReady}
                   {...createOptions(this.props.fontSize)}
                 />
@@ -108,7 +144,7 @@ class CardSection extends Component {
               <label>
                 CVC
                 <CardCVCElement
-                  onChange={handleChange}
+                  onChange={element => this.handleChange(element, "card_cvc")}
                   onReady={handleReady}
                   {...createOptions(this.props.fontSize)}
                 />
@@ -118,7 +154,9 @@ class CardSection extends Component {
               <label>
                 Postal code
                 <PostalCodeElement
-                  onChange={handleChange}
+                  onChange={element =>
+                    this.handleChange(element, "card_postal")
+                  }
                   onReady={handleReady}
                   {...createOptions(this.props.fontSize)}
                 />
@@ -129,6 +167,12 @@ class CardSection extends Component {
                 label="Save Card"
                 primary={true}
                 onClick={this.handleSubmit}
+                disabled={
+                  !this.state["card_number"] ||
+                  !this.state["card_expiration"] ||
+                  !this.state["card_cvc"] ||
+                  !this.state["card_postal"]
+                }
               />
             </div>
           </form>
@@ -138,16 +182,43 @@ class CardSection extends Component {
     if (this.state.cardSaved) {
       return (
         <div>
-          <h6>Edit payment details</h6>
-          <FlatButton label="Edit" primary={true} onClick={this.editForm} />
-          <FlatButton label="Delete" primary={true} onClick={this.deleteCard} />
+          <div>
+            <h6>Edit payment details</h6>
+            <label>
+              {
+                this.state.brand && this.state.lastFour
+                  ? <p>{this.state.brand} Card ending in {this.state.lastFour}</p>
+                  : <p>Previously saved card...</p>
+              }
+
+            </label>
+            <FlatButton label="Edit" primary={true} onClick={this.editForm} />
+          </div>
+          <div>
+            <Link to="/">
+              <p className="home-screen-btn">
+              <FlatButton
+                label="Home"
+                primary={true}
+              />
+              </p>
+            </Link>
+          </div>
         </div>
       );
     }
   };
 
   render() {
-    return <div>{this.renderCardForm()}</div>;
+    return (
+      <div>
+    {
+      this.state.cardIsLoaded
+       ? this.renderCardForm()
+       : <CircularProgress size={80} thickness={10} />
+    }
+    </div>
+    )
   }
 }
 
