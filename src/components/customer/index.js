@@ -6,4 +6,4 @@ export { default as TabHistory } from "./TabHistory";
 export { default as CustomerInfo } from "./CustomerInfo";
 export { default as Favorite } from "./Favorite";
 export { default as SelectMerchant } from "./SelectMerchant";
-
+export { default as Profile } from "./Profile";
