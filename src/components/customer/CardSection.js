@@ -4,16 +4,8 @@ import { CardNumberElement, CardExpiryElement } from "react-stripe-elements";
 import { CardCVCElement, PostalCodeElement } from "react-stripe-elements";
 import { FlatButton } from "material-ui";
 
-const handleBlur = () => {
-  // console.log("[blur]");
-};
-
 const handleChange = change => {
   // console.log("[change]", change);
-};
-
-const handleFocus = () => {
-  // console.log("[focus]");
 };
 
 const handleReady = () => {
@@ -43,76 +35,8 @@ class CardSection extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cardSaved: false,
-    }
-  }
-
-  renderCardForm = () => {
-
-    if (!this.state.cardSaved) {
-      return (
-        <form onSubmit={this.handleSubmit}>
-        <div>
-          <label>
-            Card number
-            <CardNumberElement
-              onBlur={handleBlur}
-              onChange={handleChange}
-              onFocus={handleFocus}
-              onReady={handleReady}
-              {...createOptions(this.props.fontSize)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Expiration date
-            <CardExpiryElement
-              onBlur={handleBlur}
-              onChange={handleChange}
-              onFocus={handleFocus}
-              onReady={handleReady}
-              {...createOptions(this.props.fontSize)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            CVC
-            <CardCVCElement
-              onBlur={handleBlur}
-              onChange={handleChange}
-              onFocus={handleFocus}
-              onReady={handleReady}
-              {...createOptions(this.props.fontSize)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Postal code
-            <PostalCodeElement
-              onBlur={handleBlur}
-              onChange={handleChange}
-              onFocus={handleFocus}
-              onReady={handleReady}
-              {...createOptions(this.props.fontSize)}
-            />
-          </label>
-        </div>
-        <div>
-          <FlatButton label="Edit" primary={true} onClick={this.editForm} />
-        </div>
-        <div>
-          <FlatButton
-            label="Save Info"
-            primary={true}
-            onClick={this.handleSubmit}
-          />
-        </div>
-      </form>
-      );
-    }
+      cardSaved: false
+    };
   }
 
   handleSubmit = async event => {
@@ -128,26 +52,102 @@ class CardSection extends Component {
         .onSnapshot(async doc => {
           let doc_id = doc.docs[0].id;
           const token = await stripe.createToken();
+          console.log("Token on adding card", token);
           let source = token.token.id;
           await db // updating user with token
             .collection("Users")
             .doc(`${doc_id}/stripe_source/tokens`)
             .set({ token_id: source }, { merge: true });
+
+          this.setState(_ => ({
+            cardSaved: true
+          }));
         });
-      this.setState(_ => ({
-        cardSaved: true,
-      }));
     } catch (err) {
       console.log(err);
     }
   };
 
-  editForm = event => {};
+  editForm = event => {
+    event.preventDefault();
+    console.log("Editing existing card info");
+  };
+
+  deleteCard = event => {
+    event.preventDefault();
+    console.log("Deleting card...");
+  };
+
+  renderCardForm = () => {
+    if (!this.state.cardSaved) {
+      return (
+        <div>
+          <h6>Add a payment method</h6>
+          <form onSubmit={this.handleSubmit}>
+            <div>
+              <label>
+                Card number
+                <CardNumberElement
+                  onChange={handleChange}
+                  onReady={handleReady}
+                  {...createOptions(this.props.fontSize)}
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                Expiration date
+                <CardExpiryElement
+                  onChange={handleChange}
+                  onReady={handleReady}
+                  {...createOptions(this.props.fontSize)}
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                CVC
+                <CardCVCElement
+                  onChange={handleChange}
+                  onReady={handleReady}
+                  {...createOptions(this.props.fontSize)}
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                Postal code
+                <PostalCodeElement
+                  onChange={handleChange}
+                  onReady={handleReady}
+                  {...createOptions(this.props.fontSize)}
+                />
+              </label>
+            </div>
+            <div>
+              <FlatButton
+                label="Save Card"
+                primary={true}
+                onClick={this.handleSubmit}
+              />
+            </div>
+          </form>
+        </div>
+      );
+    }
+    if (this.state.cardSaved) {
+      return (
+        <div>
+          <h6>Edit payment details</h6>
+          <FlatButton label="Edit" primary={true} onClick={this.editForm} />
+          <FlatButton label="Delete" primary={true} onClick={this.deleteCard} />
+        </div>
+      );
+    }
+  };
 
   render() {
-    return (
-      this.renderCardForm()
-    );
+    return <div>{this.renderCardForm()}</div>;
   }
 }
 
