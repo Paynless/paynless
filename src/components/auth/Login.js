@@ -69,15 +69,24 @@ export default class Login extends Component {
             </p>
           </div>
         )}
-        <RaisedButton
-          label="Login"
-          primary={true}
-          style={style.raisedBtn}
-          type="submit"
-        />
-        <GoogleButton
-          onClick={() => googleSignIn()}
-        />
+        <div className="verticalFlex">
+          <RaisedButton
+            label="Login"
+            primary={true}
+            style={style.raisedBtn}
+            type="submit"
+          />
+          {/* <GoogleButton
+            onClick={() => googleSignIn()}
+          /> */}
+          <RaisedButton
+            label="Sign In With Google"
+            secondary={true}
+            style={style.raisedBtn}
+            icon={<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" className="googleImg" />}
+            onClick={() => googleSignIn()}
+          />
+        </div>
 
       </form>
     );
