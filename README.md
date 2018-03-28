@@ -1,23 +1,23 @@
-# Auth with React Router V4 and Firebase V3
-This is an example repo for authenticating with Firebase and React Router using Material-UI.
+# Paynless
+A progressive web application used for quick and seamless check-ins at bars and restaurants.
 
-*Using React 16.1.1, React Router 4, and Firebase 4.6.0*
-
-### [Live Demo](https://guilherme6191.github.io/react-router-firebase-auth-material-ui/#/)
+### [Visit Deployed Site](https://paynless.co)
 
 #### Features:
-* Protected Routes with React Router
-* Register new users with Firebase
-* Add new users to ```/users``` in your Firebase Firestore database
+* Open and close tabs by merchant
+* Favorite restaurants or bars
+* Real-time updates to a running total
+* Stripe API integration
+* Google Authentication
+* Protects Routes with React Router
+* Registers new users with Firebase
+* Adds new users to Firebase Firestore database
 * Login/Logout Functionality
+* Google Auth Functionality
 * Material UI
-* Bootstrap v4 for some utilities via CDN ** should be included via yarn/npm or removed
 
-#### Instructions:
+#### Run It:
 * Swap out the firebase config in ```config/constants``` with your own
 * ```npm install```
 * ```npm start```
 * Visit ```localhost:3000```
-
-#### Others:
-It's basically [react-router-firebase-auth](https://github.com/tylermcginnis/react-router-firebase-auth) with [Material-UI](https://github.com/callemall/material-ui) and [Firebase/Firestore](https://firebase.google.com/products/firestore/)
