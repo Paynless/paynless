@@ -52,7 +52,7 @@ export default class OpenTabs extends Component {
               </div>
             ))}
             </div>
-          ) : ( <h3>{noTabsText}</h3>)
+          ) : ( <p className="noTabsText">{noTabsText}</p>)
         }
       </Fragment>
     );

@@ -22,7 +22,7 @@ const AdminTab = (props) => {
   return (
   <Card style={styles.card}>
     <CardHeader
-      avatar={<UserAvatar imgUrl={null} userName={props.userName} size={100}/>}
+      avatar={<UserAvatar imgUrl={props.tab.photoUrl} userName={props.userName} size={100}/>}
       title={props.userName}
       subtitle={total}
       actAsExpander={false}
