@@ -90,12 +90,25 @@ export const findOrCreateUserOpenTab = async (user, merchant) => {
   }
 };
 
-export const fetchUserToken = id => {
+export const fetchClosedTabs = async uid => {
+  const closedTabQuery = db
+    .collection("Tabs")
+    .where("uid", "==", uid)
+    .where("open", "==", false);
+
+  const tabDocs = await closedTabQuery.get();
+  if (tabDocs.docs.length) {
+    return tabDocs.docs.map( tab => tab.data());
+  }
+}
+
+export const fetchUserToken = uid => {
   return db.collection('Users')
-  .doc(id)
-  .collection('tokens')
-  .get()
-} 
+    .doc(uid)
+    .collection('stripe_source')
+    .doc('tokens')
+    .get()
+}
 
 export function setErrorMsg(error) {
   return {

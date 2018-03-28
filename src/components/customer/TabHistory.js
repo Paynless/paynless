@@ -3,9 +3,9 @@ import { db } from '../../config';
 import Tab from './Tab';
 import CircularProgress from 'material-ui/CircularProgress';
 
-export default class OpenTabs extends Component {
+export default class TabHistory extends Component {
   state = {
-    openTabs: [],
+    closedTabs: [],
     isLoaded: false,
   }
 
@@ -14,10 +14,10 @@ export default class OpenTabs extends Component {
 
     this.removeListenerTabs = db.collection("Tabs")
       .where("uid", "==", userObj.uid)
-      .where("open", "==", true)
+      .where("open", "==", false)
       .onSnapshot( snapshot => {
-        const openTabs = snapshot.docs.map(doc => doc.data())
-      this.setState({openTabs, isLoaded: true})
+        const closedTabs = snapshot.docs.map(doc => doc.data())
+      this.setState({closedTabs, isLoaded: true})
       })
   }
 
@@ -26,7 +26,7 @@ export default class OpenTabs extends Component {
   }
 
   render() {
-    const { isLoaded, openTabs } = this.state;
+    const { isLoaded, closedTabs } = this.state;
 
     if(!isLoaded){
       return (
@@ -35,13 +35,13 @@ export default class OpenTabs extends Component {
       </Fragment>)
     }
 
-    const noTabsText = 'Go outside and enjoy a nice meal. We\'ll help make it painless.';
+    const noHistoryText = 'Go outside and enjoy a nice meal. We\'ll help make it painless.';
 
     return (
       <Fragment>
-        {this.state.openTabs.length ?
+        {this.state.closedTabs.length ?
           (<div>
-            {openTabs.map((tab, idx)=> (
+            {closedTabs.map((tab, idx)=> (
               <div key={idx}>
                 <Tab
                   userObj={this.props.userObj}
@@ -52,7 +52,7 @@ export default class OpenTabs extends Component {
               </div>
             ))}
             </div>
-          ) : ( <h3>{noTabsText}</h3>)
+          ) : ( <h3>{noHistoryText}</h3>)
         }
       </Fragment>
     );
