@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { db } from '../../config';
 import Tab from './Tab';
 import CircularProgress from 'material-ui/CircularProgress';
@@ -52,7 +52,7 @@ export default class OpenTabs extends Component {
               </div>
             ))}
             </div>
-          ) : ( <h3>{noHistoryText}</h3>)
+          ) : ( <h3>{noTabsText}</h3>)
         }
       </Fragment>
     );
