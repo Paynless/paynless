@@ -27,7 +27,7 @@ exports.createStripeCharge = functions.firestore
         .get()
         .then(doc => {
           // amount must be in cents
-          const amount = payment.price * 100;
+          const amount = payment.price;
           const idempotency_key = paymentId;
           // prevent duplicate charges
           const customer = doc.data().sid;

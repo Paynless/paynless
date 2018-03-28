@@ -54,7 +54,7 @@ class Checkout extends Component {
     try {
       const { userObj, tab } = this.props;
       let paymentId = uuidv4();
-      let price = Math.round(this.props.total * (this.state.tip + 1)) / 100;
+      let price = Math.round(this.props.total * (this.state.tip + 1));
 
       await db.collection("Users")
         .doc(`${userObj.uid}/payments/${paymentId}`)
