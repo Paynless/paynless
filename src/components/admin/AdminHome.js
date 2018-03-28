@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from '../../config';
-import AdminTab from './adminTab';
+import { AdminTab } from './index';
 import CircularProgress from 'material-ui/CircularProgress';
 
 class AdminHome extends Component {
@@ -45,7 +45,7 @@ class AdminHome extends Component {
       <CircularProgress size={80} thickness={10} />
       </div>)
     }
-    console.log('state: ', this.state)
+
     return (
       <div>
         {this.state.openTabs.length ?

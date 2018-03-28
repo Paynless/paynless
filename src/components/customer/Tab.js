@@ -14,8 +14,10 @@ const styles = {
 };
 
 const Tab = props => {
+  const { tab, userObj } = props;
+  
   let totalCents = 0;
-  props.items.forEach(item => {
+  tab.items.forEach(item => {
     totalCents += item.price * item.quantity;
   });
   let total = currencyFormatter.format(totalCents / 100, { code: "USD" });
@@ -28,7 +30,7 @@ const Tab = props => {
   return (
     <Card style={styles.card}>
       <CardHeader
-        title={props.merchantName}
+        title={tab.merchantName}
         subtitle={total}
         actAsExpander={shouldExpand}
         showExpandableButton={shouldExpand}
@@ -37,17 +39,15 @@ const Tab = props => {
         <CardActions>
           <Elements>
             <Checkout
-              userObj={props.userObj}
-              merchantName={props.merchantName}
+              userObj={userObj}
+              tab={tab}
               total={totalCents}
-              items={props.items}
-              tabId={props.tabId}
             />
           </Elements>
         </CardActions>
       )}
       <CardText expandable={shouldExpand}>
-        <Receipt items={props.items} />
+        <Receipt items={tab.items} />
       </CardText>
     </Card>
   );
