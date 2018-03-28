@@ -43,7 +43,7 @@ class Checkout extends Component {
     event.preventDefault();
     this.setState({open: false})
     db.collection("Tabs")
-      .doc(this.props.tabId)
+      .doc(this.props.tab.id)
       .set({ open: false }, { merge: true })
   }
 
@@ -52,7 +52,7 @@ class Checkout extends Component {
     this.setState({ paymentSubmitted: true, errorMessage: ''});
     if (this.removeListener) this.removeListener();
     try {
-      const { userObj } = this.props;
+      const { userObj, tab } = this.props;
       let paymentId = uuidv4();
       let price = Math.round(this.props.total * (this.state.tip + 1)) / 100;
 
@@ -67,7 +67,7 @@ class Checkout extends Component {
         if (data.charge){
           this.setState({open: false})
           db.collection("Tabs")
-          .doc(this.props.tabId)
+          .doc(tab.tabId)
           .set({ open: false, chargeData: data.charge }, { merge: true })
         } else if (data.paymentError){
           this.setState({paymentSubmitted: false, errorMessage: data.paymentError})
@@ -84,9 +84,11 @@ class Checkout extends Component {
   };
 
   render() {
+    const { total, tab } = this.props;
+
     const actions = [
       <FlatButton label="Cancel" primary={true} onClick={this.handleCloseCancel} />,
-      <FlatButton label={this.props.total > 0 ? "Pay" : "Close Tab"} primary={true} onClick={this.props.total > 0 ? this.handleClosePay : this.handleCloseNoCharges} />
+      <FlatButton label={total > 0 ? "Pay" : "Close Tab"} primary={true} onClick={total > 0 ? this.handleClosePay : this.handleCloseNoCharges} />
     ];
 
     const submitted = [
@@ -97,7 +99,7 @@ class Checkout extends Component {
       <div>
         <FlatButton label="Close Out" onClick={this.handleOpen} />
         <Dialog
-          title={`Checkout from ${this.props.merchantName}`}
+          title={`Checkout from ${tab.merchantName}`}
           actions={this.state.paymentSubmitted ? submitted : actions}
           modal={false}
           open={this.state.open}
@@ -126,7 +128,7 @@ class Checkout extends Component {
               <TableRow>
                 <TableRowColumn>Subtotal:</TableRowColumn>
                 <TableRowColumn>
-                  {currencyFormatter.format(this.props.total / 100, {
+                  {currencyFormatter.format(total / 100, {
                     code: "USD"
                   })}
                 </TableRowColumn>
@@ -135,7 +137,7 @@ class Checkout extends Component {
                 <TableRowColumn>Tip:</TableRowColumn>
                 <TableRowColumn>
                   {currencyFormatter.format(
-                    this.props.total * this.state.tip / 100,
+                    total * this.state.tip / 100,
                     { code: "USD" }
                   )}
                 </TableRowColumn>
