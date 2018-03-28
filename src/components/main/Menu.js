@@ -43,7 +43,7 @@ class Menu extends React.Component {
           <Link to="/open-tabs">
             <MenuItem onClick={handleClose}>Open Tabs</MenuItem>
           </Link>
-          <Link to="/history">
+          <Link to="/tab-history">
             <MenuItem onClick={handleClose}>Tab History</MenuItem>
           </Link>
           <Divider />

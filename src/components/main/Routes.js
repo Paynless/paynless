@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route, Redirect, Switch } from "react-router-dom";
-import { CreateTab, OpenTabs, CustomerInfo, AdminHome, AdminSingleTab, Login, Register, AddVenue } from "../index";
+import { CreateTab, OpenTabs, TabHistory,  CustomerInfo, AdminHome, AdminSingleTab, Login, Register, AddVenue } from "../index";
 import { withAuth } from "fireview";
 
 function PrivateRoute({
@@ -95,6 +95,13 @@ class Routes extends Component {
           path="/open-tabs"
           userObj={userObj}
           component={OpenTabs}
+        />
+        <PrivateRoute
+          authed={isAuthed}
+          exact
+          path="/tab-history"
+          userObj={userObj}
+          component={TabHistory}
         />
         <PrivateRoute
           authed={isAuthed}
