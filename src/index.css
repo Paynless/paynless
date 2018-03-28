@@ -191,3 +191,7 @@ form {
   min-width: 40px;
   text-align: center;
 }
+
+.ErrorMessage {
+  color: red;
+}

@@ -42,7 +42,14 @@ exports.createStripeCharge = functions.firestore
             .doc(`/Users/${docId}/payments/${paymentId}`)
             .set({ charge }, { merge: true });
         })
-        .catch(err => console.error(err))
+        .catch(err => {
+          console.error(err)
+          console.error("this is the error keys", Object.keys(err))
+          admin
+            .firestore()
+            .doc(`/Users/${docId}/payments/${paymentId}`)
+            .set({ paymentError: err.message }, { merge: true });
+        })
     );
   });
 
