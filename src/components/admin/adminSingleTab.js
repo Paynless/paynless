@@ -28,8 +28,6 @@ class AdminSingleTab extends Component {
   async listen(props){
     if(this.removeListenerTabs) this.removeListenerTabs();
 
-    const  { merchantId } = props.userObj
-
     this.removeListenerTabs = db.collection("Tabs").doc(props.match.params.tabId)
     .onSnapshot((snapshot) => {
       console.log('snapshot', snapshot);

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { db } from "../../config";
 import { withAuth } from "fireview";
 import { Favorite } from "./index";
-import { CircularProgress, List, ListItem, TextField } from "material-ui";
+import { List, ListItem, TextField } from "material-ui";
 import { escapeRegExp } from 'lodash';
 
 class SelectMerchant extends Component {
