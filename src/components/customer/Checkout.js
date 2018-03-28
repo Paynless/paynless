@@ -67,7 +67,7 @@ class Checkout extends Component {
         if (data.charge){
           this.setState({open: false})
           db.collection("Tabs")
-          .doc(tab.tabId)
+          .doc(tab.id)
           .set({ open: false, chargeData: data.charge }, { merge: true })
         } else if (data.paymentError){
           this.setState({paymentSubmitted: false, errorMessage: data.paymentError})
