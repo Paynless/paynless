@@ -24,6 +24,7 @@ class Checkout extends Component {
     super(props);
     this.state = {
       open: false,
+      paymentSubmitted: false,
       tip: 0.18
     };
   }
@@ -37,15 +38,35 @@ class Checkout extends Component {
     this.setState({open: false})
   }
 
-  handleClosePay = event => {
+  handleClosePay = async event => {
     event.preventDefault();
-    this.setState({ open: false });
-    const { userObj } = this.props;
-    let paymentId = uuidv4();
+    this.setState({ paymentSubmitted: true });
+    if (this.removeListener) this.removeListener();
+    try {
+      const { userObj } = this.props;
+      let paymentId = uuidv4();
+      let price = Math.round(this.props.total * (this.state.tip + 1)) / 100;
 
-    db.collection("Users")
+      await db.collection("Users")
+        .doc(`${userObj.uid}/payments/${paymentId}`)
+        .set({ price: price }, { merge: true })
+
+      this.removeListener = db.collection("Users")
       .doc(`${userObj.uid}/payments/${paymentId}`)
-      .set({ price: (this.props.total * (this.state.tip + 1)) }, { merge: true });
+      .onSnapshot(snapshot => {
+        let data = snapshot.data()
+        console.log('in snapshot!', data);
+        if (data.charge){
+          this.setState({open: false})
+          db.collection("Tabs")
+          .doc(this.props.tabId)
+          .set({ open: false, chargeData: data.charge }, { merge: true })
+        }
+      })
+    } catch (err) {
+      console.error(err);
+    }
+
   };
 
   handleSlider = (event, value) => {
@@ -58,12 +79,16 @@ class Checkout extends Component {
       <FlatButton label="Pay" primary={true} onClick={this.handleClosePay} />
     ];
 
+    const submitted = [
+      <FlatButton label="Submitting Payment..." primary={true} />
+    ]
+
     return (
       <div>
         <FlatButton label="Close Out" onClick={this.handleOpen} />
         <Dialog
           title={`Checkout from ${this.props.merchantName}`}
-          actions={actions}
+          actions={this.state.paymentSubmitted ? submitted : actions}
           modal={false}
           open={this.state.open}
           onRequestClose={this.handleClose}
