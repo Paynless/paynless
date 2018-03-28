@@ -18,7 +18,6 @@ const AdminTab = (props) => {
     totalCents += (item.price * item.quantity);
   })
   let total = currencyFormatter.format(totalCents / 100, { code: 'USD' });
-  console.log('props on adminTab', props)
   return (
   <Card style={styles.card}>
     <CardHeader

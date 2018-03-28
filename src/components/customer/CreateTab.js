@@ -60,7 +60,6 @@ export default class CreateTab extends Component {
     event && event.preventDefault();
     const { userObj } = this.props;
     if (!userObj) return;
-    console.log('props in create tab:', this.props)
     const { userHasPayment } = this.state;
     if (userHasPayment) {
       findOrCreateUserOpenTab(userObj, merchant);

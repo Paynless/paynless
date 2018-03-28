@@ -71,7 +71,6 @@ export const findOrCreateUserOpenTab = async (user, merchant) => {
     if (tabDoc.docs.length) return tabDoc.docs[0].data();
 
     //create
-    console.log('data in utilities: ', user)
     const data = {
       items: [],
       merchantId: merchant.id,
