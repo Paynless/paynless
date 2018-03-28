@@ -37,8 +37,8 @@ class Menu extends React.Component {
           <Link to="/payment-details">
             <MenuItem onClick={handleClose}>Payment</MenuItem>
           </Link>
-          <Link to="/favorites">
-            <MenuItem onClick={handleClose}>Favorites</MenuItem>
+          <Link to="/">
+            <MenuItem onClick={handleClose}>Create New Tab</MenuItem>
           </Link>
           <Link to="/open-tabs">
             <MenuItem onClick={handleClose}>Open Tabs</MenuItem>
@@ -47,9 +47,9 @@ class Menu extends React.Component {
             <MenuItem onClick={handleClose}>Tab History</MenuItem>
           </Link>
           <Divider />
-          <Link to="/settings">
+          {/*<Link to="/settings">
             <MenuItem onClick={handleClose}>Settings</MenuItem>
-          </Link>
+    </Link>*/}
           <Link to="/addVenue">
             <MenuItem onClick={handleClose}>Add Business</MenuItem>
           </Link>

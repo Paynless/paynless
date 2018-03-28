@@ -1,9 +1,5 @@
 import React, { Component } from "react";
-import {
-  findOrCreateMerchant,
-  setErrorMsg,
-  getCoordsFromAdd
-} from "../../helpers";
+import { findOrCreateMerchant, setErrorMsg,} from "../../helpers";
 import RaisedButton from "material-ui/RaisedButton";
 import TextField from "material-ui/TextField";
 import { firestore } from "../../config";
@@ -22,7 +18,7 @@ export default class RegisterVenue extends Component {
   handleSubmit = async event => {
     try {
       event.preventDefault();
-      const { name, vicinity, city, state, hours } = this.state;
+      const { name, vicinity, hours } = this.state;
       const data = {
         name,
         vicinity,
@@ -49,10 +45,7 @@ export default class RegisterVenue extends Component {
   onChange = vicinity => this.setState(_ => ({ vicinity, registerError: "" }));
 
   render() {
-    const inputProps = {
-      value: this.state.vicinity,
-      onChange: this.onChange
-    };
+    
     return (
       <form onSubmit={this.handleSubmit} style={style.container}>
         <h3>Register Your Business With Paynless</h3>

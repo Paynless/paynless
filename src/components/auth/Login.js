@@ -79,7 +79,11 @@ export default class Login extends Component {
             label="Sign In With Google"
             secondary={true}
             style={style.raisedBtn}
-            icon={<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" className="googleImg" />}
+            icon={
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" 
+              className="googleImg"
+              alt="google-icon" 
+            />}
             onClick={() => googleSignIn()}
           />
         </div>

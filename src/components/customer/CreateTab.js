@@ -10,7 +10,6 @@ import {
   getCurrentPosition,
   findNearbyMerchants,
   findOrCreateUserOpenTab,
-  fetchUserToken
 } from "../../helpers/";
 import { SelectMerchant } from "./index";
 import { db } from "../../config";
