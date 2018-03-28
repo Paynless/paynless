@@ -196,6 +196,11 @@ form {
   color: red;
 }
 
+.home-screen-btn {
+  text-align: center;
+  width: 100%;
+}
+
 .googleImg {
   width: 20px;
   height: 20px;
