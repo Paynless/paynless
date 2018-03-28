@@ -7,7 +7,8 @@ import { FlatButton,
 import {
   getCurrentPosition,
   findNearbyMerchants,
-  findOrCreateUserOpenTab
+  findOrCreateUserOpenTab,
+  fetchUserToken
 } from "../../helpers/";
 import { SelectMerchant } from "./index";
 
@@ -22,8 +23,16 @@ export default class CreateTab extends Component {
       selectedMerchant: {},
       useLocation: false,
       userCoords: {},
-      isLoadingUserLocation: false
+      isLoadingUserLocation: false,
+      userHasPayment: false,
     };
+  }
+
+  async componentDidMount() {
+    const {userObj} = this.props
+    const tokenSnapshot = await fetchUserToken(userObj.uid)
+    console.log(tokenSnapshot.docs[0])
+    if (!tokenSnapshot.docs[0]) this.props.history.push('/payment-details')
   }
 
   updateSelectedMerchant = (event, idx, name) => {

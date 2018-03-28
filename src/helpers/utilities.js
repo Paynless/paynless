@@ -90,6 +90,13 @@ export const findOrCreateUserOpenTab = async (user, merchant) => {
   }
 };
 
+export const fetchUserToken = id => {
+  return db.collection('Users')
+  .doc(id)
+  .collection('tokens')
+  .get()
+} 
+
 export function setErrorMsg(error) {
   return {
     registerError: error.message
