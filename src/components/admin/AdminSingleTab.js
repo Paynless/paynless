@@ -63,7 +63,6 @@ export default class AdminSingleTab extends Component {
 
   render() {
     const { isLoaded, selectedTab } = this.state;
-    console.log('state in single tab', this.state);
     if (!isLoaded) {
       return (
         <div>
