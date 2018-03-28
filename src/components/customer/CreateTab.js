@@ -1,8 +1,10 @@
 import React, { Component, Fragment } from "react";
+import { Link } from "react-router-dom";
 import { FlatButton,
   DropDownMenu,
   MenuItem,
-  CircularProgress
+  CircularProgress,
+  Dialog
 } from "material-ui";
 import {
   getCurrentPosition,
@@ -11,6 +13,7 @@ import {
   fetchUserToken
 } from "../../helpers/";
 import { SelectMerchant } from "./index";
+import { db } from "../../config";
 
 const halfMile = 1 / 69 / 2;
 
@@ -25,14 +28,25 @@ export default class CreateTab extends Component {
       userCoords: {},
       isLoadingUserLocation: false,
       userHasPayment: false,
+      dialogOpen: false,
     };
   }
 
   async componentDidMount() {
     const {userObj} = this.props
-    const tokenSnapshot = await fetchUserToken(userObj.uid)
-    console.log(tokenSnapshot.docs[0])
-    if (!tokenSnapshot.docs[0]) this.props.history.push('/payment-details')
+
+    this.removeUserListener = db
+      .collection("Users")
+      .doc(userObj.uid)
+      .collection('stripe_source')
+      .doc('tokens')
+      .onSnapshot(snapshot => {
+        this.setState({ userHasPayment: !!snapshot.exists });
+      });
+  }
+
+  componentWillUnmount() {
+    this.removeUserListener();
   }
 
   updateSelectedMerchant = (event, idx, name) => {
@@ -42,14 +56,19 @@ export default class CreateTab extends Component {
     });
     this.setState({ selectedMerchant });
   };
-
+  
   loadTab = (event, merchant) => {
     event && event.preventDefault();
     const { userObj } = this.props;
     if (!userObj) return;
 
-    findOrCreateUserOpenTab(userObj, merchant);
-    this.props.history.push(`/open-tabs`);
+    const { userHasPayment } = this.state;
+    if (userHasPayment) {
+      findOrCreateUserOpenTab(userObj, merchant);
+      this.props.history.push(`/open-tabs`);
+    } else {
+      this.setState({dialogOpen: true})
+    }
   };
 
   narrowMerchantsUsingLocation = async _ => {
@@ -78,6 +97,8 @@ export default class CreateTab extends Component {
     }
   };
 
+  closeDialog = _ => this.setState({ dialogOpen: false })
+
   render() {
     const {
       useLocation,
@@ -92,8 +113,20 @@ export default class CreateTab extends Component {
       ? `Create a tab with ${selectedMerchant.name}`
       : "Select a Merchant";
 
+    const addPaymentBtn = <Link to="/payment-details">
+    <FlatButton>Add Payment Method</FlatButton> 
+    </Link>
     return (
       <Fragment>
+        <Dialog
+          title="Add Payment"
+          actions={addPaymentBtn}
+          modal={false}
+          open={this.state.dialogOpen}
+          onRequestClose={this.closeDialog}
+        >
+          Tabs can only be created once a payment method has been entered. Please enter payment method
+        </Dialog>
         {!useLocation && (
           <div className="checkIn">
             <SelectMerchant
