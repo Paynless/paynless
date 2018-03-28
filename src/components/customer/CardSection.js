@@ -56,7 +56,7 @@ class CardSection extends Component {
 
     try {
       // listening to user
-      await db
+      this.removeListener = await db
         .collection("Users")
         .where("uid", "==", userObj.uid)
         .onSnapshot(async doc => {
@@ -108,6 +108,10 @@ class CardSection extends Component {
           this.setState({ cardSaved: false, cardIsLoaded: true });
         }
       });
+  }
+
+  componentWillUnmount() {
+    this.removeListener();
   }
 
   renderCardForm = () => {
