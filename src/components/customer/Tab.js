@@ -41,6 +41,7 @@ const Tab = props => {
               merchantName={props.merchantName}
               total={totalCents}
               items={props.items}
+              tabId={props.tabId}
             />
           </Elements>
         </CardActions>

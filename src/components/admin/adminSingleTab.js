@@ -26,28 +26,17 @@ class AdminSingleTab extends Component {
   }
 
   async listen(props){
-    const {user} = props.withAuth;
-    if(!user) return;
     if(this.removeListenerTabs) this.removeListenerTabs();
 
-    const  { merchantId } = await db.collection("users").where("uid", "==", user.uid).get()
-    .then(snapshot => {
-      return snapshot.docs;
-    })
-    .then(docs => docs[0].data())
+    const  { merchantId } = props.userObj
 
-    const users = await db.collection("users").get()
-    .then(snapshot => {
-      return snapshot.docs;
-    })
-    .then(docs => docs.map(doc => doc.data()))
-
-    this.removeListenerTabs = db.collection("Tabs").where("merchantId", "==", merchantId).where("open", "==", true)
+    this.removeListenerTabs = db.collection("Tabs").doc(props.match.params.tabId)
     .onSnapshot((snapshot) => {
-      let tabDoc = snapshot.docs.filter(doc => doc.id === props.match.params.tabId)[0]
-      let tab = tabDoc.data()
-      let user = users.filter(user => user.uid === tab.uid)[0]
-      this.setState({selectedTab: Object.assign({}, tab, {user: user}), isLoaded: true})
+      console.log('snapshot', snapshot);
+      if(snapshot.exists){
+        let tab = snapshot.data();
+        this.setState({selectedTab: tab, isLoaded: true})
+      }
     });
   }
 
@@ -55,11 +44,7 @@ class AdminSingleTab extends Component {
     const {user} = props.withAuth;
     if(!user) return;
 
-    const  { merchantId } = await db.collection("users").where("uid", "==", user.uid).get()
-    .then(snapshot => {
-      return snapshot.docs;
-    })
-    .then(docs => docs[0].data())
+    const  { merchantId } = props.userObj
 
     const { menu } = await db.collection("Merchants").doc(merchantId).get()
     .then(snapshot => {
@@ -94,7 +79,7 @@ class AdminSingleTab extends Component {
     return (
       <div className="adminSingleTab">
         <Tab
-          merchantName={this.state.selectedTab.user.email}
+          merchantName={this.state.selectedTab.userName}
           items={this.state.selectedTab.items}
           expanded={true}
           size={400}

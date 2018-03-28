@@ -50,6 +50,7 @@ class OpenTabs extends Component {
               <Tab
                 userObj={this.props.userObj}
                 merchantName={tab.merchantName}
+                tabId={tab.id}
                 items={tab.items}
               />
             </div>
