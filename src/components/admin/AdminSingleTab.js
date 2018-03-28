@@ -23,6 +23,7 @@ export default class AdminSingleTab extends Component {
           this.setState({ selectedTab, isLoaded: true });
         }
       });
+    this.fetchMenuItems(this.props);
   }
 
   componentWillUnmount() {
@@ -62,7 +63,7 @@ export default class AdminSingleTab extends Component {
 
   render() {
     const { isLoaded, selectedTab } = this.state;
-
+    console.log('state in single tab', this.state);
     if (!isLoaded) {
       return (
         <div>

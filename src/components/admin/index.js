@@ -1,5 +1,5 @@
-export {default as AdminHome } from './adminHome';
-export {default as AdminSingleTab } from './adminSingleTab';
-export {default as AdminTab } from './adminTab';
-export {default as MenuItem } from './menuItem';
-export {default as UserAvatar} from './userAvatar';
+export {default as AdminHome } from './AdminHome';
+export {default as AdminSingleTab } from './AdminSingleTab';
+export {default as AdminTab } from './AdminTab';
+export {default as MenuItem } from './MenuItem';
+export {default as UserAvatar} from './UserAvatar';

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Card, CardHeader} from 'material-ui/Card';
 import currencyFormatter from 'currency-formatter';
-import UserAvatar from './userAvatar';
+import { UserAvatar } from './index';
 
 const styles = {
   card: {
