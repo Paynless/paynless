@@ -111,7 +111,7 @@ class CardSection extends Component {
   }
 
   componentWillUnmount() {
-    this.removeListener();
+    this.removeListener && this.removeListener();
   }
 
   renderCardForm = () => {
