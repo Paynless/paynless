@@ -25,12 +25,13 @@ class Checkout extends Component {
     this.state = {
       open: false,
       paymentSubmitted: false,
+      errorMessage: '',
       tip: 0.18
     };
   }
 
   handleOpen = () => {
-    this.setState({ open: true });
+    this.setState({ open: true, errorMessage: ''});
   };
 
   handleCloseCancel = event => {
@@ -38,9 +39,17 @@ class Checkout extends Component {
     this.setState({open: false})
   }
 
+  handleCloseNoCharges = event => {
+    event.preventDefault();
+    this.setState({open: false})
+    db.collection("Tabs")
+      .doc(this.props.tabId)
+      .set({ open: false }, { merge: true })
+  }
+
   handleClosePay = async event => {
     event.preventDefault();
-    this.setState({ paymentSubmitted: true });
+    this.setState({ paymentSubmitted: true, errorMessage: ''});
     if (this.removeListener) this.removeListener();
     try {
       const { userObj } = this.props;
@@ -55,12 +64,13 @@ class Checkout extends Component {
       .doc(`${userObj.uid}/payments/${paymentId}`)
       .onSnapshot(snapshot => {
         let data = snapshot.data()
-        console.log('in snapshot!', data);
         if (data.charge){
           this.setState({open: false})
           db.collection("Tabs")
           .doc(this.props.tabId)
           .set({ open: false, chargeData: data.charge }, { merge: true })
+        } else if (data.paymentError){
+          this.setState({paymentSubmitted: false, errorMessage: data.paymentError})
         }
       })
     } catch (err) {
@@ -76,7 +86,7 @@ class Checkout extends Component {
   render() {
     const actions = [
       <FlatButton label="Cancel" primary={true} onClick={this.handleCloseCancel} />,
-      <FlatButton label="Pay" primary={true} onClick={this.handleClosePay} />
+      <FlatButton label={this.props.total > 0 ? "Pay" : "Close Tab"} primary={true} onClick={this.props.total > 0 ? this.handleClosePay : this.handleCloseNoCharges} />
     ];
 
     const submitted = [
@@ -94,6 +104,10 @@ class Checkout extends Component {
           onRequestClose={this.handleClose}
           contentStyle={customContentStyle}
         >
+          {this.state.errorMessage.length ? (
+            <div className="ErrorMessage"> Sorry, there was a problem! {this.state.errorMessage}</div>
+          ) :
+          (null)}
           <Table
             fixedHeader={false}
             style={{ width: "auto", tableLayout: "auto" }}
