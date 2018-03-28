@@ -19,20 +19,14 @@ export default class Register extends Component {
     event.preventDefault();
     const { email, password, firstName, lastName } = this.state;
     if (!isValidEmail(email) || password.length < 6) {
-      this.setState(_ => {
-        return setErrorMsg(Error('Email Must Be Valid And Password Must Be At Least 6 Characters'))
-      });
+      this.setState(setErrorMsg(Error('Email Must Be Valid And Password Must Be At Least 6 Characters')));
       return;
     } else if (!firstName.length || !lastName.length) {
-      this.setState(_ => {
-        return setErrorMsg(Error('First And Last Name Cannot Be Left Blank'))
-      });
+      this.setState(setErrorMsg(Error('First And Last Name Cannot Be Left Blank')));
       return;
     }
 
-    auth(email, password, firstName, lastName).catch(err =>
-      this.setState(setErrorMsg(err))
-    );
+    auth(email, password, firstName, lastName).catch(err => this.setState(setErrorMsg(err)));
   };
 
   render() {
