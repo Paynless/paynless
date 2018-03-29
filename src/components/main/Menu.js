@@ -1,35 +1,34 @@
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
-import {
-  Drawer, MenuItem, Avatar, Divider, List, ListItem
-} from "material-ui";
+import { Drawer, MenuItem, Avatar, Divider, List, ListItem } from "material-ui";
 import { green900, lightGreen600 } from "material-ui/styles/colors";
 import { withAuth } from "fireview";
+import { UserAvatar } from "../admin";
 
 class Menu extends React.Component {
-
   render() {
     const { openMenu, handleClose, userObj } = this.props;
-    const userName = !userObj ? "Anonymous" : userObj.firstName
-    const isAdmin = !userObj ? false : userObj.isAdmin
+    const userName = !userObj ? "Anonymous" : userObj.firstName;
+    const isAdmin = !userObj ? false : userObj.isAdmin;
     return (
       <Fragment>
-        <Drawer
-          docked={false}
-          open={openMenu}
-          onRequestChange={handleClose}
-        >
+        <Drawer docked={false} open={openMenu} onRequestChange={handleClose}>
           <List>
             <ListItem>
-              <Avatar
-                color={green900}
-                backgroundColor={lightGreen600}
-                style={{ margin: 5 }}
-              >
-              {userName.slice(0, 1)}
-              </Avatar>
-              {userName}
+              <div className="menuHeader">
+                {userObj && (
+                  <UserAvatar
+                    imgUrl={userObj.photoUrl}
+                    userName={`${userObj.firstName} ${userObj.lastName}`}
+                    size={45}
+                  />
+                )}
+                <div className="menuName">
+                  {userName}
+                </div>
+              </div>
             </ListItem>
+            <Divider />
           </List>
           <Link to="/user-profile">
             <MenuItem onClick={handleClose}>Profile</MenuItem>
@@ -53,13 +52,15 @@ class Menu extends React.Component {
           <Link to="/addVenue">
             <MenuItem onClick={handleClose}>Add Business</MenuItem>
           </Link>
-          {isAdmin && <Link to="/admin">
-            <MenuItem onClick={handleClose}>Admin Panel</MenuItem>
-          </Link> }
+          {isAdmin && (
+            <Link to="/admin">
+              <MenuItem onClick={handleClose}>Admin Panel</MenuItem>
+            </Link>
+          )}
         </Drawer>
       </Fragment>
     );
   }
 }
 
-export default withAuth(Menu)
+export default withAuth(Menu);
