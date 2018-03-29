@@ -109,7 +109,7 @@ export default class CreateTab extends Component {
     const { allOpenMerchants } = this.props;
     const isSelected = selectedMerchant.hasOwnProperty("name");
     const checkInText = selectedMerchant.name
-      ? `Create a tab with ${selectedMerchant.name}`
+      ? "Create a tab with:"
       : "Select a Merchant";
 
     const addPaymentBtn = <Link to="/payment-details">
@@ -138,7 +138,7 @@ export default class CreateTab extends Component {
               <RaisedButton
                 label="Find Near Me"
                 onClick={this.narrowMerchantsUsingLocation}
-                primary={true}
+                secondary={true}
               />
             </div>
           </div>
@@ -148,25 +148,27 @@ export default class CreateTab extends Component {
           nearbyMerchants.length < 1 && <h3>No Restaurants Nearby</h3>}
         {locationSearchConducted &&
           nearbyMerchants.length > 0 && (
-            <Fragment>
-              <FlatButton
-                label={checkInText}
-                primary={true}
-                onClick={event => this.loadTab(event, selectedMerchant)}
-                disabled={!isSelected}
-              />
-              <DropDownMenu
-                value={selectedMerchant.name}
-                onChange={this.updateSelectedMerchant}
-                openImmediately={true}
-              >
-                {nearbyMerchants.map(venue => (
-                  <MenuItem value={venue.name} key={venue.name}>
-                    {venue.name}
-                  </MenuItem>
-                ))}
-              </DropDownMenu>
-            </Fragment>
+            <div className="veritcalFlex">
+              <div>
+                <RaisedButton
+                  label={checkInText}
+                  secondary={true}
+                  onClick={event => this.loadTab(event, selectedMerchant)}
+                  disabled={!isSelected}
+                />
+              </div>
+              <div>
+                <DropDownMenu
+                  value={selectedMerchant.name}
+                  onChange={this.updateSelectedMerchant}
+                  openImmediately={true}
+                >
+                  {nearbyMerchants.map(venue => (
+                    <MenuItem value={venue.name} primaryText={venue.name} key={venue.name} />
+                  ))}
+                </DropDownMenu>
+              </div>
+            </div>
           )}
       </Fragment>
     );
