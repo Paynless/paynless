@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
-import { FlatButton,
+import { RaisedButton,
+  FlatButton,
   DropDownMenu,
   MenuItem,
   CircularProgress,
@@ -134,7 +135,7 @@ export default class CreateTab extends Component {
             />
             <div />
             <div className="findNearMe">
-              <FlatButton
+              <RaisedButton
                 label="Find Near Me"
                 onClick={this.narrowMerchantsUsingLocation}
                 primary={true}
@@ -149,13 +150,11 @@ export default class CreateTab extends Component {
           nearbyMerchants.length > 0 && (
             <Fragment>
               <FlatButton
+                label={checkInText}
                 primary={true}
-                fullWidth={true}
                 onClick={event => this.loadTab(event, selectedMerchant)}
                 disabled={!isSelected}
-              >
-                {checkInText}
-              </FlatButton>
+              />
               <DropDownMenu
                 value={selectedMerchant.name}
                 onChange={this.updateSelectedMerchant}

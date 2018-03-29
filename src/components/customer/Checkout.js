@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Dialog, FlatButton, Slider } from "material-ui";
+import { Dialog, FlatButton, Slider, RaisedButton } from "material-ui";
 import CreditCardDropdown from "./CreditCardDropdown";
 import {
   Table,
@@ -97,7 +97,7 @@ class Checkout extends Component {
 
     return (
       <div>
-        <FlatButton label="Close Out" onClick={this.handleOpen} />
+        <RaisedButton label="Close Out" onClick={this.handleOpen} />
         <Dialog
           title={`Checkout from ${tab.merchantName}`}
           actions={this.state.paymentSubmitted ? submitted : actions}
