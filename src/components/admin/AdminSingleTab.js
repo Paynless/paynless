@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { db } from "../../config";
 import { Tab } from "../customer";
 import { MenuItem } from "./index";
-import CircularProgress from "material-ui/CircularProgress";
+import {CircularProgress, RaisedButton} from "material-ui";
 
 export default class AdminSingleTab extends Component {
   state = {
@@ -69,6 +69,20 @@ export default class AdminSingleTab extends Component {
           <CircularProgress size={80} thickness={10} />
         </div>
       );
+    } else if (!selectedTab.open) {
+        return (
+          <div className="verticalFlex">
+            <h3>This tab has been closed</h3>
+            <RaisedButton 
+              label="Return to Admin Panel" 
+              onClick={event => {
+                event.preventDefault()
+                this.props.history.push("/admin")
+              }}
+              secondary={true}
+            />
+          </div>
+        )
     }
     return (
       <div className="adminSingleTab">
