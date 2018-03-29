@@ -46,7 +46,7 @@ export default class TabHistory extends Component {
           <div>
             {closedTabs.map((tab, idx) => (
               <div key={idx}>
-                <Tab userObj={this.props.userObj} tab={tab} />
+                <Tab userObj={this.props.userObj} tab={tab} hideAction={true}/>
               </div>
             ))}
           </div>

@@ -15,7 +15,7 @@ const styles = {
 
 const Tab = props => {
   const { tab, userObj } = props;
-  
+
   let totalCents = 0;
   tab.items.forEach(item => {
     totalCents += item.price * item.quantity;
@@ -25,7 +25,7 @@ const Tab = props => {
   //style settings
   let shouldExpand = props.expanded ? false : true;
   if (props.size) styles.card.width = props.size;
-  let displayAction = props.displayAction ? false : true;
+  let displayAction = props.hideAction ? false : true;
 
   return (
     <Card style={styles.card}>
