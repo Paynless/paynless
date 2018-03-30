@@ -155,10 +155,9 @@ form {
 }
 
 .checkIn {
-  width: 95vw;
+  width: 80vw;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
   align-items: center;
 }
 
@@ -166,8 +165,9 @@ form {
   flex: 4;
 }
 
-.findNearMe {
+.Toggle {
   flex: 1;
+
 }
 
 .checkinItem {

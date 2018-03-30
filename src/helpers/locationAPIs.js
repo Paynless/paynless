@@ -28,12 +28,12 @@ export const getCurrentPosition = options => {
     navigator.geolocation.getCurrentPosition(
       location => {
         resolve({
-          //   _lat: location.coords.latitude,
-          //   _long: location.coords.longitude
+            _lat: location.coords.latitude,
+            _long: location.coords.longitude
 
           //dont use location when you are home
-          _lat: 40.7050604,
-          _long: -74.00865979999999
+          // _lat: 40.7050604,
+          // _long: -74.00865979999999
         });
       },
       err => {

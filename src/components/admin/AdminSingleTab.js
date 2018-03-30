@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { db } from "../../config";
 import { Tab } from "../customer";
 import { MenuItem } from "./index";
