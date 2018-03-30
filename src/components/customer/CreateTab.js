@@ -1,11 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
-import {
-  FlatButton,
-  CircularProgress,
-  Dialog,
-  Toggle
-} from "material-ui";
+import { FlatButton, CircularProgress, Dialog, Toggle } from "material-ui";
 import {
   getCurrentPosition,
   findNearbyMerchants,
@@ -22,9 +17,10 @@ export default class CreateTab extends Component {
     this.state = {
       userHasPayment: false,
       dialogOpen: false,
+      useLocation: false,
       isLoadingUserLocation: false,
-      nearbyMerchants: [],
-      locationSearchConducted: false,
+      userCoords: {},
+      nearbyMerchants: []
     };
   }
 
@@ -45,18 +41,10 @@ export default class CreateTab extends Component {
     this.removeUserListener();
   }
 
-  updateSelectedMerchant = (event, idx, name) => {
-    const { allOpenMerchants } = this.props;
-    const selectedMerchant = allOpenMerchants.find(merchant => {
-      return merchant.name === name;
-    });
-    this.setState({ selectedMerchant });
-  };
-
   loadTab = (event, merchant) => {
     event && event.preventDefault();
     const { userObj } = this.props;
-    if (!userObj) return;
+
     const { userHasPayment } = this.state;
     if (userHasPayment) {
       findOrCreateUserOpenTab(userObj, merchant);
@@ -66,33 +54,49 @@ export default class CreateTab extends Component {
     }
   };
 
-  narrowMerchantsUsingLocation = async _ => {
-    try {
-      const { locationSearchConducted } = this.state;
-
-      if (!locationSearchConducted) {
-        let allOpenMerchants = this.props.allOpenMerchants.slice();
-        this.setState({
+  locationToggle = _ => {
+    const { useLocation } = this.state;
+    if (!useLocation) {
+      this.setState(
+        { 
+          useLocation: true, 
           isLoadingUserLocation: true
-        });
+        }
+      ) 
+    } else {
+      this.setState({ useLocation: false}) 
+    }
+  }
 
-        const userCoords = await getCurrentPosition();
-        const nearbyMerchants = await findNearbyMerchants(
-          userCoords,
-          allOpenMerchants,
-          halfMile
-        );
+  async componentWillUpdate(_, nextState) {
+    if (nextState.useLocation && nextState.isLoadingUserLocation) {
+      try {
+        let { userCoords: prevCoords, nearbyMerchants } = nextState;
+        let nextCoords = await getCurrentPosition();
+
+        if (
+          Object.values(prevCoords).length ||
+          nextCoords._lat !== prevCoords._lat ||
+          nextCoords._long !== prevCoords._long
+        ) {
+          let allOpenMerchants = this.props.allOpenMerchants.slice();
+          nearbyMerchants = await findNearbyMerchants(
+            nextCoords,
+            allOpenMerchants,
+            halfMile
+          );
+        }
 
         this.setState({
           isLoadingUserLocation: false,
-          locationSearchConducted: true,
-          nearbyMerchants
+          nearbyMerchants,
+          userCoords: nextCoords ? nextCoords : prevCoords
         });
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
     }
-  };
+  }
 
   closeDialog = _ => this.setState({ dialogOpen: false });
 
@@ -100,13 +104,11 @@ export default class CreateTab extends Component {
     const {
       useLocation,
       isLoadingUserLocation,
-      locationSearchConducted,
-      nearbyMerchants,
+      nearbyMerchants
     } = this.state;
     const { allOpenMerchants } = this.props;
 
-    const merchantList =
-      (useLocation && locationSearchConducted)
+    const merchantList = useLocation
         ? nearbyMerchants
         : allOpenMerchants;
 
@@ -131,8 +133,8 @@ export default class CreateTab extends Component {
         <div className="checkIn">
           <Toggle
             label="Search Near My Location"
-            onClick={this.narrowMerchantsUsingLocation}
-            thumbSwitchedStyle={{backgroundColor: '#7CB342'}}
+            onClick={this.locationToggle}
+            thumbSwitchedStyle={{ backgroundColor: "#7CB342" }}
           />
           {isLoadingUserLocation && (
             <div>
@@ -140,9 +142,11 @@ export default class CreateTab extends Component {
             </div>
           )}
           <SelectMerchant
+            isLoadingUserLocation={isLoadingUserLocation}
             userObj={this.props.userObj}
             openMerchants={merchantList}
             loadTab={this.loadTab}
+            useLocation={useLocation}
           />
         </div>
       </Fragment>
