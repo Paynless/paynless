@@ -68,10 +68,11 @@ export default class CreateTab extends Component {
     }
   }
 
-  async componentWillUpdate(_, nextState) {
+  async componentWillUpdate(nextProps, nextState) {
     if (nextState.useLocation && nextState.isLoadingUserLocation) {
       try {
         let { userCoords: prevCoords, nearbyMerchants } = nextState;
+        
         let nextCoords = await getCurrentPosition();
 
         if (
@@ -79,10 +80,9 @@ export default class CreateTab extends Component {
           nextCoords._lat !== prevCoords._lat ||
           nextCoords._long !== prevCoords._long
         ) {
-          let allOpenMerchants = this.props.allOpenMerchants.slice();
           nearbyMerchants = await findNearbyMerchants(
             nextCoords,
-            allOpenMerchants,
+            nextProps.allOpenMerchants,
             halfMile
           );
         }
