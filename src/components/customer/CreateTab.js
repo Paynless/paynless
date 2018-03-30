@@ -1,16 +1,15 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
-import { RaisedButton,
+import {
   FlatButton,
-  DropDownMenu,
-  MenuItem,
   CircularProgress,
-  Dialog
+  Dialog,
+  Toggle
 } from "material-ui";
 import {
   getCurrentPosition,
   findNearbyMerchants,
-  findOrCreateUserOpenTab,
+  findOrCreateUserOpenTab
 } from "../../helpers/";
 import { SelectMerchant } from "./index";
 import { db } from "../../config";
@@ -21,25 +20,22 @@ export default class CreateTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      nearbyMerchants: [],
-      locationSearchConducted: false,
-      selectedMerchant: {},
-      useLocation: false,
-      userCoords: {},
-      isLoadingUserLocation: false,
       userHasPayment: false,
       dialogOpen: false,
+      isLoadingUserLocation: false,
+      nearbyMerchants: [],
+      locationSearchConducted: false,
     };
   }
 
   async componentDidMount() {
-    const {userObj} = this.props
+    const { userObj } = this.props;
 
     this.removeUserListener = db
       .collection("Users")
       .doc(userObj.uid)
-      .collection('stripe_source')
-      .doc('tokens')
+      .collection("stripe_source")
+      .doc("tokens")
       .onSnapshot(snapshot => {
         this.setState({ userHasPayment: !!snapshot.exists });
       });
@@ -66,37 +62,39 @@ export default class CreateTab extends Component {
       findOrCreateUserOpenTab(userObj, merchant);
       this.props.history.push(`/open-tabs`);
     } else {
-      this.setState({dialogOpen: true})
+      this.setState({ dialogOpen: true });
     }
   };
 
   narrowMerchantsUsingLocation = async _ => {
     try {
-      let allOpenMerchants = this.props.allOpenMerchants.slice();
-      this.setState({
-        isLoadingUserLocation: true
-      });
+      const { locationSearchConducted } = this.state;
 
-      const userCoords = await getCurrentPosition();
-      const nearbyMerchants = await findNearbyMerchants(
-        userCoords,
-        allOpenMerchants,
-        halfMile
-      );
+      if (!locationSearchConducted) {
+        let allOpenMerchants = this.props.allOpenMerchants.slice();
+        this.setState({
+          isLoadingUserLocation: true
+        });
 
-      this.setState({
-        userCoords,
-        useLocation: true,
-        isLoadingUserLocation: false,
-        locationSearchConducted: nearbyMerchants.length > 0,
-        nearbyMerchants
-      });
+        const userCoords = await getCurrentPosition();
+        const nearbyMerchants = await findNearbyMerchants(
+          userCoords,
+          allOpenMerchants,
+          halfMile
+        );
+
+        this.setState({
+          isLoadingUserLocation: false,
+          locationSearchConducted: true,
+          nearbyMerchants
+        });
+      }
     } catch (err) {
       console.log(err);
     }
   };
 
-  closeDialog = _ => this.setState({ dialogOpen: false })
+  closeDialog = _ => this.setState({ dialogOpen: false });
 
   render() {
     const {
@@ -104,17 +102,20 @@ export default class CreateTab extends Component {
       isLoadingUserLocation,
       locationSearchConducted,
       nearbyMerchants,
-      selectedMerchant
     } = this.state;
     const { allOpenMerchants } = this.props;
-    const isSelected = selectedMerchant.hasOwnProperty("name");
-    const checkInText = selectedMerchant.name
-      ? "Create a tab with:"
-      : "Select a Merchant";
 
-    const addPaymentBtn = <Link to="/payment-details">
-    <FlatButton>Add Payment Method</FlatButton>
-    </Link>
+    const merchantList =
+      (useLocation && locationSearchConducted)
+        ? nearbyMerchants
+        : allOpenMerchants;
+
+    const addPaymentBtn = (
+      <Link to="/payment-details">
+        <FlatButton>Add Payment Method</FlatButton>
+      </Link>
+    );
+
     return (
       <Fragment>
         <Dialog
@@ -124,52 +125,26 @@ export default class CreateTab extends Component {
           open={this.state.dialogOpen}
           onRequestClose={this.closeDialog}
         >
-          Tabs can only be created once a payment method has been entered. Please enter payment method
+          Tabs can only be created once a payment method has been entered.
+          Please enter payment method
         </Dialog>
-        {!useLocation && (
-          <div className="checkIn">
-            <SelectMerchant
-              userObj={this.props.userObj}
-              openMerchants={allOpenMerchants}
-              loadTab={this.loadTab}
-            />
-            <div />
-            <div className="findNearMe">
-              <RaisedButton
-                label="Find Near Me"
-                onClick={this.narrowMerchantsUsingLocation}
-                secondary={true}
-              />
-            </div>
-          </div>
-        )}
-        {isLoadingUserLocation && <CircularProgress size={60} thickness={7} />}
-        {locationSearchConducted &&
-          nearbyMerchants.length < 1 && <h3>No Restaurants Nearby</h3>}
-        {locationSearchConducted &&
-          nearbyMerchants.length > 0 && (
-            <div className="veritcalFlex">
-              <div>
-                <RaisedButton
-                  label={checkInText}
-                  secondary={true}
-                  onClick={event => this.loadTab(event, selectedMerchant)}
-                  disabled={!isSelected}
-                />
-              </div>
-              <div>
-                <DropDownMenu
-                  value={selectedMerchant.name}
-                  onChange={this.updateSelectedMerchant}
-                  openImmediately={true}
-                >
-                  {nearbyMerchants.map(venue => (
-                    <MenuItem value={venue.name} primaryText={venue.name} key={venue.name} />
-                  ))}
-                </DropDownMenu>
-              </div>
+        <div className="checkIn">
+          <Toggle
+            label="Search Near My Location"
+            onClick={this.narrowMerchantsUsingLocation}
+            thumbSwitchedStyle={{backgroundColor: '#7CB342'}}
+          />
+          {isLoadingUserLocation && (
+            <div>
+              <CircularProgress size={50} thickness={6} />
             </div>
           )}
+          <SelectMerchant
+            userObj={this.props.userObj}
+            openMerchants={merchantList}
+            loadTab={this.loadTab}
+          />
+        </div>
       </Fragment>
     );
   }
