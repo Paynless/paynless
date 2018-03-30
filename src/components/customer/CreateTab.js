@@ -132,7 +132,7 @@ export default class CreateTab extends Component {
         </Dialog>
         <div className="checkIn">
           <Toggle
-            label="Search Near My Location"
+            label="Search Near Me"
             onClick={this.locationToggle}
             thumbSwitchedStyle={{ backgroundColor: "#7CB342" }}
           />
