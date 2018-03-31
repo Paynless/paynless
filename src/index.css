@@ -152,6 +152,7 @@ form {
   overflow-y: scroll;
   height: 100%;
   background-color: #f6f9fc;
+  width: 95vw;
 }
 
 .checkIn {
