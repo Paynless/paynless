@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { App } from "./components";
+import { LoadContext } from "./components";
 import registerServiceWorker from "./registerServiceWorker";
 import "./index.css";
 import { MuiThemeProvider, getMuiTheme } from "material-ui/styles"
@@ -19,7 +19,7 @@ ReactDOM.render(
   <AuthProvider auth={firebaseAuth()}>
     <StripeProvider apiKey="pk_test_IOdUH1bXLHYRTBMZtPQvFxLB">
       <MuiThemeProvider muiTheme={muiTheme}>
-        <App />
+        <LoadContext />
       </MuiThemeProvider>
     </StripeProvider>
   </AuthProvider>,
