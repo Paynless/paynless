@@ -89,7 +89,6 @@ class App extends Component {
               openMenu={this.state.openMenu}
               handleClose={this.handleClose}
             />
-            <div className="splashbox" />
           </div>
           <div className="container d-flex justify-content-center mt-3 scrollable">
             <div className="row">
