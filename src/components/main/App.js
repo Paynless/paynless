@@ -70,19 +70,6 @@ class App extends Component {
 
   render() {
     const { allOpenMerchants, userObj, isLoading } = this.state;
-    
-    const tabData = {
-      0: {
-        path: !!userObj ? "/" : "/login",
-        icon: !!userObj ? "plus-circle" : "sign-in",
-        label: !!userObj ? "New Tab" : "Login"
-      },
-      1: {
-        path: !!userObj ? "/open-tabs" : "/register",
-        icon: !!userObj ? "sticky-note" : "user-plus",
-        label: !!userObj ? "Open Tabs" : "Register"
-      }
-    };
 
     return isLoading ? (
       <SplashScreen />
@@ -102,14 +89,13 @@ class App extends Component {
               openMenu={this.state.openMenu}
               handleClose={this.handleClose}
             />
-            <div className="splashbox" />
           </div>
           <div className="container d-flex justify-content-center mt-3 scrollable">
             <div className="row">
               <Routes allOpenMerchants={allOpenMerchants} userObj={userObj} />
             </div>
           </div>
-          <BottomNavigationBar data={tabData} />
+          <BottomNavigationBar userObj={userObj} />
         </div>
       </Router>
     );
