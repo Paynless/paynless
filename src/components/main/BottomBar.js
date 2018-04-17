@@ -1,61 +1,59 @@
-
-import React, {Component} from 'react';
-import { withRouter } from 'react-router-dom';
-import {BottomNavigation, BottomNavigationItem} from 'material-ui/BottomNavigation';
-import {grey500} from 'material-ui/styles/colors';
-import Paper from 'material-ui/Paper';
-import FontAwesome from 'react-fontawesome';
-
+import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
+import {
+  BottomNavigation,
+  BottomNavigationItem,
+  Paper
+} from "material-ui";
+import { grey500 } from "material-ui/styles/colors";
+import FontAwesome from "react-fontawesome";
+import { TabData } from "./index";
 
 class BottomNavigationBar extends Component {
   state = {
     selectedIndex: 0,
-    shouldDisplay: false
   };
 
-  componentDidMount(){
-    if(this.props.location.pathname === this.props.data[0].path){
-      this.setState({selectedIndex: 0, shouldDisplay: true})
-    } else if (this.props.location.pathname === this.props.data[1].path){
-      this.setState({selectedIndex: 1, shouldDisplay: true})
-    } else {
-      this.setState({shouldDisplay: false})
-    }
-  }
-
-  componentWillReceiveProps(props){
-    if(props.location.pathname === this.props.data[0].path){
-      this.setState({selectedIndex: 0, shouldDisplay: true})
-    } else if (props.location.pathname === this.props.data[1].path){
-      this.setState({selectedIndex: 1, shouldDisplay: true})
-    } else {
-      this.setState({shouldDisplay: false})
-    }
-  }
-
-  select = (index) => {
-    this.setState({selectedIndex: index})
-    this.props.history.push(this.props.data[index].path)
+  select = (index, path) => {
+    this.setState({ selectedIndex: index });
+    this.props.history.push(path);
   };
 
   render() {
-    const navIcon1 = <FontAwesome name={this.props.data[0].icon} style={{ color: this.state.selectedIndex === 0 ? '#0a2009' : grey500
-    }} />
-    const navIcon2 = <FontAwesome name={this.props.data[1].icon} style={{ color: this.state.selectedIndex === 1 ? '#0a2009' : grey500
-    }} />
-    if (!this.state.shouldDisplay) return <div></div>;
+    const { selectedIndex } = this.state;
+    const { userObj } = this.props;
+
+    const data = TabData(userObj);
+
+    const navIcon1 = (
+      <FontAwesome
+        name={data[0].icon}
+        style={{
+          color: selectedIndex === 0 ? "#0a2009" : grey500
+        }}
+      />
+    );
+    const navIcon2 = (
+      <FontAwesome
+        name={data[1].icon}
+        style={{
+          color: selectedIndex === 1 ? "#0a2009" : grey500
+        }}
+      />
+    );
+
     return (
       <Paper zDepth={1}>
-        <BottomNavigation selectedIndex={this.state.selectedIndex}>
+        <BottomNavigation selectedIndex={selectedIndex}>
           <BottomNavigationItem
-            label={this.props.data[0].label}
+            label={data[0].label}
             icon={navIcon1}
-            onClick={() => this.select(0)}
+            onClick={ _=> this.select(0, data[0].path)}
           />
           <BottomNavigationItem
-            label={this.props.data[1].label}
+            label={data[1].label}
             icon={navIcon2}
-            onClick={() => this.select(1)}
+            onClick={ _=> this.select(1, data[1].path)}
           />
         </BottomNavigation>
       </Paper>
