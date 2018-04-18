@@ -41,12 +41,15 @@ class LoadContext extends Component {
       });
   }
 
-  componentWillUpdate(nextProps, nextState) {
-    if (nextProps.withAuth.ready && nextState.allOpenMerchants.length > 0) {
-      if (
-        !this.props.withAuth.ready ||
-        this.state.allOpenMerchants.length === 0
-      ) {
+  componentDidUpdate(prevProps, prevState) {
+    const { ready: thisAuthReady } = this.props.withAuth;
+    const { allOpenMerchants: thisMerchants } = this.state;
+
+    if (thisAuthReady && thisMerchants.length > 0) {
+      const { ready: prevAuthReady } = prevProps.withAuth;
+      const { allOpenMerchants: prevMerchants } = prevState;
+
+      if (!prevAuthReady || prevMerchants.length === 0) {
         this.setState({ isLoading: false });
       }
     }
