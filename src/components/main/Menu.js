@@ -1,66 +1,60 @@
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
-import { Drawer, MenuItem, Avatar, Divider, List, ListItem } from "material-ui";
-import { green900, lightGreen600 } from "material-ui/styles/colors";
-import { withAuth } from "fireview";
+import { Drawer, MenuItem, Divider, List, ListItem } from "material-ui";
 import { UserAvatar } from "../admin";
 
-class Menu extends React.Component {
-  render() {
-    const { openMenu, handleClose, userObj } = this.props;
-    const userName = !userObj ? "Anonymous" : userObj.firstName;
-    const isAdmin = !userObj ? false : userObj.isAdmin;
-    return (
-      <Fragment>
-        <Drawer docked={false} open={openMenu} onRequestChange={handleClose}>
-          <List>
-            <ListItem>
-              <div className="menuHeader">
-                {userObj && (
-                  <UserAvatar
-                    imgUrl={userObj.photoUrl}
-                    userName={`${userObj.firstName} ${userObj.lastName}`}
-                    size={45}
-                  />
-                )}
-                <div className="menuName">
-                  {userName}
-                </div>
-              </div>
-            </ListItem>
-            <Divider />
-          </List>
-          <Link to="/user-profile">
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
-          </Link>
-          <Link to="/payment-details">
-            <MenuItem onClick={handleClose}>Payment</MenuItem>
-          </Link>
-          <Link to="/">
-            <MenuItem onClick={handleClose}>Create New Tab</MenuItem>
-          </Link>
-          <Link to="/open-tabs">
-            <MenuItem onClick={handleClose}>Open Tabs</MenuItem>
-          </Link>
-          <Link to="/tab-history">
-            <MenuItem onClick={handleClose}>Tab History</MenuItem>
-          </Link>
+const Menu = props => {
+  const { openMenu, handleClose, userObj } = props;
+  const userName = !userObj ? "Anonymous" : userObj.firstName;
+  const isAdmin = !userObj ? false : userObj.isAdmin;
+  return (
+    <Fragment>
+      <Drawer docked={false} open={openMenu} onRequestChange={handleClose}>
+        <List>
+          <ListItem>
+            <div className="menuHeader">
+              {userObj && (
+                <UserAvatar
+                  imgUrl={userObj.photoUrl}
+                  userName={`${userObj.firstName} ${userObj.lastName}`}
+                  size={45}
+                />
+              )}
+              <div className="menuName">{userName}</div>
+            </div>
+          </ListItem>
           <Divider />
-          {/*<Link to="/settings">
+        </List>
+        <Link to="/user-profile">
+          <MenuItem onClick={handleClose}>Profile</MenuItem>
+        </Link>
+        <Link to="/payment-details">
+          <MenuItem onClick={handleClose}>Payment</MenuItem>
+        </Link>
+        <Link to="/">
+          <MenuItem onClick={handleClose}>Create New Tab</MenuItem>
+        </Link>
+        <Link to="/open-tabs">
+          <MenuItem onClick={handleClose}>Open Tabs</MenuItem>
+        </Link>
+        <Link to="/tab-history">
+          <MenuItem onClick={handleClose}>Tab History</MenuItem>
+        </Link>
+        <Divider />
+        {/*<Link to="/settings">
             <MenuItem onClick={handleClose}>Settings</MenuItem>
     </Link>*/}
-          <Link to="/addVenue">
-            <MenuItem onClick={handleClose}>Add Business</MenuItem>
+        <Link to="/addVenue">
+          <MenuItem onClick={handleClose}>Add Business</MenuItem>
+        </Link>
+        {isAdmin && (
+          <Link to="/admin">
+            <MenuItem onClick={handleClose}>Admin Panel</MenuItem>
           </Link>
-          {isAdmin && (
-            <Link to="/admin">
-              <MenuItem onClick={handleClose}>Admin Panel</MenuItem>
-            </Link>
-          )}
-        </Drawer>
-      </Fragment>
-    );
-  }
-}
+        )}
+      </Drawer>
+    </Fragment>
+  );
+};
 
-export default withAuth(Menu);
+export default Menu;
