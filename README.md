@@ -1,7 +1,7 @@
 # Paynless
 A progressive web application used for quick and seamless check-ins at bars and restaurants.
 
-### [Visit Deployed Site](https://paynless.co)
+*** This project has entered maintanence mode and is no longer being supported *** 
 
 #### Features:
 * Open and close tabs by merchant
